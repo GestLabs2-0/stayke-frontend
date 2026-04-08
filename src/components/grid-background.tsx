@@ -3,7 +3,6 @@
 export function GridBackground() {
   return (
     <div className="pointer-events-none fixed inset-0 z-0" aria-hidden="true">
-      {/* Ambient glow */}
       <div
         className="absolute inset-0 transition-opacity duration-500"
         style={{
@@ -13,7 +12,6 @@ export function GridBackground() {
           ].join(", "),
         }}
       />
-
       {/* Large grid — purple (left) */}
       <div
         className="absolute inset-0 opacity-80 dark:opacity-60"
@@ -28,7 +26,6 @@ export function GridBackground() {
             "radial-gradient(ellipse 30% 35% at 30% 50%, black, transparent)",
         }}
       />
-
       {/* Large grid — green (right) */}
       <div
         className="absolute inset-0 opacity-80 dark:opacity-60"
@@ -43,7 +40,6 @@ export function GridBackground() {
             "radial-gradient(ellipse 30% 35% at 70% 50%, black, transparent)",
         }}
       />
-
       {/* Small grid — purple (left) */}
       <div
         className="absolute inset-0 opacity-80 dark:opacity-60"
@@ -58,7 +54,6 @@ export function GridBackground() {
             "radial-gradient(ellipse 30% 35% at 30% 50%, black, transparent)",
         }}
       />
-
       {/* Small grid — green (right) */}
       <div
         className="absolute inset-0 opacity-80 dark:opacity-60"
