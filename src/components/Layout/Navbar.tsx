@@ -1,6 +1,5 @@
 "use client";
 
-//Library
 import {
   Menu,
   X,
@@ -14,47 +13,47 @@ import {
   Copy,
   Check,
 } from "lucide-react";
-import { useWallet } from "../../lib/wallet/context";
 
-//Next
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-
-//React
 import { useState } from "react";
-//Own Components
-import { WalletButton } from "../wallet-button";
-import { PhantomModal } from "./Modal/PhantomModal";
-import { navLinks } from "../../constants";
 
-// Mock Auth Context for UI demonstration
-const useAuthMock = () => {
-  return {
-    user: {
-      firstName: "User",
-      image: null,
-      reputation: 4.8,
-      isHost: true,
-    },
-    logout: () => console.log("Logout"),
-    isRegistered: false, // Set to true to see UserMenu
-  };
-};
+import { usePrivy, useWallets } from "@privy-io/react-auth";
+
+import { navLinks } from "../../constants";
+import { useSolBalance } from "../hooks/useSolBalance";
+import { useCreateWallet } from "@privy-io/react-auth/solana";
 
 const UserMenu = () => {
-  const { user, logout } = useAuthMock();
-  const { disconnect, wallet } = useWallet();
+  const { user, logout } = usePrivy();
+  const { wallets } = useWallets();
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const router = useRouter();
 
-  const address = wallet?.account?.address?.toString() ?? "";
-  
-  // Mock balances
-  const balance = 1.25;
-  const usdcBalance = 450.00;
-  const loadingBalance = false;
-  const loadingUsdc = false;
+  const solanaWallet = user?.linkedAccounts?.find(
+    (acc) => acc.type === "wallet" && acc.chainType === "solana"
+  );
+
+  if (!solanaWallet) {
+    useCreateWallet;
+  }
+
+  //@ts-ignore
+  const address = solanaWallet?.address;
+
+  const { balance, isLoading: loadingBalance } = useSolBalance(address);
+
+  const userThings = {
+    firstName: "User",
+    image: null,
+    reputation: 4.8,
+    isHost: true,
+  };
+
+  console.log(solanaWallet);
+  console.log(wallets);
+  console.log(user);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(address);
@@ -62,9 +61,8 @@ const UserMenu = () => {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const handleLogout = () => {
-    disconnect();
-    logout();
+  const handleLogout = async () => {
+    await logout();
     setOpen(false);
     router.push("/");
   };
@@ -76,19 +74,19 @@ const UserMenu = () => {
         onClick={() => setOpen((v) => !v)}
         className="inline-flex items-center gap-2.5 rounded-xl border border-border bg-card px-3 py-2 text-sm font-medium text-foreground hover:border-primary hover:shadow-glow transition-all duration-200"
       >
-        <div className="relative flex h-7 w-7 items-center justify-center rounded-full gradient-solana shrink-0 overflow-hidden">
-          {user?.image ? (
+        <div className="relative flex h-7 w-7 items-center justify-center rounded-full gradient-solana shrink-0 ">
+          {userThings?.image ? (
             <img
-              src={user.image}
-              alt={user.firstName}
+              src={userThings.image}
+              alt={userThings.firstName}
               className="h-full w-full object-cover"
             />
           ) : (
             <User className="h-3.5 w-3.5 text-primary-foreground" />
           )}
-          <span className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-emerald-400 border-2 border-card" />
+          <span className="absolute top-5 -right-[.9px] h-2.5 w-2.5 rounded-full bg-emerald-400 border-2 border-card z" />
         </div>
-        <span className="max-w-20 truncate">{user?.firstName}</span>
+        <span className="max-w-20 truncate">{userThings?.firstName}</span>
         <ChevronDown
           className={`h-3.5 w-3.5 text-muted-foreground transition-transform duration-200 ${open ? "rotate-180" : ""}`}
         />
@@ -105,12 +103,12 @@ const UserMenu = () => {
 
             {/* Contenido */}
             <div className="relative">
-              {/* Top: Wallet pill + copy */}
+              {/* Top: Phantom pill + copy */}
               <div className="flex items-center justify-between mb-4">
                 <div className="inline-flex items-center gap-1.5 rounded-full border border-border/50 bg-background/60 backdrop-blur-sm px-2.5 py-1">
                   <div className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
                   <span className="text-xs font-medium text-foreground">
-                    Connected
+                    Phantom
                   </span>
                 </div>
 
@@ -132,13 +130,12 @@ const UserMenu = () => {
                 </button>
               </div>
 
-              {/* Balance */}
               <div>
                 <p className="text-xs text-muted-foreground mb-1 tracking-wider uppercase">
                   Balance
                 </p>
                 <div className="flex items-baseline gap-2">
-                  {loadingBalance || loadingUsdc ? (
+                  {loadingBalance ? (
                     <div className="h-8 w-24 rounded-lg bg-muted/40 animate-pulse" />
                   ) : (
                     <div className="flex flex-col">
@@ -151,12 +148,12 @@ const UserMenu = () => {
                         </span>
                       </div>
                       <div className="flex items-baseline gap-2">
-                        <span className="font-display text-xl font-bold text-primary">
+                        {/* <span className="font-display text-xl font-bold text-primary">
                           {usdcBalance !== null ? usdcBalance.toFixed(2) : "—"}
-                        </span>
-                        <span className="text-xs font-medium text-muted-foreground uppercase">
+                        </span> */}
+                        {/* <span className="text-xs font-medium text-muted-foreground uppercase">
                           USDC
-                        </span>
+                        </span> */}
                       </div>
                     </div>
                   )}
@@ -172,7 +169,7 @@ const UserMenu = () => {
               <div className="flex items-center gap-1">
                 <Star className="h-3.5 w-3.5 fill-primary text-primary" />
                 <span className="text-sm font-bold text-foreground">
-                  {user?.reputation ?? "—"}
+                  {userThings?.reputation ?? "—"}
                 </span>
                 <span className="text-xs text-muted-foreground">/ 5.0</span>
               </div>
@@ -183,13 +180,13 @@ const UserMenu = () => {
                 className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold  
                   
                   ${
-                    user?.isHost
+                    userThings?.isHost
                       ? "bg-primary/10 text-primary"
                       : "bg-primary/20 text-white"
                   }`}
               >
                 <div className="h-2 w-2 rounded-full bg-emerald-400 mr-2" />
-                {user?.isHost ? "Host" : "Client"}
+                {userThings?.isHost ? "Host" : "Client"}
               </span>
             </div>
           </div>
@@ -213,7 +210,7 @@ const UserMenu = () => {
               My Bookings
             </Link>
 
-            {user?.isHost && (
+            {userThings?.isHost && (
               <Link
                 href="/list-property"
                 onClick={() => setOpen(false)}
@@ -242,96 +239,46 @@ const UserMenu = () => {
 
 export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [showModal, setShowModal] = useState(false);
-  const { isRegistered } = useAuthMock();
+
+  const { ready, authenticated, login } = usePrivy();
 
   return (
-    <>
-      <nav className="fixed top-0 left-0 right-0 z-50 border-b border-border bg-background/80 backdrop-blur-xl transition-all duration-300">
-        <div className="container mx-auto flex items-center justify-between xl:px-[10%] px-6 py-4">
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-lg gradient-solana flex items-center justify-center">
-              <Shield className="h-4 w-4 text-primary-foreground" />
-            </div>
-            <span className="font-display text-xl font-bold text-foreground">
-              Stay<span className="text-gradient">ke</span>
-            </span>
-          </Link>
-
-          {/* Desktop Links */}
-          <div className="hidden items-center gap-8 md:flex">
-            {navLinks.map((item) => (
-              <Link
-                key={item.label}
-                href={item.href}
-                className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
-              >
-                {item.label}
-              </Link>
-            ))}
+    <nav className="fixed top-0 left-0 right-0 z-50 border-b border-border bg-background/80 backdrop-blur-xl">
+      <div className="container mx-auto flex items-center justify-between xl:px-[10%] px-6 py-4">
+        <Link href="/" className="flex items-center gap-2">
+          <div className="h-8 w-8 rounded-lg gradient-solana flex items-center justify-center">
+            <Shield className="h-4 w-4 text-primary-foreground" />
           </div>
+          <span className="font-display text-xl font-bold">
+            Stay<span className="text-gradient">ke</span>
+          </span>
+        </Link>
 
-          {/* Desktop Actions — wallet o perfil */}
-          <div className="hidden items-center gap-3 md:flex">
-            {isRegistered ? (
-              <UserMenu />
-            ) : (
-              <WalletButton onOpenModal={() => setShowModal(true)} />
-            )}
-          </div>
-
-          {/* Mobile Toggle */}
-          <button
-            className="text-foreground md:hidden"
-            onClick={() => setIsOpen(!isOpen)}
-            aria-label="Toggle menu"
-          >
-            {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-          </button>
+        <div className="hidden md:flex gap-8">
+          {navLinks.map((item) => (
+            <Link key={item.label} href={item.href}>
+              {item.label}
+            </Link>
+          ))}
         </div>
 
-        {/* Mobile Menu */}
-        <div
-          className={`overflow-hidden transition-all duration-300 ease-in-out md:hidden ${
-            isOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
-          }`}
-        >
-          <div className="border-t border-border bg-background px-6 py-4 flex flex-col gap-4">
-            {navLinks.map((item) => (
-              <Link
-                key={item.label}
-                href={item.href}
-                className="text-sm text-muted-foreground hover:text-primary transition-colors"
-                onClick={() => setIsOpen(false)}
-              >
-                {item.label}
-              </Link>
-            ))}
-            <div className="pt-2 border-t border-border">
-              {isRegistered ? (
-                <Link
-                  href="/profile"
-                  onClick={() => setIsOpen(false)}
-                  className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  <User className="h-4 w-4" />
-                  My Profile
-                </Link>
-              ) : (
-                <WalletButton
-                  onOpenModal={() => {
-                    setShowModal(true);
-                    setIsOpen(false);
-                  }}
-                />
-              )}
-            </div>
-          </div>
+        <div className="hidden md:flex">
+          {!ready ? null : authenticated ? (
+            <UserMenu />
+          ) : (
+            <button
+              onClick={login}
+              className="inline-flex items-center gap-2 gradient-solana text-primary-foreground text-sm font-semibold px-4 py-[9.2px] rounded-md shadow-glow transition-opacity hover:opacity-90 cursor-pointer"
+            >
+              Login
+            </button>
+          )}
         </div>
-      </nav>
 
-      {showModal && <PhantomModal onClose={() => setShowModal(false)} />}
-    </>
+        <button onClick={() => setIsOpen(!isOpen)} className="md:hidden">
+          {isOpen ? <X /> : <Menu />}
+        </button>
+      </div>
+    </nav>
   );
 };
