@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist_Mono, Inter } from "next/font/google";
 import "./globals.css";
-import { Providers } from "../components/Providers";
+import { Providers } from "../components/contexts/Providers";
 import { Navbar } from "../components/Layout/Navbar";
 
 const inter = Inter({

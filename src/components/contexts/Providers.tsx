@@ -2,13 +2,13 @@
 
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "sonner";
-import { ClusterProvider } from "./cluster-context";
-import { SolanaClientProvider } from "../lib/solana-client-context";
+import { ClusterProvider } from "../cluster-context";
+import { SolanaClientProvider } from "../../lib/solanaClientContext";
 
 import { PrivyProvider } from "@privy-io/react-auth";
 import { toSolanaWalletConnectors } from "@privy-io/react-auth/solana";
 import { createSolanaRpc, createSolanaRpcSubscriptions } from "@solana/kit";
-import { PRIVY_APP_ID } from "../constant";
+import { PRIVY_APP_ID } from "../../constant";
 
 const solanaConnectors = toSolanaWalletConnectors({
   // By default, shouldAutoConnect is enabled

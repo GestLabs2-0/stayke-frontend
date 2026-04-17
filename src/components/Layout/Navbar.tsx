@@ -9,6 +9,7 @@ import { usePrivy } from "@privy-io/react-auth";
 
 import { navLinks } from "../../constants";
 import { UserMenu } from "./UserMenu";
+import { ClusterSelect } from "../cluster-select";
 
 export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -51,6 +52,8 @@ export const Navbar = () => {
         <button onClick={() => setIsOpen(!isOpen)} className="md:hidden">
           {isOpen ? <X /> : <Menu />}
         </button>
+
+        <ClusterSelect />
       </div>
     </nav>
   );

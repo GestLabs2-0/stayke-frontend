@@ -17,17 +17,17 @@ export const useSolBalance = (addressString: string) => {
   const fetchBalance = useCallback(async () => {
     if (!addressString) return;
     setLoading(true);
-    try {
-      const res = await client.getBalance(address(addressString)).send();
-      // Balance is in lamports → divide by 1_000_000_000 for SOL
-      const sol = Number(res.value) / 1_000_000_000;
-      setBalance(sol);
-    } catch (error) {
-      console.error("useSolBalance error:", error);
-      setBalance(null);
-    } finally {
-      setLoading(false);
-    }
+    // try {
+    //   const res = await client.getBalance(address(addressString)).send();
+    //   // Balance is in lamports → divide by 1_000_000_000 for SOL
+    //   const sol = Number(res.value) / 1_000_000_000;
+    //   setBalance(sol);
+    // } catch (error) {
+    //   console.error("useSolBalance error:", error);
+    //   setBalance(null);
+    // } finally {
+    //   setLoading(false);
+    // }
   }, [addressString]);
 
   useEffect(() => {

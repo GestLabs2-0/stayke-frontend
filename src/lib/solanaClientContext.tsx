@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useMemo, type ReactNode } from "react";
-import { createSolanaClient, type SolanaClient } from "./solana-client";
+import { createSolanaClient, type SolanaClient } from "./solanaClient";
 import { useCluster } from "../components/cluster-context";
 
 const SolanaClientContext = createContext<SolanaClient | null>(null);
