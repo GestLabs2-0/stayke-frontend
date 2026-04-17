@@ -10,6 +10,7 @@ import { usePrivy } from "@privy-io/react-auth";
 import { navLinks } from "../../constants";
 import { UserMenu } from "./UserMenu";
 import { ClusterSelect } from "../cluster-select";
+import { ENVIRONMENT } from "@/src/constant";
 
 export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -53,7 +54,7 @@ export const Navbar = () => {
           {isOpen ? <X /> : <Menu />}
         </button>
 
-        <ClusterSelect />
+        {ENVIRONMENT === "development" && <ClusterSelect />}
       </div>
     </nav>
   );
