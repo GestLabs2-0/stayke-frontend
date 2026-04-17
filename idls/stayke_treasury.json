@@ -1,0 +1,732 @@
+{
+  "address": "59buEPHFBK4h8LyLE2KtnV1kpaQTyjb82NWt5F9jSuHu",
+  "metadata": {
+    "name": "stayke_treasury",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "Treasury library for Stayke, containing treasury and lending core logic"
+  },
+  "instructions": [
+    {
+      "name": "cpi_penalize_transfer",
+      "discriminator": [
+        214,
+        174,
+        171,
+        229,
+        151,
+        45,
+        138,
+        94
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "signer": true
+        },
+        {
+          "name": "config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  116,
+                  114,
+                  101,
+                  97,
+                  115,
+                  117,
+                  114,
+                  121,
+                  95,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "treasury_vault",
+          "writable": true
+        },
+        {
+          "name": "treasury_pda",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  116,
+                  114,
+                  101,
+                  97,
+                  115,
+                  117,
+                  114,
+                  121
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "destination_token_account",
+          "docs": [
+            "Destination: the destination token account owned by the affected party."
+          ],
+          "writable": true
+        },
+        {
+          "name": "usdc_mint"
+        },
+        {
+          "name": "token_program"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "deposit_guarantee",
+      "discriminator": [
+        174,
+        44,
+        254,
+        65,
+        0,
+        155,
+        77,
+        55
+      ],
+      "accounts": [
+        {
+          "name": "signer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  116,
+                  114,
+                  101,
+                  97,
+                  115,
+                  117,
+                  114,
+                  121,
+                  95,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "sender_token_account",
+          "docs": [
+            "Source: the user's own USDC token account."
+          ],
+          "writable": true
+        },
+        {
+          "name": "treasury_vault",
+          "docs": [
+            "Destination: the treasury vault (must match config)."
+          ],
+          "writable": true
+        },
+        {
+          "name": "usdc_mint"
+        },
+        {
+          "name": "token_program"
+        },
+        {
+          "name": "user_profile",
+          "docs": [
+            "The user's UserProfile PDA in stayke-core — will be mutated via CPI."
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  117,
+                  115,
+                  101,
+                  114,
+                  95,
+                  112,
+                  114,
+                  111,
+                  102,
+                  105,
+                  108,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "signer"
+              }
+            ],
+            "program": {
+              "kind": "account",
+              "path": "stayke_core_program"
+            }
+          }
+        },
+        {
+          "name": "stayke_core_program",
+          "address": "8yHjmyUgA9x4pzftX1cwJt8SnG8iV1zxLjEP77HKc9YP"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "initialize_treasury",
+      "discriminator": [
+        124,
+        186,
+        211,
+        195,
+        85,
+        165,
+        129,
+        166
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  116,
+                  114,
+                  101,
+                  97,
+                  115,
+                  117,
+                  114,
+                  121,
+                  95,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "treasury_pda",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  116,
+                  114,
+                  101,
+                  97,
+                  115,
+                  117,
+                  114,
+                  121
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "treasury_vault",
+          "docs": [
+            "USDC token account controlled by treasury_pda."
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  116,
+                  114,
+                  101,
+                  97,
+                  115,
+                  117,
+                  114,
+                  121,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "usdc_mint"
+        },
+        {
+          "name": "token_program"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "minimum_deposit",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "lend",
+      "discriminator": [
+        89,
+        34,
+        75,
+        168,
+        122,
+        47,
+        185,
+        45
+      ],
+      "accounts": [
+        {
+          "name": "signer",
+          "signer": true
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "stake",
+      "discriminator": [
+        206,
+        176,
+        202,
+        18,
+        200,
+        209,
+        179,
+        108
+      ],
+      "accounts": [
+        {
+          "name": "signer",
+          "signer": true
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "withdraw_from_lending",
+      "discriminator": [
+        11,
+        191,
+        231,
+        168,
+        105,
+        209,
+        8,
+        166
+      ],
+      "accounts": [
+        {
+          "name": "signer",
+          "signer": true
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "withdraw_guarantee",
+      "discriminator": [
+        90,
+        175,
+        173,
+        229,
+        183,
+        148,
+        41,
+        242
+      ],
+      "accounts": [
+        {
+          "name": "signer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  116,
+                  114,
+                  101,
+                  97,
+                  115,
+                  117,
+                  114,
+                  121,
+                  95,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "treasury_vault",
+          "docs": [
+            "Treasury vault — source of the withdrawal."
+          ],
+          "writable": true
+        },
+        {
+          "name": "treasury_pda",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  116,
+                  114,
+                  101,
+                  97,
+                  115,
+                  117,
+                  114,
+                  121
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "user_token_account",
+          "docs": [
+            "Destination: the user's own USDC token account."
+          ],
+          "writable": true
+        },
+        {
+          "name": "usdc_mint"
+        },
+        {
+          "name": "token_program"
+        },
+        {
+          "name": "user_profile",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  117,
+                  115,
+                  101,
+                  114,
+                  95,
+                  112,
+                  114,
+                  111,
+                  102,
+                  105,
+                  108,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "signer"
+              }
+            ],
+            "program": {
+              "kind": "account",
+              "path": "stayke_core_program"
+            }
+          }
+        },
+        {
+          "name": "stayke_core_program",
+          "address": "8yHjmyUgA9x4pzftX1cwJt8SnG8iV1zxLjEP77HKc9YP"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "TreasuryConfig",
+      "discriminator": [
+        124,
+        54,
+        212,
+        227,
+        213,
+        189,
+        168,
+        41
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "AlreadyInitialized",
+      "msg": "Treasury is already initialized"
+    },
+    {
+      "code": 6001,
+      "name": "DepositTooLow",
+      "msg": "Deposit amount is below the minimum required"
+    },
+    {
+      "code": 6002,
+      "name": "InvalidTreasuryVault",
+      "msg": "The treasury vault account does not match the configured one"
+    },
+    {
+      "code": 6003,
+      "name": "InvalidTokenMint",
+      "msg": "The token mint does not match the configured USDC mint"
+    },
+    {
+      "code": 6004,
+      "name": "InsufficientBalance",
+      "msg": "Insufficient guarantee balance to withdraw the requested amount"
+    },
+    {
+      "code": 6005,
+      "name": "ZeroWithdrawal",
+      "msg": "Withdrawal amount must be greater than zero"
+    },
+    {
+      "code": 6006,
+      "name": "ActiveBookingExists",
+      "msg": "User has an active booking and cannot withdraw their guarantee"
+    },
+    {
+      "code": 6007,
+      "name": "UserBanned",
+      "msg": "User is banned and cannot perform this action"
+    },
+    {
+      "code": 6008,
+      "name": "Unauthorized",
+      "msg": "Only the authority can perform this action"
+    },
+    {
+      "code": 6009,
+      "name": "LendingNotEnabled",
+      "msg": "Lending is not yet enabled"
+    }
+  ],
+  "types": [
+    {
+      "name": "TreasuryConfig",
+      "docs": [
+        "Config account for the Treasury program.",
+        "Stores the authority allowed to manage treasury operations",
+        "and the references to the on-chain token vaults."
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "authority",
+            "docs": [
+              "The admin/authority pubkey that can manage the treasury."
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "treasury_vault",
+            "docs": [
+              "Pubkey of the treasury token account (controlled by treasury_pda).",
+              "Holds user USDC guarantee deposits."
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "treasury_bump",
+            "docs": [
+              "Bump of the treasury PDA ([b\"treasury\"]) — used to sign CPI calls."
+            ],
+            "type": "u8"
+          },
+          {
+            "name": "usdc_mint",
+            "docs": [
+              "The USDC mint accepted by this treasury."
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "minimum_deposit",
+            "docs": [
+              "Minimum deposit amount (in USDC lamports) required from each user."
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "is_initialized",
+            "docs": [
+              "Guard flag to prevent re-initialization."
+            ],
+            "type": "bool"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "UserProfile",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "owner",
+            "type": "pubkey"
+          },
+          {
+            "name": "identity",
+            "type": "pubkey"
+          },
+          {
+            "name": "banned",
+            "type": "bool"
+          },
+          {
+            "name": "active_booking",
+            "type": {
+              "option": "pubkey"
+            }
+          },
+          {
+            "name": "active_stay",
+            "type": {
+              "option": "pubkey"
+            }
+          },
+          {
+            "name": "deposited",
+            "type": "u64"
+          },
+          {
+            "name": "deposit_timestamp",
+            "type": "i64"
+          },
+          {
+            "name": "lending",
+            "type": "u64"
+          },
+          {
+            "name": "staked",
+            "type": "u64"
+          },
+          {
+            "name": "is_verified",
+            "type": "bool"
+          },
+          {
+            "name": "listings",
+            "type": "u16"
+          },
+          {
+            "name": "is_host",
+            "type": "bool"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    }
+  ],
+  "constants": [
+    {
+      "name": "SEED",
+      "type": "string",
+      "value": "\"anchor\""
+    }
+  ]
+}
