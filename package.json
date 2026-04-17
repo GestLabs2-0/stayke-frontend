@@ -1,16 +1,12 @@
 {
   "name": "stayke-frontend",
   "scripts": {
-    "anchor-build": "cd anchor && anchor build",
-    "anchor-test": "cd anchor && anchor test --skip-deploy",
     "build": "next build",
     "ci": "pnpm run build && pnpm run lint && pnpm run format:check",
-    "codama:js": "codama run js",
     "dev": "next dev",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint": "eslint",
-    "setup": "pnpm run anchor-build && pnpm run codama:js",
     "start": "next start",
     "build:client": "node ./scripts/buildClients.ts"
   },
