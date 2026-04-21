@@ -28,7 +28,7 @@ export const useSolBalance = (addressString: string) => {
     } finally {
       setLoading(false);
     }
-  }, [addressString]);
+  }, [addressString, client]);
 
   useEffect(() => {
     fetchBalance();
