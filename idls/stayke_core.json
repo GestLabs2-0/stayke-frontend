@@ -935,9 +935,29 @@
   ],
   "constants": [
     {
-      "name": "SEED",
+      "name": "CORE_CONFIG_SEED",
       "type": "string",
-      "value": "\"anchor\""
+      "value": "\"config\""
+    },
+    {
+      "name": "IDENTITY_SEED",
+      "type": "string",
+      "value": "\"identity\""
+    },
+    {
+      "name": "LISTING_SEED",
+      "type": "string",
+      "value": "\"listing\""
+    },
+    {
+      "name": "REPUTATION_PROFILE_SEED",
+      "type": "string",
+      "value": "\"reputation_profile\""
+    },
+    {
+      "name": "USER_PROFILE_SEED",
+      "type": "string",
+      "value": "\"user_profile\""
     }
   ]
 }

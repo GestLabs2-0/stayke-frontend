@@ -12,6 +12,7 @@ import {
   fixEncoderSize,
   getBytesDecoder,
   getBytesEncoder,
+  getProgramDerivedAddress,
   getStructDecoder,
   getStructEncoder,
   getU64Decoder,
@@ -54,6 +55,7 @@ export type DepositGuaranteeInstruction<
   TProgram extends string = typeof STAYKE_TREASURY_PROGRAM_ADDRESS,
   TAccountSigner extends string | AccountMeta<string> = string,
   TAccountConfig extends string | AccountMeta<string> = string,
+  TAccountGlobalConfig extends string | AccountMeta<string> = string,
   TAccountSenderTokenAccount extends string | AccountMeta<string> = string,
   TAccountTreasuryVault extends string | AccountMeta<string> = string,
   TAccountUsdcMint extends string | AccountMeta<string> = string,
@@ -74,6 +76,9 @@ export type DepositGuaranteeInstruction<
       TAccountConfig extends string
         ? ReadonlyAccount<TAccountConfig>
         : TAccountConfig,
+      TAccountGlobalConfig extends string
+        ? ReadonlyAccount<TAccountGlobalConfig>
+        : TAccountGlobalConfig,
       TAccountSenderTokenAccount extends string
         ? WritableAccount<TAccountSenderTokenAccount>
         : TAccountSenderTokenAccount,
@@ -133,6 +138,7 @@ export function getDepositGuaranteeInstructionDataCodec(): FixedSizeCodec<
 export type DepositGuaranteeAsyncInput<
   TAccountSigner extends string = string,
   TAccountConfig extends string = string,
+  TAccountGlobalConfig extends string = string,
   TAccountSenderTokenAccount extends string = string,
   TAccountTreasuryVault extends string = string,
   TAccountUsdcMint extends string = string,
@@ -142,6 +148,7 @@ export type DepositGuaranteeAsyncInput<
 > = {
   signer: TransactionSigner<TAccountSigner>;
   config?: Address<TAccountConfig>;
+  globalConfig?: Address<TAccountGlobalConfig>;
   /** Source: the user's own USDC token account. */
   senderTokenAccount: Address<TAccountSenderTokenAccount>;
   /** Destination: the treasury vault (must match config). */
@@ -157,6 +164,7 @@ export type DepositGuaranteeAsyncInput<
 export async function getDepositGuaranteeInstructionAsync<
   TAccountSigner extends string,
   TAccountConfig extends string,
+  TAccountGlobalConfig extends string,
   TAccountSenderTokenAccount extends string,
   TAccountTreasuryVault extends string,
   TAccountUsdcMint extends string,
@@ -168,6 +176,7 @@ export async function getDepositGuaranteeInstructionAsync<
   input: DepositGuaranteeAsyncInput<
     TAccountSigner,
     TAccountConfig,
+    TAccountGlobalConfig,
     TAccountSenderTokenAccount,
     TAccountTreasuryVault,
     TAccountUsdcMint,
@@ -181,6 +190,7 @@ export async function getDepositGuaranteeInstructionAsync<
     TProgramAddress,
     TAccountSigner,
     TAccountConfig,
+    TAccountGlobalConfig,
     TAccountSenderTokenAccount,
     TAccountTreasuryVault,
     TAccountUsdcMint,
@@ -197,6 +207,7 @@ export async function getDepositGuaranteeInstructionAsync<
   const originalAccounts = {
     signer: { value: input.signer ?? null, isWritable: true },
     config: { value: input.config ?? null, isWritable: false },
+    globalConfig: { value: input.globalConfig ?? null, isWritable: false },
     senderTokenAccount: {
       value: input.senderTokenAccount ?? null,
       isWritable: true,
@@ -222,6 +233,19 @@ export async function getDepositGuaranteeInstructionAsync<
   if (!accounts.config.value) {
     accounts.config.value = await findConfigPda();
   }
+  if (!accounts.globalConfig.value) {
+    accounts.globalConfig.value = await getProgramDerivedAddress({
+      programAddress:
+        "8yHjmyUgA9x4pzftX1cwJt8SnG8iV1zxLjEP77HKc9YP" as Address<"8yHjmyUgA9x4pzftX1cwJt8SnG8iV1zxLjEP77HKc9YP">,
+      seeds: [
+        getBytesEncoder().encode(
+          new Uint8Array([
+            103, 108, 111, 98, 97, 108, 95, 99, 111, 110, 102, 105, 103,
+          ]),
+        ),
+      ],
+    });
+  }
   if (!accounts.tokenProgram.value) {
     accounts.tokenProgram.value =
       "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA" as Address<"TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA">;
@@ -241,6 +265,7 @@ export async function getDepositGuaranteeInstructionAsync<
     accounts: [
       getAccountMeta(accounts.signer),
       getAccountMeta(accounts.config),
+      getAccountMeta(accounts.globalConfig),
       getAccountMeta(accounts.senderTokenAccount),
       getAccountMeta(accounts.treasuryVault),
       getAccountMeta(accounts.usdcMint),
@@ -256,6 +281,7 @@ export async function getDepositGuaranteeInstructionAsync<
     TProgramAddress,
     TAccountSigner,
     TAccountConfig,
+    TAccountGlobalConfig,
     TAccountSenderTokenAccount,
     TAccountTreasuryVault,
     TAccountUsdcMint,
@@ -268,6 +294,7 @@ export async function getDepositGuaranteeInstructionAsync<
 export type DepositGuaranteeInput<
   TAccountSigner extends string = string,
   TAccountConfig extends string = string,
+  TAccountGlobalConfig extends string = string,
   TAccountSenderTokenAccount extends string = string,
   TAccountTreasuryVault extends string = string,
   TAccountUsdcMint extends string = string,
@@ -277,6 +304,7 @@ export type DepositGuaranteeInput<
 > = {
   signer: TransactionSigner<TAccountSigner>;
   config: Address<TAccountConfig>;
+  globalConfig: Address<TAccountGlobalConfig>;
   /** Source: the user's own USDC token account. */
   senderTokenAccount: Address<TAccountSenderTokenAccount>;
   /** Destination: the treasury vault (must match config). */
@@ -292,6 +320,7 @@ export type DepositGuaranteeInput<
 export function getDepositGuaranteeInstruction<
   TAccountSigner extends string,
   TAccountConfig extends string,
+  TAccountGlobalConfig extends string,
   TAccountSenderTokenAccount extends string,
   TAccountTreasuryVault extends string,
   TAccountUsdcMint extends string,
@@ -303,6 +332,7 @@ export function getDepositGuaranteeInstruction<
   input: DepositGuaranteeInput<
     TAccountSigner,
     TAccountConfig,
+    TAccountGlobalConfig,
     TAccountSenderTokenAccount,
     TAccountTreasuryVault,
     TAccountUsdcMint,
@@ -315,6 +345,7 @@ export function getDepositGuaranteeInstruction<
   TProgramAddress,
   TAccountSigner,
   TAccountConfig,
+  TAccountGlobalConfig,
   TAccountSenderTokenAccount,
   TAccountTreasuryVault,
   TAccountUsdcMint,
@@ -330,6 +361,7 @@ export function getDepositGuaranteeInstruction<
   const originalAccounts = {
     signer: { value: input.signer ?? null, isWritable: true },
     config: { value: input.config ?? null, isWritable: false },
+    globalConfig: { value: input.globalConfig ?? null, isWritable: false },
     senderTokenAccount: {
       value: input.senderTokenAccount ?? null,
       isWritable: true,
@@ -366,6 +398,7 @@ export function getDepositGuaranteeInstruction<
     accounts: [
       getAccountMeta(accounts.signer),
       getAccountMeta(accounts.config),
+      getAccountMeta(accounts.globalConfig),
       getAccountMeta(accounts.senderTokenAccount),
       getAccountMeta(accounts.treasuryVault),
       getAccountMeta(accounts.usdcMint),
@@ -381,6 +414,7 @@ export function getDepositGuaranteeInstruction<
     TProgramAddress,
     TAccountSigner,
     TAccountConfig,
+    TAccountGlobalConfig,
     TAccountSenderTokenAccount,
     TAccountTreasuryVault,
     TAccountUsdcMint,
@@ -398,15 +432,16 @@ export type ParsedDepositGuaranteeInstruction<
   accounts: {
     signer: TAccountMetas[0];
     config: TAccountMetas[1];
+    globalConfig: TAccountMetas[2];
     /** Source: the user's own USDC token account. */
-    senderTokenAccount: TAccountMetas[2];
+    senderTokenAccount: TAccountMetas[3];
     /** Destination: the treasury vault (must match config). */
-    treasuryVault: TAccountMetas[3];
-    usdcMint: TAccountMetas[4];
-    tokenProgram: TAccountMetas[5];
+    treasuryVault: TAccountMetas[4];
+    usdcMint: TAccountMetas[5];
+    tokenProgram: TAccountMetas[6];
     /** The user's UserProfile PDA in stayke-core — will be mutated via CPI. */
-    userProfile: TAccountMetas[6];
-    staykeCoreProgram: TAccountMetas[7];
+    userProfile: TAccountMetas[7];
+    staykeCoreProgram: TAccountMetas[8];
   };
   data: DepositGuaranteeInstructionData;
 };
@@ -419,7 +454,7 @@ export function parseDepositGuaranteeInstruction<
     InstructionWithAccounts<TAccountMetas> &
     InstructionWithData<ReadonlyUint8Array>,
 ): ParsedDepositGuaranteeInstruction<TProgram, TAccountMetas> {
-  if (instruction.accounts.length < 8) {
+  if (instruction.accounts.length < 9) {
     // TODO: Coded error.
     throw new Error("Not enough accounts");
   }
@@ -434,6 +469,7 @@ export function parseDepositGuaranteeInstruction<
     accounts: {
       signer: getNextAccount(),
       config: getNextAccount(),
+      globalConfig: getNextAccount(),
       senderTokenAccount: getNextAccount(),
       treasuryVault: getNextAccount(),
       usdcMint: getNextAccount(),

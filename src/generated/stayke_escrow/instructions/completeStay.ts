@@ -32,11 +32,7 @@ import {
   type WritableAccount,
   type WritableSignerAccount,
 } from "@solana/kit";
-import {
-  findEscrowConfigPda,
-  findEscrowTokenAccountPda,
-  findTreasuryConfigPda,
-} from "../pdas";
+import { findEscrowConfigPda, findEscrowTokenAccountPda } from "../pdas";
 import { STAYKE_ESCROW_PROGRAM_ADDRESS } from "../programs";
 import {
   expectAddress,
@@ -60,8 +56,8 @@ export type CompleteStayInstruction<
   TAccountClientProfile extends string | AccountMeta<string> = string,
   TAccountHostProfile extends string | AccountMeta<string> = string,
   TAccountBooking extends string | AccountMeta<string> = string,
+  TAccountGlobalConfig extends string | AccountMeta<string> = string,
   TAccountEscrowConfig extends string | AccountMeta<string> = string,
-  TAccountTreasuryConfig extends string | AccountMeta<string> = string,
   TAccountEscrowTokenAccount extends string | AccountMeta<string> = string,
   TAccountHostTokenAccount extends string | AccountMeta<string> = string,
   TAccountPlatformVault extends string | AccountMeta<string> = string,
@@ -86,12 +82,12 @@ export type CompleteStayInstruction<
       TAccountBooking extends string
         ? WritableAccount<TAccountBooking>
         : TAccountBooking,
+      TAccountGlobalConfig extends string
+        ? ReadonlyAccount<TAccountGlobalConfig>
+        : TAccountGlobalConfig,
       TAccountEscrowConfig extends string
         ? ReadonlyAccount<TAccountEscrowConfig>
         : TAccountEscrowConfig,
-      TAccountTreasuryConfig extends string
-        ? ReadonlyAccount<TAccountTreasuryConfig>
-        : TAccountTreasuryConfig,
       TAccountEscrowTokenAccount extends string
         ? WritableAccount<TAccountEscrowTokenAccount>
         : TAccountEscrowTokenAccount,
@@ -143,8 +139,8 @@ export type CompleteStayAsyncInput<
   TAccountClientProfile extends string = string,
   TAccountHostProfile extends string = string,
   TAccountBooking extends string = string,
+  TAccountGlobalConfig extends string = string,
   TAccountEscrowConfig extends string = string,
-  TAccountTreasuryConfig extends string = string,
   TAccountEscrowTokenAccount extends string = string,
   TAccountHostTokenAccount extends string = string,
   TAccountPlatformVault extends string = string,
@@ -156,8 +152,8 @@ export type CompleteStayAsyncInput<
   /** The host's UserProfile — destination for the payment. */
   hostProfile: Address<TAccountHostProfile>;
   booking: Address<TAccountBooking>;
+  globalConfig?: Address<TAccountGlobalConfig>;
   escrowConfig?: Address<TAccountEscrowConfig>;
-  treasuryConfig?: Address<TAccountTreasuryConfig>;
   escrowTokenAccount?: Address<TAccountEscrowTokenAccount>;
   /** The host's USDC token account. */
   hostTokenAccount: Address<TAccountHostTokenAccount>;
@@ -172,8 +168,8 @@ export async function getCompleteStayInstructionAsync<
   TAccountClientProfile extends string,
   TAccountHostProfile extends string,
   TAccountBooking extends string,
+  TAccountGlobalConfig extends string,
   TAccountEscrowConfig extends string,
-  TAccountTreasuryConfig extends string,
   TAccountEscrowTokenAccount extends string,
   TAccountHostTokenAccount extends string,
   TAccountPlatformVault extends string,
@@ -186,8 +182,8 @@ export async function getCompleteStayInstructionAsync<
     TAccountClientProfile,
     TAccountHostProfile,
     TAccountBooking,
+    TAccountGlobalConfig,
     TAccountEscrowConfig,
-    TAccountTreasuryConfig,
     TAccountEscrowTokenAccount,
     TAccountHostTokenAccount,
     TAccountPlatformVault,
@@ -202,8 +198,8 @@ export async function getCompleteStayInstructionAsync<
     TAccountClientProfile,
     TAccountHostProfile,
     TAccountBooking,
+    TAccountGlobalConfig,
     TAccountEscrowConfig,
-    TAccountTreasuryConfig,
     TAccountEscrowTokenAccount,
     TAccountHostTokenAccount,
     TAccountPlatformVault,
@@ -221,8 +217,8 @@ export async function getCompleteStayInstructionAsync<
     clientProfile: { value: input.clientProfile ?? null, isWritable: false },
     hostProfile: { value: input.hostProfile ?? null, isWritable: false },
     booking: { value: input.booking ?? null, isWritable: true },
+    globalConfig: { value: input.globalConfig ?? null, isWritable: false },
     escrowConfig: { value: input.escrowConfig ?? null, isWritable: false },
-    treasuryConfig: { value: input.treasuryConfig ?? null, isWritable: false },
     escrowTokenAccount: {
       value: input.escrowTokenAccount ?? null,
       isWritable: true,
@@ -255,11 +251,21 @@ export async function getCompleteStayInstructionAsync<
       ],
     });
   }
+  if (!accounts.globalConfig.value) {
+    accounts.globalConfig.value = await getProgramDerivedAddress({
+      programAddress:
+        "8yHjmyUgA9x4pzftX1cwJt8SnG8iV1zxLjEP77HKc9YP" as Address<"8yHjmyUgA9x4pzftX1cwJt8SnG8iV1zxLjEP77HKc9YP">,
+      seeds: [
+        getBytesEncoder().encode(
+          new Uint8Array([
+            103, 108, 111, 98, 97, 108, 95, 99, 111, 110, 102, 105, 103,
+          ]),
+        ),
+      ],
+    });
+  }
   if (!accounts.escrowConfig.value) {
     accounts.escrowConfig.value = await findEscrowConfigPda();
-  }
-  if (!accounts.treasuryConfig.value) {
-    accounts.treasuryConfig.value = await findTreasuryConfigPda();
   }
   if (!accounts.escrowTokenAccount.value) {
     accounts.escrowTokenAccount.value = await findEscrowTokenAccountPda({
@@ -278,8 +284,8 @@ export async function getCompleteStayInstructionAsync<
       getAccountMeta(accounts.clientProfile),
       getAccountMeta(accounts.hostProfile),
       getAccountMeta(accounts.booking),
+      getAccountMeta(accounts.globalConfig),
       getAccountMeta(accounts.escrowConfig),
-      getAccountMeta(accounts.treasuryConfig),
       getAccountMeta(accounts.escrowTokenAccount),
       getAccountMeta(accounts.hostTokenAccount),
       getAccountMeta(accounts.platformVault),
@@ -294,8 +300,8 @@ export async function getCompleteStayInstructionAsync<
     TAccountClientProfile,
     TAccountHostProfile,
     TAccountBooking,
+    TAccountGlobalConfig,
     TAccountEscrowConfig,
-    TAccountTreasuryConfig,
     TAccountEscrowTokenAccount,
     TAccountHostTokenAccount,
     TAccountPlatformVault,
@@ -309,8 +315,8 @@ export type CompleteStayInput<
   TAccountClientProfile extends string = string,
   TAccountHostProfile extends string = string,
   TAccountBooking extends string = string,
+  TAccountGlobalConfig extends string = string,
   TAccountEscrowConfig extends string = string,
-  TAccountTreasuryConfig extends string = string,
   TAccountEscrowTokenAccount extends string = string,
   TAccountHostTokenAccount extends string = string,
   TAccountPlatformVault extends string = string,
@@ -322,8 +328,8 @@ export type CompleteStayInput<
   /** The host's UserProfile — destination for the payment. */
   hostProfile: Address<TAccountHostProfile>;
   booking: Address<TAccountBooking>;
+  globalConfig: Address<TAccountGlobalConfig>;
   escrowConfig: Address<TAccountEscrowConfig>;
-  treasuryConfig: Address<TAccountTreasuryConfig>;
   escrowTokenAccount: Address<TAccountEscrowTokenAccount>;
   /** The host's USDC token account. */
   hostTokenAccount: Address<TAccountHostTokenAccount>;
@@ -338,8 +344,8 @@ export function getCompleteStayInstruction<
   TAccountClientProfile extends string,
   TAccountHostProfile extends string,
   TAccountBooking extends string,
+  TAccountGlobalConfig extends string,
   TAccountEscrowConfig extends string,
-  TAccountTreasuryConfig extends string,
   TAccountEscrowTokenAccount extends string,
   TAccountHostTokenAccount extends string,
   TAccountPlatformVault extends string,
@@ -352,8 +358,8 @@ export function getCompleteStayInstruction<
     TAccountClientProfile,
     TAccountHostProfile,
     TAccountBooking,
+    TAccountGlobalConfig,
     TAccountEscrowConfig,
-    TAccountTreasuryConfig,
     TAccountEscrowTokenAccount,
     TAccountHostTokenAccount,
     TAccountPlatformVault,
@@ -367,8 +373,8 @@ export function getCompleteStayInstruction<
   TAccountClientProfile,
   TAccountHostProfile,
   TAccountBooking,
+  TAccountGlobalConfig,
   TAccountEscrowConfig,
-  TAccountTreasuryConfig,
   TAccountEscrowTokenAccount,
   TAccountHostTokenAccount,
   TAccountPlatformVault,
@@ -385,8 +391,8 @@ export function getCompleteStayInstruction<
     clientProfile: { value: input.clientProfile ?? null, isWritable: false },
     hostProfile: { value: input.hostProfile ?? null, isWritable: false },
     booking: { value: input.booking ?? null, isWritable: true },
+    globalConfig: { value: input.globalConfig ?? null, isWritable: false },
     escrowConfig: { value: input.escrowConfig ?? null, isWritable: false },
-    treasuryConfig: { value: input.treasuryConfig ?? null, isWritable: false },
     escrowTokenAccount: {
       value: input.escrowTokenAccount ?? null,
       isWritable: true,
@@ -417,8 +423,8 @@ export function getCompleteStayInstruction<
       getAccountMeta(accounts.clientProfile),
       getAccountMeta(accounts.hostProfile),
       getAccountMeta(accounts.booking),
+      getAccountMeta(accounts.globalConfig),
       getAccountMeta(accounts.escrowConfig),
-      getAccountMeta(accounts.treasuryConfig),
       getAccountMeta(accounts.escrowTokenAccount),
       getAccountMeta(accounts.hostTokenAccount),
       getAccountMeta(accounts.platformVault),
@@ -433,8 +439,8 @@ export function getCompleteStayInstruction<
     TAccountClientProfile,
     TAccountHostProfile,
     TAccountBooking,
+    TAccountGlobalConfig,
     TAccountEscrowConfig,
-    TAccountTreasuryConfig,
     TAccountEscrowTokenAccount,
     TAccountHostTokenAccount,
     TAccountPlatformVault,
@@ -454,8 +460,8 @@ export type ParsedCompleteStayInstruction<
     /** The host's UserProfile — destination for the payment. */
     hostProfile: TAccountMetas[2];
     booking: TAccountMetas[3];
-    escrowConfig: TAccountMetas[4];
-    treasuryConfig: TAccountMetas[5];
+    globalConfig: TAccountMetas[4];
+    escrowConfig: TAccountMetas[5];
     escrowTokenAccount: TAccountMetas[6];
     /** The host's USDC token account. */
     hostTokenAccount: TAccountMetas[7];
@@ -492,8 +498,8 @@ export function parseCompleteStayInstruction<
       clientProfile: getNextAccount(),
       hostProfile: getNextAccount(),
       booking: getNextAccount(),
+      globalConfig: getNextAccount(),
       escrowConfig: getNextAccount(),
-      treasuryConfig: getNextAccount(),
       escrowTokenAccount: getNextAccount(),
       hostTokenAccount: getNextAccount(),
       platformVault: getNextAccount(),

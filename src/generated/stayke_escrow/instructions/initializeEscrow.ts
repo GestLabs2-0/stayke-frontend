@@ -12,12 +12,9 @@ import {
   fixEncoderSize,
   getBytesDecoder,
   getBytesEncoder,
+  getProgramDerivedAddress,
   getStructDecoder,
   getStructEncoder,
-  getU16Decoder,
-  getU16Encoder,
-  getU64Decoder,
-  getU64Encoder,
   transformEncoder,
   type AccountMeta,
   type AccountSignerMeta,
@@ -34,11 +31,7 @@ import {
   type WritableAccount,
   type WritableSignerAccount,
 } from "@solana/kit";
-import {
-  findEscrowConfigPda,
-  findPlatformVaultPda,
-  findPlatformVaultPdaPda,
-} from "../pdas";
+import { findEscrowConfigPda } from "../pdas";
 import { STAYKE_ESCROW_PROGRAM_ADDRESS } from "../programs";
 import { getAccountMetaFactory, type ResolvedAccount } from "../shared";
 
@@ -56,11 +49,7 @@ export type InitializeEscrowInstruction<
   TProgram extends string = typeof STAYKE_ESCROW_PROGRAM_ADDRESS,
   TAccountAuthority extends string | AccountMeta<string> = string,
   TAccountEscrowConfig extends string | AccountMeta<string> = string,
-  TAccountPlatformVaultPda extends string | AccountMeta<string> = string,
-  TAccountPlatformVault extends string | AccountMeta<string> = string,
-  TAccountUsdcMint extends string | AccountMeta<string> = string,
-  TAccountTokenProgram extends string | AccountMeta<string> =
-    "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+  TAccountGlobalConfig extends string | AccountMeta<string> = string,
   TAccountSystemProgram extends string | AccountMeta<string> =
     "11111111111111111111111111111111",
   TRemainingAccounts extends readonly AccountMeta<string>[] = [],
@@ -75,18 +64,9 @@ export type InitializeEscrowInstruction<
       TAccountEscrowConfig extends string
         ? WritableAccount<TAccountEscrowConfig>
         : TAccountEscrowConfig,
-      TAccountPlatformVaultPda extends string
-        ? ReadonlyAccount<TAccountPlatformVaultPda>
-        : TAccountPlatformVaultPda,
-      TAccountPlatformVault extends string
-        ? WritableAccount<TAccountPlatformVault>
-        : TAccountPlatformVault,
-      TAccountUsdcMint extends string
-        ? ReadonlyAccount<TAccountUsdcMint>
-        : TAccountUsdcMint,
-      TAccountTokenProgram extends string
-        ? ReadonlyAccount<TAccountTokenProgram>
-        : TAccountTokenProgram,
+      TAccountGlobalConfig extends string
+        ? ReadonlyAccount<TAccountGlobalConfig>
+        : TAccountGlobalConfig,
       TAccountSystemProgram extends string
         ? ReadonlyAccount<TAccountSystemProgram>
         : TAccountSystemProgram,
@@ -96,25 +76,13 @@ export type InitializeEscrowInstruction<
 
 export type InitializeEscrowInstructionData = {
   discriminator: ReadonlyUint8Array;
-  feeBps: number;
-  minimumDeposit: bigint;
-  pricePerNight: bigint;
 };
 
-export type InitializeEscrowInstructionDataArgs = {
-  feeBps: number;
-  minimumDeposit: number | bigint;
-  pricePerNight: number | bigint;
-};
+export type InitializeEscrowInstructionDataArgs = {};
 
 export function getInitializeEscrowInstructionDataEncoder(): FixedSizeEncoder<InitializeEscrowInstructionDataArgs> {
   return transformEncoder(
-    getStructEncoder([
-      ["discriminator", fixEncoderSize(getBytesEncoder(), 8)],
-      ["feeBps", getU16Encoder()],
-      ["minimumDeposit", getU64Encoder()],
-      ["pricePerNight", getU64Encoder()],
-    ]),
+    getStructEncoder([["discriminator", fixEncoderSize(getBytesEncoder(), 8)]]),
     (value) => ({ ...value, discriminator: INITIALIZE_ESCROW_DISCRIMINATOR }),
   );
 }
@@ -122,9 +90,6 @@ export function getInitializeEscrowInstructionDataEncoder(): FixedSizeEncoder<In
 export function getInitializeEscrowInstructionDataDecoder(): FixedSizeDecoder<InitializeEscrowInstructionData> {
   return getStructDecoder([
     ["discriminator", fixDecoderSize(getBytesDecoder(), 8)],
-    ["feeBps", getU16Decoder()],
-    ["minimumDeposit", getU64Decoder()],
-    ["pricePerNight", getU64Decoder()],
   ]);
 }
 
@@ -141,41 +106,26 @@ export function getInitializeEscrowInstructionDataCodec(): FixedSizeCodec<
 export type InitializeEscrowAsyncInput<
   TAccountAuthority extends string = string,
   TAccountEscrowConfig extends string = string,
-  TAccountPlatformVaultPda extends string = string,
-  TAccountPlatformVault extends string = string,
-  TAccountUsdcMint extends string = string,
-  TAccountTokenProgram extends string = string,
+  TAccountGlobalConfig extends string = string,
   TAccountSystemProgram extends string = string,
 > = {
   authority: TransactionSigner<TAccountAuthority>;
   escrowConfig?: Address<TAccountEscrowConfig>;
-  platformVaultPda?: Address<TAccountPlatformVaultPda>;
-  platformVault?: Address<TAccountPlatformVault>;
-  usdcMint: Address<TAccountUsdcMint>;
-  tokenProgram?: Address<TAccountTokenProgram>;
+  globalConfig?: Address<TAccountGlobalConfig>;
   systemProgram?: Address<TAccountSystemProgram>;
-  feeBps: InitializeEscrowInstructionDataArgs["feeBps"];
-  minimumDeposit: InitializeEscrowInstructionDataArgs["minimumDeposit"];
-  pricePerNight: InitializeEscrowInstructionDataArgs["pricePerNight"];
 };
 
 export async function getInitializeEscrowInstructionAsync<
   TAccountAuthority extends string,
   TAccountEscrowConfig extends string,
-  TAccountPlatformVaultPda extends string,
-  TAccountPlatformVault extends string,
-  TAccountUsdcMint extends string,
-  TAccountTokenProgram extends string,
+  TAccountGlobalConfig extends string,
   TAccountSystemProgram extends string,
   TProgramAddress extends Address = typeof STAYKE_ESCROW_PROGRAM_ADDRESS,
 >(
   input: InitializeEscrowAsyncInput<
     TAccountAuthority,
     TAccountEscrowConfig,
-    TAccountPlatformVaultPda,
-    TAccountPlatformVault,
-    TAccountUsdcMint,
-    TAccountTokenProgram,
+    TAccountGlobalConfig,
     TAccountSystemProgram
   >,
   config?: { programAddress?: TProgramAddress },
@@ -184,10 +134,7 @@ export async function getInitializeEscrowInstructionAsync<
     TProgramAddress,
     TAccountAuthority,
     TAccountEscrowConfig,
-    TAccountPlatformVaultPda,
-    TAccountPlatformVault,
-    TAccountUsdcMint,
-    TAccountTokenProgram,
+    TAccountGlobalConfig,
     TAccountSystemProgram
   >
 > {
@@ -199,13 +146,7 @@ export async function getInitializeEscrowInstructionAsync<
   const originalAccounts = {
     authority: { value: input.authority ?? null, isWritable: true },
     escrowConfig: { value: input.escrowConfig ?? null, isWritable: true },
-    platformVaultPda: {
-      value: input.platformVaultPda ?? null,
-      isWritable: false,
-    },
-    platformVault: { value: input.platformVault ?? null, isWritable: true },
-    usdcMint: { value: input.usdcMint ?? null, isWritable: false },
-    tokenProgram: { value: input.tokenProgram ?? null, isWritable: false },
+    globalConfig: { value: input.globalConfig ?? null, isWritable: false },
     systemProgram: { value: input.systemProgram ?? null, isWritable: false },
   };
   const accounts = originalAccounts as Record<
@@ -213,22 +154,22 @@ export async function getInitializeEscrowInstructionAsync<
     ResolvedAccount
   >;
 
-  // Original args.
-  const args = { ...input };
-
   // Resolve default values.
   if (!accounts.escrowConfig.value) {
     accounts.escrowConfig.value = await findEscrowConfigPda();
   }
-  if (!accounts.platformVaultPda.value) {
-    accounts.platformVaultPda.value = await findPlatformVaultPdaPda();
-  }
-  if (!accounts.platformVault.value) {
-    accounts.platformVault.value = await findPlatformVaultPda();
-  }
-  if (!accounts.tokenProgram.value) {
-    accounts.tokenProgram.value =
-      "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA" as Address<"TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA">;
+  if (!accounts.globalConfig.value) {
+    accounts.globalConfig.value = await getProgramDerivedAddress({
+      programAddress:
+        "8yHjmyUgA9x4pzftX1cwJt8SnG8iV1zxLjEP77HKc9YP" as Address<"8yHjmyUgA9x4pzftX1cwJt8SnG8iV1zxLjEP77HKc9YP">,
+      seeds: [
+        getBytesEncoder().encode(
+          new Uint8Array([
+            103, 108, 111, 98, 97, 108, 95, 99, 111, 110, 102, 105, 103,
+          ]),
+        ),
+      ],
+    });
   }
   if (!accounts.systemProgram.value) {
     accounts.systemProgram.value =
@@ -240,24 +181,16 @@ export async function getInitializeEscrowInstructionAsync<
     accounts: [
       getAccountMeta(accounts.authority),
       getAccountMeta(accounts.escrowConfig),
-      getAccountMeta(accounts.platformVaultPda),
-      getAccountMeta(accounts.platformVault),
-      getAccountMeta(accounts.usdcMint),
-      getAccountMeta(accounts.tokenProgram),
+      getAccountMeta(accounts.globalConfig),
       getAccountMeta(accounts.systemProgram),
     ],
-    data: getInitializeEscrowInstructionDataEncoder().encode(
-      args as InitializeEscrowInstructionDataArgs,
-    ),
+    data: getInitializeEscrowInstructionDataEncoder().encode({}),
     programAddress,
   } as InitializeEscrowInstruction<
     TProgramAddress,
     TAccountAuthority,
     TAccountEscrowConfig,
-    TAccountPlatformVaultPda,
-    TAccountPlatformVault,
-    TAccountUsdcMint,
-    TAccountTokenProgram,
+    TAccountGlobalConfig,
     TAccountSystemProgram
   >);
 }
@@ -265,41 +198,26 @@ export async function getInitializeEscrowInstructionAsync<
 export type InitializeEscrowInput<
   TAccountAuthority extends string = string,
   TAccountEscrowConfig extends string = string,
-  TAccountPlatformVaultPda extends string = string,
-  TAccountPlatformVault extends string = string,
-  TAccountUsdcMint extends string = string,
-  TAccountTokenProgram extends string = string,
+  TAccountGlobalConfig extends string = string,
   TAccountSystemProgram extends string = string,
 > = {
   authority: TransactionSigner<TAccountAuthority>;
   escrowConfig: Address<TAccountEscrowConfig>;
-  platformVaultPda: Address<TAccountPlatformVaultPda>;
-  platformVault: Address<TAccountPlatformVault>;
-  usdcMint: Address<TAccountUsdcMint>;
-  tokenProgram?: Address<TAccountTokenProgram>;
+  globalConfig: Address<TAccountGlobalConfig>;
   systemProgram?: Address<TAccountSystemProgram>;
-  feeBps: InitializeEscrowInstructionDataArgs["feeBps"];
-  minimumDeposit: InitializeEscrowInstructionDataArgs["minimumDeposit"];
-  pricePerNight: InitializeEscrowInstructionDataArgs["pricePerNight"];
 };
 
 export function getInitializeEscrowInstruction<
   TAccountAuthority extends string,
   TAccountEscrowConfig extends string,
-  TAccountPlatformVaultPda extends string,
-  TAccountPlatformVault extends string,
-  TAccountUsdcMint extends string,
-  TAccountTokenProgram extends string,
+  TAccountGlobalConfig extends string,
   TAccountSystemProgram extends string,
   TProgramAddress extends Address = typeof STAYKE_ESCROW_PROGRAM_ADDRESS,
 >(
   input: InitializeEscrowInput<
     TAccountAuthority,
     TAccountEscrowConfig,
-    TAccountPlatformVaultPda,
-    TAccountPlatformVault,
-    TAccountUsdcMint,
-    TAccountTokenProgram,
+    TAccountGlobalConfig,
     TAccountSystemProgram
   >,
   config?: { programAddress?: TProgramAddress },
@@ -307,10 +225,7 @@ export function getInitializeEscrowInstruction<
   TProgramAddress,
   TAccountAuthority,
   TAccountEscrowConfig,
-  TAccountPlatformVaultPda,
-  TAccountPlatformVault,
-  TAccountUsdcMint,
-  TAccountTokenProgram,
+  TAccountGlobalConfig,
   TAccountSystemProgram
 > {
   // Program address.
@@ -321,13 +236,7 @@ export function getInitializeEscrowInstruction<
   const originalAccounts = {
     authority: { value: input.authority ?? null, isWritable: true },
     escrowConfig: { value: input.escrowConfig ?? null, isWritable: true },
-    platformVaultPda: {
-      value: input.platformVaultPda ?? null,
-      isWritable: false,
-    },
-    platformVault: { value: input.platformVault ?? null, isWritable: true },
-    usdcMint: { value: input.usdcMint ?? null, isWritable: false },
-    tokenProgram: { value: input.tokenProgram ?? null, isWritable: false },
+    globalConfig: { value: input.globalConfig ?? null, isWritable: false },
     systemProgram: { value: input.systemProgram ?? null, isWritable: false },
   };
   const accounts = originalAccounts as Record<
@@ -335,14 +244,7 @@ export function getInitializeEscrowInstruction<
     ResolvedAccount
   >;
 
-  // Original args.
-  const args = { ...input };
-
   // Resolve default values.
-  if (!accounts.tokenProgram.value) {
-    accounts.tokenProgram.value =
-      "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA" as Address<"TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA">;
-  }
   if (!accounts.systemProgram.value) {
     accounts.systemProgram.value =
       "11111111111111111111111111111111" as Address<"11111111111111111111111111111111">;
@@ -353,24 +255,16 @@ export function getInitializeEscrowInstruction<
     accounts: [
       getAccountMeta(accounts.authority),
       getAccountMeta(accounts.escrowConfig),
-      getAccountMeta(accounts.platformVaultPda),
-      getAccountMeta(accounts.platformVault),
-      getAccountMeta(accounts.usdcMint),
-      getAccountMeta(accounts.tokenProgram),
+      getAccountMeta(accounts.globalConfig),
       getAccountMeta(accounts.systemProgram),
     ],
-    data: getInitializeEscrowInstructionDataEncoder().encode(
-      args as InitializeEscrowInstructionDataArgs,
-    ),
+    data: getInitializeEscrowInstructionDataEncoder().encode({}),
     programAddress,
   } as InitializeEscrowInstruction<
     TProgramAddress,
     TAccountAuthority,
     TAccountEscrowConfig,
-    TAccountPlatformVaultPda,
-    TAccountPlatformVault,
-    TAccountUsdcMint,
-    TAccountTokenProgram,
+    TAccountGlobalConfig,
     TAccountSystemProgram
   >);
 }
@@ -383,11 +277,8 @@ export type ParsedInitializeEscrowInstruction<
   accounts: {
     authority: TAccountMetas[0];
     escrowConfig: TAccountMetas[1];
-    platformVaultPda: TAccountMetas[2];
-    platformVault: TAccountMetas[3];
-    usdcMint: TAccountMetas[4];
-    tokenProgram: TAccountMetas[5];
-    systemProgram: TAccountMetas[6];
+    globalConfig: TAccountMetas[2];
+    systemProgram: TAccountMetas[3];
   };
   data: InitializeEscrowInstructionData;
 };
@@ -400,7 +291,7 @@ export function parseInitializeEscrowInstruction<
     InstructionWithAccounts<TAccountMetas> &
     InstructionWithData<ReadonlyUint8Array>,
 ): ParsedInitializeEscrowInstruction<TProgram, TAccountMetas> {
-  if (instruction.accounts.length < 7) {
+  if (instruction.accounts.length < 4) {
     // TODO: Coded error.
     throw new Error("Not enough accounts");
   }
@@ -415,10 +306,7 @@ export function parseInitializeEscrowInstruction<
     accounts: {
       authority: getNextAccount(),
       escrowConfig: getNextAccount(),
-      platformVaultPda: getNextAccount(),
-      platformVault: getNextAccount(),
-      usdcMint: getNextAccount(),
-      tokenProgram: getNextAccount(),
+      globalConfig: getNextAccount(),
       systemProgram: getNextAccount(),
     },
     data: getInitializeEscrowInstructionDataDecoder().decode(instruction.data),

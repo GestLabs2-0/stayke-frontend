@@ -32,7 +32,7 @@ import {
   type WritableAccount,
   type WritableSignerAccount,
 } from "@solana/kit";
-import { findEscrowTokenAccountPda, findTreasuryConfigPda } from "../pdas";
+import { findEscrowConfigPda, findEscrowTokenAccountPda } from "../pdas";
 import { STAYKE_ESCROW_PROGRAM_ADDRESS } from "../programs";
 import {
   expectAddress,
@@ -56,7 +56,8 @@ export type ClientAcceptReserveInstruction<
   TAccountClientProfile extends string | AccountMeta<string> = string,
   TAccountBooking extends string | AccountMeta<string> = string,
   TAccountListing extends string | AccountMeta<string> = string,
-  TAccountTreasuryConfig extends string | AccountMeta<string> = string,
+  TAccountGlobalConfig extends string | AccountMeta<string> = string,
+  TAccountEscrowConfig extends string | AccountMeta<string> = string,
   TAccountMint extends string | AccountMeta<string> = string,
   TAccountClientTokenAccount extends string | AccountMeta<string> = string,
   TAccountEscrowTokenAccount extends string | AccountMeta<string> = string,
@@ -84,9 +85,12 @@ export type ClientAcceptReserveInstruction<
       TAccountListing extends string
         ? WritableAccount<TAccountListing>
         : TAccountListing,
-      TAccountTreasuryConfig extends string
-        ? ReadonlyAccount<TAccountTreasuryConfig>
-        : TAccountTreasuryConfig,
+      TAccountGlobalConfig extends string
+        ? ReadonlyAccount<TAccountGlobalConfig>
+        : TAccountGlobalConfig,
+      TAccountEscrowConfig extends string
+        ? ReadonlyAccount<TAccountEscrowConfig>
+        : TAccountEscrowConfig,
       TAccountMint extends string
         ? WritableAccount<TAccountMint>
         : TAccountMint,
@@ -146,7 +150,8 @@ export type ClientAcceptReserveAsyncInput<
   TAccountClientProfile extends string = string,
   TAccountBooking extends string = string,
   TAccountListing extends string = string,
-  TAccountTreasuryConfig extends string = string,
+  TAccountGlobalConfig extends string = string,
+  TAccountEscrowConfig extends string = string,
   TAccountMint extends string = string,
   TAccountClientTokenAccount extends string = string,
   TAccountEscrowTokenAccount extends string = string,
@@ -158,7 +163,8 @@ export type ClientAcceptReserveAsyncInput<
   clientProfile?: Address<TAccountClientProfile>;
   booking: Address<TAccountBooking>;
   listing: Address<TAccountListing>;
-  treasuryConfig?: Address<TAccountTreasuryConfig>;
+  globalConfig?: Address<TAccountGlobalConfig>;
+  escrowConfig?: Address<TAccountEscrowConfig>;
   mint: Address<TAccountMint>;
   clientTokenAccount?: Address<TAccountClientTokenAccount>;
   escrowTokenAccount?: Address<TAccountEscrowTokenAccount>;
@@ -172,7 +178,8 @@ export async function getClientAcceptReserveInstructionAsync<
   TAccountClientProfile extends string,
   TAccountBooking extends string,
   TAccountListing extends string,
-  TAccountTreasuryConfig extends string,
+  TAccountGlobalConfig extends string,
+  TAccountEscrowConfig extends string,
   TAccountMint extends string,
   TAccountClientTokenAccount extends string,
   TAccountEscrowTokenAccount extends string,
@@ -186,7 +193,8 @@ export async function getClientAcceptReserveInstructionAsync<
     TAccountClientProfile,
     TAccountBooking,
     TAccountListing,
-    TAccountTreasuryConfig,
+    TAccountGlobalConfig,
+    TAccountEscrowConfig,
     TAccountMint,
     TAccountClientTokenAccount,
     TAccountEscrowTokenAccount,
@@ -202,7 +210,8 @@ export async function getClientAcceptReserveInstructionAsync<
     TAccountClientProfile,
     TAccountBooking,
     TAccountListing,
-    TAccountTreasuryConfig,
+    TAccountGlobalConfig,
+    TAccountEscrowConfig,
     TAccountMint,
     TAccountClientTokenAccount,
     TAccountEscrowTokenAccount,
@@ -221,7 +230,8 @@ export async function getClientAcceptReserveInstructionAsync<
     clientProfile: { value: input.clientProfile ?? null, isWritable: false },
     booking: { value: input.booking ?? null, isWritable: true },
     listing: { value: input.listing ?? null, isWritable: true },
-    treasuryConfig: { value: input.treasuryConfig ?? null, isWritable: false },
+    globalConfig: { value: input.globalConfig ?? null, isWritable: false },
+    escrowConfig: { value: input.escrowConfig ?? null, isWritable: false },
     mint: { value: input.mint ?? null, isWritable: true },
     clientTokenAccount: {
       value: input.clientTokenAccount ?? null,
@@ -258,8 +268,21 @@ export async function getClientAcceptReserveInstructionAsync<
       ],
     });
   }
-  if (!accounts.treasuryConfig.value) {
-    accounts.treasuryConfig.value = await findTreasuryConfigPda();
+  if (!accounts.globalConfig.value) {
+    accounts.globalConfig.value = await getProgramDerivedAddress({
+      programAddress:
+        "8yHjmyUgA9x4pzftX1cwJt8SnG8iV1zxLjEP77HKc9YP" as Address<"8yHjmyUgA9x4pzftX1cwJt8SnG8iV1zxLjEP77HKc9YP">,
+      seeds: [
+        getBytesEncoder().encode(
+          new Uint8Array([
+            103, 108, 111, 98, 97, 108, 95, 99, 111, 110, 102, 105, 103,
+          ]),
+        ),
+      ],
+    });
+  }
+  if (!accounts.escrowConfig.value) {
+    accounts.escrowConfig.value = await findEscrowConfigPda();
   }
   if (!accounts.clientTokenAccount.value) {
     accounts.clientTokenAccount.value = await getProgramDerivedAddress({
@@ -303,7 +326,8 @@ export async function getClientAcceptReserveInstructionAsync<
       getAccountMeta(accounts.clientProfile),
       getAccountMeta(accounts.booking),
       getAccountMeta(accounts.listing),
-      getAccountMeta(accounts.treasuryConfig),
+      getAccountMeta(accounts.globalConfig),
+      getAccountMeta(accounts.escrowConfig),
       getAccountMeta(accounts.mint),
       getAccountMeta(accounts.clientTokenAccount),
       getAccountMeta(accounts.escrowTokenAccount),
@@ -319,7 +343,8 @@ export async function getClientAcceptReserveInstructionAsync<
     TAccountClientProfile,
     TAccountBooking,
     TAccountListing,
-    TAccountTreasuryConfig,
+    TAccountGlobalConfig,
+    TAccountEscrowConfig,
     TAccountMint,
     TAccountClientTokenAccount,
     TAccountEscrowTokenAccount,
@@ -334,7 +359,8 @@ export type ClientAcceptReserveInput<
   TAccountClientProfile extends string = string,
   TAccountBooking extends string = string,
   TAccountListing extends string = string,
-  TAccountTreasuryConfig extends string = string,
+  TAccountGlobalConfig extends string = string,
+  TAccountEscrowConfig extends string = string,
   TAccountMint extends string = string,
   TAccountClientTokenAccount extends string = string,
   TAccountEscrowTokenAccount extends string = string,
@@ -346,7 +372,8 @@ export type ClientAcceptReserveInput<
   clientProfile: Address<TAccountClientProfile>;
   booking: Address<TAccountBooking>;
   listing: Address<TAccountListing>;
-  treasuryConfig: Address<TAccountTreasuryConfig>;
+  globalConfig: Address<TAccountGlobalConfig>;
+  escrowConfig: Address<TAccountEscrowConfig>;
   mint: Address<TAccountMint>;
   clientTokenAccount: Address<TAccountClientTokenAccount>;
   escrowTokenAccount: Address<TAccountEscrowTokenAccount>;
@@ -360,7 +387,8 @@ export function getClientAcceptReserveInstruction<
   TAccountClientProfile extends string,
   TAccountBooking extends string,
   TAccountListing extends string,
-  TAccountTreasuryConfig extends string,
+  TAccountGlobalConfig extends string,
+  TAccountEscrowConfig extends string,
   TAccountMint extends string,
   TAccountClientTokenAccount extends string,
   TAccountEscrowTokenAccount extends string,
@@ -374,7 +402,8 @@ export function getClientAcceptReserveInstruction<
     TAccountClientProfile,
     TAccountBooking,
     TAccountListing,
-    TAccountTreasuryConfig,
+    TAccountGlobalConfig,
+    TAccountEscrowConfig,
     TAccountMint,
     TAccountClientTokenAccount,
     TAccountEscrowTokenAccount,
@@ -389,7 +418,8 @@ export function getClientAcceptReserveInstruction<
   TAccountClientProfile,
   TAccountBooking,
   TAccountListing,
-  TAccountTreasuryConfig,
+  TAccountGlobalConfig,
+  TAccountEscrowConfig,
   TAccountMint,
   TAccountClientTokenAccount,
   TAccountEscrowTokenAccount,
@@ -407,7 +437,8 @@ export function getClientAcceptReserveInstruction<
     clientProfile: { value: input.clientProfile ?? null, isWritable: false },
     booking: { value: input.booking ?? null, isWritable: true },
     listing: { value: input.listing ?? null, isWritable: true },
-    treasuryConfig: { value: input.treasuryConfig ?? null, isWritable: false },
+    globalConfig: { value: input.globalConfig ?? null, isWritable: false },
+    escrowConfig: { value: input.escrowConfig ?? null, isWritable: false },
     mint: { value: input.mint ?? null, isWritable: true },
     clientTokenAccount: {
       value: input.clientTokenAccount ?? null,
@@ -450,7 +481,8 @@ export function getClientAcceptReserveInstruction<
       getAccountMeta(accounts.clientProfile),
       getAccountMeta(accounts.booking),
       getAccountMeta(accounts.listing),
-      getAccountMeta(accounts.treasuryConfig),
+      getAccountMeta(accounts.globalConfig),
+      getAccountMeta(accounts.escrowConfig),
       getAccountMeta(accounts.mint),
       getAccountMeta(accounts.clientTokenAccount),
       getAccountMeta(accounts.escrowTokenAccount),
@@ -466,7 +498,8 @@ export function getClientAcceptReserveInstruction<
     TAccountClientProfile,
     TAccountBooking,
     TAccountListing,
-    TAccountTreasuryConfig,
+    TAccountGlobalConfig,
+    TAccountEscrowConfig,
     TAccountMint,
     TAccountClientTokenAccount,
     TAccountEscrowTokenAccount,
@@ -486,13 +519,14 @@ export type ParsedClientAcceptReserveInstruction<
     clientProfile: TAccountMetas[1];
     booking: TAccountMetas[2];
     listing: TAccountMetas[3];
-    treasuryConfig: TAccountMetas[4];
-    mint: TAccountMetas[5];
-    clientTokenAccount: TAccountMetas[6];
-    escrowTokenAccount: TAccountMetas[7];
-    tokenProgram: TAccountMetas[8];
-    associatedTokenProgram: TAccountMetas[9];
-    systemProgram: TAccountMetas[10];
+    globalConfig: TAccountMetas[4];
+    escrowConfig: TAccountMetas[5];
+    mint: TAccountMetas[6];
+    clientTokenAccount: TAccountMetas[7];
+    escrowTokenAccount: TAccountMetas[8];
+    tokenProgram: TAccountMetas[9];
+    associatedTokenProgram: TAccountMetas[10];
+    systemProgram: TAccountMetas[11];
   };
   data: ClientAcceptReserveInstructionData;
 };
@@ -505,7 +539,7 @@ export function parseClientAcceptReserveInstruction<
     InstructionWithAccounts<TAccountMetas> &
     InstructionWithData<ReadonlyUint8Array>,
 ): ParsedClientAcceptReserveInstruction<TProgram, TAccountMetas> {
-  if (instruction.accounts.length < 11) {
+  if (instruction.accounts.length < 12) {
     // TODO: Coded error.
     throw new Error("Not enough accounts");
   }
@@ -522,7 +556,8 @@ export function parseClientAcceptReserveInstruction<
       clientProfile: getNextAccount(),
       booking: getNextAccount(),
       listing: getNextAccount(),
-      treasuryConfig: getNextAccount(),
+      globalConfig: getNextAccount(),
+      escrowConfig: getNextAccount(),
       mint: getNextAccount(),
       clientTokenAccount: getNextAccount(),
       escrowTokenAccount: getNextAccount(),

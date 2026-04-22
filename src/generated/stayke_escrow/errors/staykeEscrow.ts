@@ -62,8 +62,6 @@ export const STAYKE_ESCROW_ERROR__INVALID_VAULT_ACCOUNT = 0x1785; // 6021
 export const STAYKE_ESCROW_ERROR__WRONG_GUEST_PASSED = 0x1786; // 6022
 /** UnauthorizedAdmin: Unauthorized admin action */
 export const STAYKE_ESCROW_ERROR__UNAUTHORIZED_ADMIN = 0x1787; // 6023
-/** InvalidBps: Fee basis points must be less than 10 000 */
-export const STAYKE_ESCROW_ERROR__INVALID_BPS = 0x1788; // 6024
 
 export type StaykeEscrowError =
   | typeof STAYKE_ESCROW_ERROR__BOOKING_NOT_ACTIVE
@@ -76,7 +74,6 @@ export type StaykeEscrowError =
   | typeof STAYKE_ESCROW_ERROR__INVALID_BOOKING_DAYS_ACCOUNT
   | typeof STAYKE_ESCROW_ERROR__INVALID_BOOKING_PROPERTY
   | typeof STAYKE_ESCROW_ERROR__INVALID_BOOKING_STATUS
-  | typeof STAYKE_ESCROW_ERROR__INVALID_BPS
   | typeof STAYKE_ESCROW_ERROR__INVALID_HOST
   | typeof STAYKE_ESCROW_ERROR__INVALID_MONTH
   | typeof STAYKE_ESCROW_ERROR__INVALID_SCORE
@@ -105,7 +102,6 @@ if (process.env.NODE_ENV !== "production") {
     [STAYKE_ESCROW_ERROR__INVALID_BOOKING_DAYS_ACCOUNT]: `Invalid BookingDays account for the given dates`,
     [STAYKE_ESCROW_ERROR__INVALID_BOOKING_PROPERTY]: `Invalid booking property`,
     [STAYKE_ESCROW_ERROR__INVALID_BOOKING_STATUS]: `Invalid booking status for this action`,
-    [STAYKE_ESCROW_ERROR__INVALID_BPS]: `Fee basis points must be less than 10 000`,
     [STAYKE_ESCROW_ERROR__INVALID_HOST]: `Invalid host for this property`,
     [STAYKE_ESCROW_ERROR__INVALID_MONTH]: `Invalid month`,
     [STAYKE_ESCROW_ERROR__INVALID_SCORE]: `Invalid score — must be between 1 and 5`,

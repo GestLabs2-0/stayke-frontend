@@ -20,27 +20,24 @@ export const STAYKE_TREASURY_ERROR__ALREADY_INITIALIZED = 0x1770; // 6000
 export const STAYKE_TREASURY_ERROR__DEPOSIT_TOO_LOW = 0x1771; // 6001
 /** InvalidTreasuryVault: The treasury vault account does not match the configured one */
 export const STAYKE_TREASURY_ERROR__INVALID_TREASURY_VAULT = 0x1772; // 6002
-/** InvalidTokenMint: The token mint does not match the configured USDC mint */
-export const STAYKE_TREASURY_ERROR__INVALID_TOKEN_MINT = 0x1773; // 6003
 /** InsufficientBalance: Insufficient guarantee balance to withdraw the requested amount */
-export const STAYKE_TREASURY_ERROR__INSUFFICIENT_BALANCE = 0x1774; // 6004
+export const STAYKE_TREASURY_ERROR__INSUFFICIENT_BALANCE = 0x1773; // 6003
 /** ZeroWithdrawal: Withdrawal amount must be greater than zero */
-export const STAYKE_TREASURY_ERROR__ZERO_WITHDRAWAL = 0x1775; // 6005
+export const STAYKE_TREASURY_ERROR__ZERO_WITHDRAWAL = 0x1774; // 6004
 /** ActiveBookingExists: User has an active booking and cannot withdraw their guarantee */
-export const STAYKE_TREASURY_ERROR__ACTIVE_BOOKING_EXISTS = 0x1776; // 6006
+export const STAYKE_TREASURY_ERROR__ACTIVE_BOOKING_EXISTS = 0x1775; // 6005
 /** UserBanned: User is banned and cannot perform this action */
-export const STAYKE_TREASURY_ERROR__USER_BANNED = 0x1777; // 6007
+export const STAYKE_TREASURY_ERROR__USER_BANNED = 0x1776; // 6006
 /** Unauthorized: Only the authority can perform this action */
-export const STAYKE_TREASURY_ERROR__UNAUTHORIZED = 0x1778; // 6008
+export const STAYKE_TREASURY_ERROR__UNAUTHORIZED = 0x1777; // 6007
 /** LendingNotEnabled: Lending is not yet enabled */
-export const STAYKE_TREASURY_ERROR__LENDING_NOT_ENABLED = 0x1779; // 6009
+export const STAYKE_TREASURY_ERROR__LENDING_NOT_ENABLED = 0x1778; // 6008
 
 export type StaykeTreasuryError =
   | typeof STAYKE_TREASURY_ERROR__ACTIVE_BOOKING_EXISTS
   | typeof STAYKE_TREASURY_ERROR__ALREADY_INITIALIZED
   | typeof STAYKE_TREASURY_ERROR__DEPOSIT_TOO_LOW
   | typeof STAYKE_TREASURY_ERROR__INSUFFICIENT_BALANCE
-  | typeof STAYKE_TREASURY_ERROR__INVALID_TOKEN_MINT
   | typeof STAYKE_TREASURY_ERROR__INVALID_TREASURY_VAULT
   | typeof STAYKE_TREASURY_ERROR__LENDING_NOT_ENABLED
   | typeof STAYKE_TREASURY_ERROR__UNAUTHORIZED
@@ -56,7 +53,6 @@ if (process.env.NODE_ENV !== "production") {
     [STAYKE_TREASURY_ERROR__ALREADY_INITIALIZED]: `Treasury is already initialized`,
     [STAYKE_TREASURY_ERROR__DEPOSIT_TOO_LOW]: `Deposit amount is below the minimum required`,
     [STAYKE_TREASURY_ERROR__INSUFFICIENT_BALANCE]: `Insufficient guarantee balance to withdraw the requested amount`,
-    [STAYKE_TREASURY_ERROR__INVALID_TOKEN_MINT]: `The token mint does not match the configured USDC mint`,
     [STAYKE_TREASURY_ERROR__INVALID_TREASURY_VAULT]: `The treasury vault account does not match the configured one`,
     [STAYKE_TREASURY_ERROR__LENDING_NOT_ENABLED]: `Lending is not yet enabled`,
     [STAYKE_TREASURY_ERROR__UNAUTHORIZED]: `Only the authority can perform this action`,

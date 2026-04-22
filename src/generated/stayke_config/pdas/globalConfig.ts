@@ -13,19 +13,18 @@ import {
   type ProgramDerivedAddress,
 } from "@solana/kit";
 
-export async function findTreasuryConfigPda(
+export async function findGlobalConfigPda(
   config: { programAddress?: Address | undefined } = {},
 ): Promise<ProgramDerivedAddress> {
   const {
-    programAddress = "FRXoLmSWKjMBmHz2Wfn2BPV3mcjkWZ2ESMRWUiwjb2iQ" as Address<"FRXoLmSWKjMBmHz2Wfn2BPV3mcjkWZ2ESMRWUiwjb2iQ">,
+    programAddress = "8yHjmyUgA9x4pzftX1cwJt8SnG8iV1zxLjEP77HKc9YP" as Address<"8yHjmyUgA9x4pzftX1cwJt8SnG8iV1zxLjEP77HKc9YP">,
   } = config;
   return await getProgramDerivedAddress({
     programAddress,
     seeds: [
       getBytesEncoder().encode(
         new Uint8Array([
-          116, 114, 101, 97, 115, 117, 114, 121, 95, 99, 111, 110, 102, 105,
-          103,
+          103, 108, 111, 98, 97, 108, 95, 99, 111, 110, 102, 105, 103,
         ]),
       ),
     ],

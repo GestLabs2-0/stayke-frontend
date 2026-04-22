@@ -23,8 +23,6 @@ import {
   getBytesEncoder,
   getStructDecoder,
   getStructEncoder,
-  getU64Decoder,
-  getU64Encoder,
   getU8Decoder,
   getU8Encoder,
   transformEncoder,
@@ -62,10 +60,7 @@ export type TreasuryConfig = {
   treasuryVault: Address;
   /** Bump of the treasury PDA ([b"treasury"]) — used to sign CPI calls. */
   treasuryBump: number;
-  /** The USDC mint accepted by this treasury. */
-  usdcMint: Address;
-  /** Minimum deposit amount (in USDC lamports) required from each user. */
-  minimumDeposit: bigint;
+  globalConfig: Address;
   /** Guard flag to prevent re-initialization. */
   isInitialized: boolean;
   bump: number;
@@ -81,10 +76,7 @@ export type TreasuryConfigArgs = {
   treasuryVault: Address;
   /** Bump of the treasury PDA ([b"treasury"]) — used to sign CPI calls. */
   treasuryBump: number;
-  /** The USDC mint accepted by this treasury. */
-  usdcMint: Address;
-  /** Minimum deposit amount (in USDC lamports) required from each user. */
-  minimumDeposit: number | bigint;
+  globalConfig: Address;
   /** Guard flag to prevent re-initialization. */
   isInitialized: boolean;
   bump: number;
@@ -98,8 +90,7 @@ export function getTreasuryConfigEncoder(): FixedSizeEncoder<TreasuryConfigArgs>
       ["authority", getAddressEncoder()],
       ["treasuryVault", getAddressEncoder()],
       ["treasuryBump", getU8Encoder()],
-      ["usdcMint", getAddressEncoder()],
-      ["minimumDeposit", getU64Encoder()],
+      ["globalConfig", getAddressEncoder()],
       ["isInitialized", getBooleanEncoder()],
       ["bump", getU8Encoder()],
     ]),
@@ -114,8 +105,7 @@ export function getTreasuryConfigDecoder(): FixedSizeDecoder<TreasuryConfig> {
     ["authority", getAddressDecoder()],
     ["treasuryVault", getAddressDecoder()],
     ["treasuryBump", getU8Decoder()],
-    ["usdcMint", getAddressDecoder()],
-    ["minimumDeposit", getU64Decoder()],
+    ["globalConfig", getAddressDecoder()],
     ["isInitialized", getBooleanDecoder()],
     ["bump", getU8Decoder()],
   ]);
@@ -191,5 +181,5 @@ export async function fetchAllMaybeTreasuryConfig(
 }
 
 export function getTreasuryConfigSize(): number {
-  return 115;
+  return 107;
 }

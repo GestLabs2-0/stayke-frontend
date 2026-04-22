@@ -13,18 +13,19 @@ import {
   type ProgramDerivedAddress,
 } from "@solana/kit";
 
-export async function findPlatformVaultPdaPda(
+export async function findPlatformVaultPda(
   config: { programAddress?: Address | undefined } = {},
 ): Promise<ProgramDerivedAddress> {
   const {
-    programAddress = "FRXoLmSWKjMBmHz2Wfn2BPV3mcjkWZ2ESMRWUiwjb2iQ" as Address<"FRXoLmSWKjMBmHz2Wfn2BPV3mcjkWZ2ESMRWUiwjb2iQ">,
+    programAddress = "8yHjmyUgA9x4pzftX1cwJt8SnG8iV1zxLjEP77HKc9YP" as Address<"8yHjmyUgA9x4pzftX1cwJt8SnG8iV1zxLjEP77HKc9YP">,
   } = config;
   return await getProgramDerivedAddress({
     programAddress,
     seeds: [
       getBytesEncoder().encode(
         new Uint8Array([
-          112, 108, 97, 116, 102, 111, 114, 109, 95, 118, 97, 117, 108, 116,
+          112, 108, 97, 116, 102, 111, 114, 109, 95, 118, 97, 117, 108, 116, 95,
+          116, 111, 107, 101, 110,
         ]),
       ),
     ],

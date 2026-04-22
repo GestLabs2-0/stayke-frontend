@@ -12,9 +12,10 @@ import {
   fixEncoderSize,
   getBytesDecoder,
   getBytesEncoder,
-  getProgramDerivedAddress,
   getStructDecoder,
   getStructEncoder,
+  getU64Decoder,
+  getU64Encoder,
   transformEncoder,
   type AccountMeta,
   type AccountSignerMeta,
@@ -32,31 +33,30 @@ import {
   type WritableSignerAccount,
 } from "@solana/kit";
 import {
-  findConfigPda,
-  findTreasuryPdaPda,
-  findTreasuryVaultPda,
+  findGlobalConfigPda,
+  findPlatformVaultPda,
+  findPlatformVaultPdaPda,
 } from "../pdas";
-import { STAYKE_TREASURY_PROGRAM_ADDRESS } from "../programs";
+import { STAYKE_CONFIG_PROGRAM_ADDRESS } from "../programs";
 import { getAccountMetaFactory, type ResolvedAccount } from "../shared";
 
-export const INITIALIZE_TREASURY_DISCRIMINATOR = new Uint8Array([
-  124, 186, 211, 195, 85, 165, 129, 166,
+export const INITIALIZE_CONFIG_DISCRIMINATOR = new Uint8Array([
+  208, 127, 21, 1, 194, 190, 196, 70,
 ]);
 
-export function getInitializeTreasuryDiscriminatorBytes() {
+export function getInitializeConfigDiscriminatorBytes() {
   return fixEncoderSize(getBytesEncoder(), 8).encode(
-    INITIALIZE_TREASURY_DISCRIMINATOR,
+    INITIALIZE_CONFIG_DISCRIMINATOR,
   );
 }
 
-export type InitializeTreasuryInstruction<
-  TProgram extends string = typeof STAYKE_TREASURY_PROGRAM_ADDRESS,
-  TAccountAuthority extends string | AccountMeta<string> = string,
-  TAccountConfig extends string | AccountMeta<string> = string,
-  TAccountTreasuryPda extends string | AccountMeta<string> = string,
-  TAccountTreasuryVault extends string | AccountMeta<string> = string,
-  TAccountUsdcMint extends string | AccountMeta<string> = string,
+export type InitializeConfigInstruction<
+  TProgram extends string = typeof STAYKE_CONFIG_PROGRAM_ADDRESS,
   TAccountGlobalConfig extends string | AccountMeta<string> = string,
+  TAccountAuthority extends string | AccountMeta<string> = string,
+  TAccountPlatformVaultPda extends string | AccountMeta<string> = string,
+  TAccountPlatformVault extends string | AccountMeta<string> = string,
+  TAccountUsdcMint extends string | AccountMeta<string> = string,
   TAccountTokenProgram extends string | AccountMeta<string> =
     "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
   TAccountSystemProgram extends string | AccountMeta<string> =
@@ -66,25 +66,22 @@ export type InitializeTreasuryInstruction<
   InstructionWithData<ReadonlyUint8Array> &
   InstructionWithAccounts<
     [
+      TAccountGlobalConfig extends string
+        ? WritableAccount<TAccountGlobalConfig>
+        : TAccountGlobalConfig,
       TAccountAuthority extends string
         ? WritableSignerAccount<TAccountAuthority> &
             AccountSignerMeta<TAccountAuthority>
         : TAccountAuthority,
-      TAccountConfig extends string
-        ? WritableAccount<TAccountConfig>
-        : TAccountConfig,
-      TAccountTreasuryPda extends string
-        ? ReadonlyAccount<TAccountTreasuryPda>
-        : TAccountTreasuryPda,
-      TAccountTreasuryVault extends string
-        ? WritableAccount<TAccountTreasuryVault>
-        : TAccountTreasuryVault,
+      TAccountPlatformVaultPda extends string
+        ? ReadonlyAccount<TAccountPlatformVaultPda>
+        : TAccountPlatformVaultPda,
+      TAccountPlatformVault extends string
+        ? WritableAccount<TAccountPlatformVault>
+        : TAccountPlatformVault,
       TAccountUsdcMint extends string
         ? ReadonlyAccount<TAccountUsdcMint>
         : TAccountUsdcMint,
-      TAccountGlobalConfig extends string
-        ? ReadonlyAccount<TAccountGlobalConfig>
-        : TAccountGlobalConfig,
       TAccountTokenProgram extends string
         ? ReadonlyAccount<TAccountTokenProgram>
         : TAccountTokenProgram,
@@ -95,103 +92,112 @@ export type InitializeTreasuryInstruction<
     ]
   >;
 
-export type InitializeTreasuryInstructionData = {
+export type InitializeConfigInstructionData = {
   discriminator: ReadonlyUint8Array;
+  minimumDeposit: bigint;
+  feeBps: bigint;
 };
 
-export type InitializeTreasuryInstructionDataArgs = {};
+export type InitializeConfigInstructionDataArgs = {
+  minimumDeposit: number | bigint;
+  feeBps: number | bigint;
+};
 
-export function getInitializeTreasuryInstructionDataEncoder(): FixedSizeEncoder<InitializeTreasuryInstructionDataArgs> {
+export function getInitializeConfigInstructionDataEncoder(): FixedSizeEncoder<InitializeConfigInstructionDataArgs> {
   return transformEncoder(
-    getStructEncoder([["discriminator", fixEncoderSize(getBytesEncoder(), 8)]]),
-    (value) => ({ ...value, discriminator: INITIALIZE_TREASURY_DISCRIMINATOR }),
+    getStructEncoder([
+      ["discriminator", fixEncoderSize(getBytesEncoder(), 8)],
+      ["minimumDeposit", getU64Encoder()],
+      ["feeBps", getU64Encoder()],
+    ]),
+    (value) => ({ ...value, discriminator: INITIALIZE_CONFIG_DISCRIMINATOR }),
   );
 }
 
-export function getInitializeTreasuryInstructionDataDecoder(): FixedSizeDecoder<InitializeTreasuryInstructionData> {
+export function getInitializeConfigInstructionDataDecoder(): FixedSizeDecoder<InitializeConfigInstructionData> {
   return getStructDecoder([
     ["discriminator", fixDecoderSize(getBytesDecoder(), 8)],
+    ["minimumDeposit", getU64Decoder()],
+    ["feeBps", getU64Decoder()],
   ]);
 }
 
-export function getInitializeTreasuryInstructionDataCodec(): FixedSizeCodec<
-  InitializeTreasuryInstructionDataArgs,
-  InitializeTreasuryInstructionData
+export function getInitializeConfigInstructionDataCodec(): FixedSizeCodec<
+  InitializeConfigInstructionDataArgs,
+  InitializeConfigInstructionData
 > {
   return combineCodec(
-    getInitializeTreasuryInstructionDataEncoder(),
-    getInitializeTreasuryInstructionDataDecoder(),
+    getInitializeConfigInstructionDataEncoder(),
+    getInitializeConfigInstructionDataDecoder(),
   );
 }
 
-export type InitializeTreasuryAsyncInput<
-  TAccountAuthority extends string = string,
-  TAccountConfig extends string = string,
-  TAccountTreasuryPda extends string = string,
-  TAccountTreasuryVault extends string = string,
-  TAccountUsdcMint extends string = string,
+export type InitializeConfigAsyncInput<
   TAccountGlobalConfig extends string = string,
+  TAccountAuthority extends string = string,
+  TAccountPlatformVaultPda extends string = string,
+  TAccountPlatformVault extends string = string,
+  TAccountUsdcMint extends string = string,
   TAccountTokenProgram extends string = string,
   TAccountSystemProgram extends string = string,
 > = {
-  authority: TransactionSigner<TAccountAuthority>;
-  config?: Address<TAccountConfig>;
-  treasuryPda?: Address<TAccountTreasuryPda>;
-  /** USDC token account controlled by treasury_pda. */
-  treasuryVault?: Address<TAccountTreasuryVault>;
-  usdcMint: Address<TAccountUsdcMint>;
   globalConfig?: Address<TAccountGlobalConfig>;
+  authority: TransactionSigner<TAccountAuthority>;
+  platformVaultPda?: Address<TAccountPlatformVaultPda>;
+  platformVault?: Address<TAccountPlatformVault>;
+  usdcMint: Address<TAccountUsdcMint>;
   tokenProgram?: Address<TAccountTokenProgram>;
   systemProgram?: Address<TAccountSystemProgram>;
+  minimumDeposit: InitializeConfigInstructionDataArgs["minimumDeposit"];
+  feeBps: InitializeConfigInstructionDataArgs["feeBps"];
 };
 
-export async function getInitializeTreasuryInstructionAsync<
-  TAccountAuthority extends string,
-  TAccountConfig extends string,
-  TAccountTreasuryPda extends string,
-  TAccountTreasuryVault extends string,
-  TAccountUsdcMint extends string,
+export async function getInitializeConfigInstructionAsync<
   TAccountGlobalConfig extends string,
+  TAccountAuthority extends string,
+  TAccountPlatformVaultPda extends string,
+  TAccountPlatformVault extends string,
+  TAccountUsdcMint extends string,
   TAccountTokenProgram extends string,
   TAccountSystemProgram extends string,
-  TProgramAddress extends Address = typeof STAYKE_TREASURY_PROGRAM_ADDRESS,
+  TProgramAddress extends Address = typeof STAYKE_CONFIG_PROGRAM_ADDRESS,
 >(
-  input: InitializeTreasuryAsyncInput<
-    TAccountAuthority,
-    TAccountConfig,
-    TAccountTreasuryPda,
-    TAccountTreasuryVault,
-    TAccountUsdcMint,
+  input: InitializeConfigAsyncInput<
     TAccountGlobalConfig,
+    TAccountAuthority,
+    TAccountPlatformVaultPda,
+    TAccountPlatformVault,
+    TAccountUsdcMint,
     TAccountTokenProgram,
     TAccountSystemProgram
   >,
   config?: { programAddress?: TProgramAddress },
 ): Promise<
-  InitializeTreasuryInstruction<
+  InitializeConfigInstruction<
     TProgramAddress,
-    TAccountAuthority,
-    TAccountConfig,
-    TAccountTreasuryPda,
-    TAccountTreasuryVault,
-    TAccountUsdcMint,
     TAccountGlobalConfig,
+    TAccountAuthority,
+    TAccountPlatformVaultPda,
+    TAccountPlatformVault,
+    TAccountUsdcMint,
     TAccountTokenProgram,
     TAccountSystemProgram
   >
 > {
   // Program address.
   const programAddress =
-    config?.programAddress ?? STAYKE_TREASURY_PROGRAM_ADDRESS;
+    config?.programAddress ?? STAYKE_CONFIG_PROGRAM_ADDRESS;
 
   // Original accounts.
   const originalAccounts = {
+    globalConfig: { value: input.globalConfig ?? null, isWritable: true },
     authority: { value: input.authority ?? null, isWritable: true },
-    config: { value: input.config ?? null, isWritable: true },
-    treasuryPda: { value: input.treasuryPda ?? null, isWritable: false },
-    treasuryVault: { value: input.treasuryVault ?? null, isWritable: true },
+    platformVaultPda: {
+      value: input.platformVaultPda ?? null,
+      isWritable: false,
+    },
+    platformVault: { value: input.platformVault ?? null, isWritable: true },
     usdcMint: { value: input.usdcMint ?? null, isWritable: false },
-    globalConfig: { value: input.globalConfig ?? null, isWritable: false },
     tokenProgram: { value: input.tokenProgram ?? null, isWritable: false },
     systemProgram: { value: input.systemProgram ?? null, isWritable: false },
   };
@@ -200,28 +206,18 @@ export async function getInitializeTreasuryInstructionAsync<
     ResolvedAccount
   >;
 
+  // Original args.
+  const args = { ...input };
+
   // Resolve default values.
-  if (!accounts.config.value) {
-    accounts.config.value = await findConfigPda();
-  }
-  if (!accounts.treasuryPda.value) {
-    accounts.treasuryPda.value = await findTreasuryPdaPda();
-  }
-  if (!accounts.treasuryVault.value) {
-    accounts.treasuryVault.value = await findTreasuryVaultPda();
-  }
   if (!accounts.globalConfig.value) {
-    accounts.globalConfig.value = await getProgramDerivedAddress({
-      programAddress:
-        "8yHjmyUgA9x4pzftX1cwJt8SnG8iV1zxLjEP77HKc9YP" as Address<"8yHjmyUgA9x4pzftX1cwJt8SnG8iV1zxLjEP77HKc9YP">,
-      seeds: [
-        getBytesEncoder().encode(
-          new Uint8Array([
-            103, 108, 111, 98, 97, 108, 95, 99, 111, 110, 102, 105, 103,
-          ]),
-        ),
-      ],
-    });
+    accounts.globalConfig.value = await findGlobalConfigPda();
+  }
+  if (!accounts.platformVaultPda.value) {
+    accounts.platformVaultPda.value = await findPlatformVaultPdaPda();
+  }
+  if (!accounts.platformVault.value) {
+    accounts.platformVault.value = await findPlatformVaultPda();
   }
   if (!accounts.tokenProgram.value) {
     accounts.tokenProgram.value =
@@ -235,96 +231,94 @@ export async function getInitializeTreasuryInstructionAsync<
   const getAccountMeta = getAccountMetaFactory(programAddress, "programId");
   return Object.freeze({
     accounts: [
-      getAccountMeta(accounts.authority),
-      getAccountMeta(accounts.config),
-      getAccountMeta(accounts.treasuryPda),
-      getAccountMeta(accounts.treasuryVault),
-      getAccountMeta(accounts.usdcMint),
       getAccountMeta(accounts.globalConfig),
+      getAccountMeta(accounts.authority),
+      getAccountMeta(accounts.platformVaultPda),
+      getAccountMeta(accounts.platformVault),
+      getAccountMeta(accounts.usdcMint),
       getAccountMeta(accounts.tokenProgram),
       getAccountMeta(accounts.systemProgram),
     ],
-    data: getInitializeTreasuryInstructionDataEncoder().encode({}),
+    data: getInitializeConfigInstructionDataEncoder().encode(
+      args as InitializeConfigInstructionDataArgs,
+    ),
     programAddress,
-  } as InitializeTreasuryInstruction<
+  } as InitializeConfigInstruction<
     TProgramAddress,
-    TAccountAuthority,
-    TAccountConfig,
-    TAccountTreasuryPda,
-    TAccountTreasuryVault,
-    TAccountUsdcMint,
     TAccountGlobalConfig,
+    TAccountAuthority,
+    TAccountPlatformVaultPda,
+    TAccountPlatformVault,
+    TAccountUsdcMint,
     TAccountTokenProgram,
     TAccountSystemProgram
   >);
 }
 
-export type InitializeTreasuryInput<
-  TAccountAuthority extends string = string,
-  TAccountConfig extends string = string,
-  TAccountTreasuryPda extends string = string,
-  TAccountTreasuryVault extends string = string,
-  TAccountUsdcMint extends string = string,
+export type InitializeConfigInput<
   TAccountGlobalConfig extends string = string,
+  TAccountAuthority extends string = string,
+  TAccountPlatformVaultPda extends string = string,
+  TAccountPlatformVault extends string = string,
+  TAccountUsdcMint extends string = string,
   TAccountTokenProgram extends string = string,
   TAccountSystemProgram extends string = string,
 > = {
-  authority: TransactionSigner<TAccountAuthority>;
-  config: Address<TAccountConfig>;
-  treasuryPda: Address<TAccountTreasuryPda>;
-  /** USDC token account controlled by treasury_pda. */
-  treasuryVault: Address<TAccountTreasuryVault>;
-  usdcMint: Address<TAccountUsdcMint>;
   globalConfig: Address<TAccountGlobalConfig>;
+  authority: TransactionSigner<TAccountAuthority>;
+  platformVaultPda: Address<TAccountPlatformVaultPda>;
+  platformVault: Address<TAccountPlatformVault>;
+  usdcMint: Address<TAccountUsdcMint>;
   tokenProgram?: Address<TAccountTokenProgram>;
   systemProgram?: Address<TAccountSystemProgram>;
+  minimumDeposit: InitializeConfigInstructionDataArgs["minimumDeposit"];
+  feeBps: InitializeConfigInstructionDataArgs["feeBps"];
 };
 
-export function getInitializeTreasuryInstruction<
-  TAccountAuthority extends string,
-  TAccountConfig extends string,
-  TAccountTreasuryPda extends string,
-  TAccountTreasuryVault extends string,
-  TAccountUsdcMint extends string,
+export function getInitializeConfigInstruction<
   TAccountGlobalConfig extends string,
+  TAccountAuthority extends string,
+  TAccountPlatformVaultPda extends string,
+  TAccountPlatformVault extends string,
+  TAccountUsdcMint extends string,
   TAccountTokenProgram extends string,
   TAccountSystemProgram extends string,
-  TProgramAddress extends Address = typeof STAYKE_TREASURY_PROGRAM_ADDRESS,
+  TProgramAddress extends Address = typeof STAYKE_CONFIG_PROGRAM_ADDRESS,
 >(
-  input: InitializeTreasuryInput<
-    TAccountAuthority,
-    TAccountConfig,
-    TAccountTreasuryPda,
-    TAccountTreasuryVault,
-    TAccountUsdcMint,
+  input: InitializeConfigInput<
     TAccountGlobalConfig,
+    TAccountAuthority,
+    TAccountPlatformVaultPda,
+    TAccountPlatformVault,
+    TAccountUsdcMint,
     TAccountTokenProgram,
     TAccountSystemProgram
   >,
   config?: { programAddress?: TProgramAddress },
-): InitializeTreasuryInstruction<
+): InitializeConfigInstruction<
   TProgramAddress,
-  TAccountAuthority,
-  TAccountConfig,
-  TAccountTreasuryPda,
-  TAccountTreasuryVault,
-  TAccountUsdcMint,
   TAccountGlobalConfig,
+  TAccountAuthority,
+  TAccountPlatformVaultPda,
+  TAccountPlatformVault,
+  TAccountUsdcMint,
   TAccountTokenProgram,
   TAccountSystemProgram
 > {
   // Program address.
   const programAddress =
-    config?.programAddress ?? STAYKE_TREASURY_PROGRAM_ADDRESS;
+    config?.programAddress ?? STAYKE_CONFIG_PROGRAM_ADDRESS;
 
   // Original accounts.
   const originalAccounts = {
+    globalConfig: { value: input.globalConfig ?? null, isWritable: true },
     authority: { value: input.authority ?? null, isWritable: true },
-    config: { value: input.config ?? null, isWritable: true },
-    treasuryPda: { value: input.treasuryPda ?? null, isWritable: false },
-    treasuryVault: { value: input.treasuryVault ?? null, isWritable: true },
+    platformVaultPda: {
+      value: input.platformVaultPda ?? null,
+      isWritable: false,
+    },
+    platformVault: { value: input.platformVault ?? null, isWritable: true },
     usdcMint: { value: input.usdcMint ?? null, isWritable: false },
-    globalConfig: { value: input.globalConfig ?? null, isWritable: false },
     tokenProgram: { value: input.tokenProgram ?? null, isWritable: false },
     systemProgram: { value: input.systemProgram ?? null, isWritable: false },
   };
@@ -332,6 +326,9 @@ export function getInitializeTreasuryInstruction<
     keyof typeof originalAccounts,
     ResolvedAccount
   >;
+
+  // Original args.
+  const args = { ...input };
 
   // Resolve default values.
   if (!accounts.tokenProgram.value) {
@@ -346,58 +343,56 @@ export function getInitializeTreasuryInstruction<
   const getAccountMeta = getAccountMetaFactory(programAddress, "programId");
   return Object.freeze({
     accounts: [
-      getAccountMeta(accounts.authority),
-      getAccountMeta(accounts.config),
-      getAccountMeta(accounts.treasuryPda),
-      getAccountMeta(accounts.treasuryVault),
-      getAccountMeta(accounts.usdcMint),
       getAccountMeta(accounts.globalConfig),
+      getAccountMeta(accounts.authority),
+      getAccountMeta(accounts.platformVaultPda),
+      getAccountMeta(accounts.platformVault),
+      getAccountMeta(accounts.usdcMint),
       getAccountMeta(accounts.tokenProgram),
       getAccountMeta(accounts.systemProgram),
     ],
-    data: getInitializeTreasuryInstructionDataEncoder().encode({}),
+    data: getInitializeConfigInstructionDataEncoder().encode(
+      args as InitializeConfigInstructionDataArgs,
+    ),
     programAddress,
-  } as InitializeTreasuryInstruction<
+  } as InitializeConfigInstruction<
     TProgramAddress,
-    TAccountAuthority,
-    TAccountConfig,
-    TAccountTreasuryPda,
-    TAccountTreasuryVault,
-    TAccountUsdcMint,
     TAccountGlobalConfig,
+    TAccountAuthority,
+    TAccountPlatformVaultPda,
+    TAccountPlatformVault,
+    TAccountUsdcMint,
     TAccountTokenProgram,
     TAccountSystemProgram
   >);
 }
 
-export type ParsedInitializeTreasuryInstruction<
-  TProgram extends string = typeof STAYKE_TREASURY_PROGRAM_ADDRESS,
+export type ParsedInitializeConfigInstruction<
+  TProgram extends string = typeof STAYKE_CONFIG_PROGRAM_ADDRESS,
   TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
 > = {
   programAddress: Address<TProgram>;
   accounts: {
-    authority: TAccountMetas[0];
-    config: TAccountMetas[1];
-    treasuryPda: TAccountMetas[2];
-    /** USDC token account controlled by treasury_pda. */
-    treasuryVault: TAccountMetas[3];
+    globalConfig: TAccountMetas[0];
+    authority: TAccountMetas[1];
+    platformVaultPda: TAccountMetas[2];
+    platformVault: TAccountMetas[3];
     usdcMint: TAccountMetas[4];
-    globalConfig: TAccountMetas[5];
-    tokenProgram: TAccountMetas[6];
-    systemProgram: TAccountMetas[7];
+    tokenProgram: TAccountMetas[5];
+    systemProgram: TAccountMetas[6];
   };
-  data: InitializeTreasuryInstructionData;
+  data: InitializeConfigInstructionData;
 };
 
-export function parseInitializeTreasuryInstruction<
+export function parseInitializeConfigInstruction<
   TProgram extends string,
   TAccountMetas extends readonly AccountMeta[],
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
     InstructionWithData<ReadonlyUint8Array>,
-): ParsedInitializeTreasuryInstruction<TProgram, TAccountMetas> {
-  if (instruction.accounts.length < 8) {
+): ParsedInitializeConfigInstruction<TProgram, TAccountMetas> {
+  if (instruction.accounts.length < 7) {
     // TODO: Coded error.
     throw new Error("Not enough accounts");
   }
@@ -410,17 +405,14 @@ export function parseInitializeTreasuryInstruction<
   return {
     programAddress: instruction.programAddress,
     accounts: {
-      authority: getNextAccount(),
-      config: getNextAccount(),
-      treasuryPda: getNextAccount(),
-      treasuryVault: getNextAccount(),
-      usdcMint: getNextAccount(),
       globalConfig: getNextAccount(),
+      authority: getNextAccount(),
+      platformVaultPda: getNextAccount(),
+      platformVault: getNextAccount(),
+      usdcMint: getNextAccount(),
       tokenProgram: getNextAccount(),
       systemProgram: getNextAccount(),
     },
-    data: getInitializeTreasuryInstructionDataDecoder().decode(
-      instruction.data,
-    ),
+    data: getInitializeConfigInstructionDataDecoder().decode(instruction.data),
   };
 }

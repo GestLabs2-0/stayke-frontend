@@ -32,14 +32,10 @@ export const STAYKE_DISPUTES_ERROR__BOOKING_NOT_ACTIVE = 0x1776; // 6006
 export const STAYKE_DISPUTES_ERROR__DISPUTE_NOT_OPEN = 0x1777; // 6007
 /** InvalidFeeBps: Invalid configuration */
 export const STAYKE_DISPUTES_ERROR__INVALID_FEE_BPS = 0x1778; // 6008
-/** InvalidVaultAccount: The treasury/vault account does not match the configured one */
-export const STAYKE_DISPUTES_ERROR__INVALID_VAULT_ACCOUNT = 0x1779; // 6009
-/** InvalidTokenMint: The token mint does not match the configured USDC mint */
-export const STAYKE_DISPUTES_ERROR__INVALID_TOKEN_MINT = 0x177a; // 6010
 /** UserBanned: User is banned */
-export const STAYKE_DISPUTES_ERROR__USER_BANNED = 0x177b; // 6011
+export const STAYKE_DISPUTES_ERROR__USER_BANNED = 0x1779; // 6009
 /** UserNotVerified: User is not verified */
-export const STAYKE_DISPUTES_ERROR__USER_NOT_VERIFIED = 0x177c; // 6012
+export const STAYKE_DISPUTES_ERROR__USER_NOT_VERIFIED = 0x177a; // 6010
 
 export type StaykeDisputesError =
   | typeof STAYKE_DISPUTES_ERROR__ADMIN_NOT_FOUND
@@ -48,8 +44,6 @@ export type StaykeDisputesError =
   | typeof STAYKE_DISPUTES_ERROR__CANNOT_REMOVE_SELF
   | typeof STAYKE_DISPUTES_ERROR__DISPUTE_NOT_OPEN
   | typeof STAYKE_DISPUTES_ERROR__INVALID_FEE_BPS
-  | typeof STAYKE_DISPUTES_ERROR__INVALID_TOKEN_MINT
-  | typeof STAYKE_DISPUTES_ERROR__INVALID_VAULT_ACCOUNT
   | typeof STAYKE_DISPUTES_ERROR__MAX_ADMINS_REACHED
   | typeof STAYKE_DISPUTES_ERROR__UNAUTHORIZED_ADMIN
   | typeof STAYKE_DISPUTES_ERROR__UNAUTHORIZED_DISPUTE_INITIATOR
@@ -67,8 +61,6 @@ if (process.env.NODE_ENV !== "production") {
     [STAYKE_DISPUTES_ERROR__CANNOT_REMOVE_SELF]: `Cannot remove yourself as admin`,
     [STAYKE_DISPUTES_ERROR__DISPUTE_NOT_OPEN]: `Dispute is already resolved or rejected`,
     [STAYKE_DISPUTES_ERROR__INVALID_FEE_BPS]: `Invalid configuration`,
-    [STAYKE_DISPUTES_ERROR__INVALID_TOKEN_MINT]: `The token mint does not match the configured USDC mint`,
-    [STAYKE_DISPUTES_ERROR__INVALID_VAULT_ACCOUNT]: `The treasury/vault account does not match the configured one`,
     [STAYKE_DISPUTES_ERROR__MAX_ADMINS_REACHED]: `Max admins reached`,
     [STAYKE_DISPUTES_ERROR__UNAUTHORIZED_ADMIN]: `Unauthorized admin action`,
     [STAYKE_DISPUTES_ERROR__UNAUTHORIZED_DISPUTE_INITIATOR]: `Only the guest or host can open a dispute`,

@@ -23,8 +23,6 @@ import {
   getBytesEncoder,
   getStructDecoder,
   getStructEncoder,
-  getU16Decoder,
-  getU16Encoder,
   getU8Decoder,
   getU8Encoder,
   transformEncoder,
@@ -54,28 +52,14 @@ export function getEscrowConfigDiscriminatorBytes() {
 export type EscrowConfig = {
   discriminator: ReadonlyUint8Array;
   authority: Address;
-  /** Platform fee vault token account. */
-  platformVault: Address;
-  /** Bump of the platform vault authority PDA. */
-  platformVaultBump: number;
-  /** USDC mint accepted by this escrow program. */
-  usdcMint: Address;
-  /** Platform fee in basis points (e.g. 500 = 5%). */
-  feeBps: number;
+  globalConfig: Address;
   isInitialized: boolean;
   bump: number;
 };
 
 export type EscrowConfigArgs = {
   authority: Address;
-  /** Platform fee vault token account. */
-  platformVault: Address;
-  /** Bump of the platform vault authority PDA. */
-  platformVaultBump: number;
-  /** USDC mint accepted by this escrow program. */
-  usdcMint: Address;
-  /** Platform fee in basis points (e.g. 500 = 5%). */
-  feeBps: number;
+  globalConfig: Address;
   isInitialized: boolean;
   bump: number;
 };
@@ -86,10 +70,7 @@ export function getEscrowConfigEncoder(): FixedSizeEncoder<EscrowConfigArgs> {
     getStructEncoder([
       ["discriminator", fixEncoderSize(getBytesEncoder(), 8)],
       ["authority", getAddressEncoder()],
-      ["platformVault", getAddressEncoder()],
-      ["platformVaultBump", getU8Encoder()],
-      ["usdcMint", getAddressEncoder()],
-      ["feeBps", getU16Encoder()],
+      ["globalConfig", getAddressEncoder()],
       ["isInitialized", getBooleanEncoder()],
       ["bump", getU8Encoder()],
     ]),
@@ -102,10 +83,7 @@ export function getEscrowConfigDecoder(): FixedSizeDecoder<EscrowConfig> {
   return getStructDecoder([
     ["discriminator", fixDecoderSize(getBytesDecoder(), 8)],
     ["authority", getAddressDecoder()],
-    ["platformVault", getAddressDecoder()],
-    ["platformVaultBump", getU8Decoder()],
-    ["usdcMint", getAddressDecoder()],
-    ["feeBps", getU16Decoder()],
+    ["globalConfig", getAddressDecoder()],
     ["isInitialized", getBooleanDecoder()],
     ["bump", getU8Decoder()],
   ]);
@@ -173,5 +151,5 @@ export async function fetchAllMaybeEscrowConfig(
 }
 
 export function getEscrowConfigSize(): number {
-  return 109;
+  return 74;
 }

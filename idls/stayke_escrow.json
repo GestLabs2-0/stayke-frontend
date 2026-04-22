@@ -156,20 +156,80 @@
           }
         },
         {
-          "name": "treasury_config",
+          "name": "global_config",
           "pda": {
             "seeds": [
               {
                 "kind": "const",
                 "value": [
-                  116,
-                  114,
-                  101,
+                  103,
+                  108,
+                  111,
+                  98,
                   97,
+                  108,
+                  95,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                118,
+                109,
+                66,
+                74,
+                177,
+                144,
+                211,
+                97,
+                159,
+                13,
+                99,
+                204,
+                121,
+                183,
+                217,
+                255,
+                57,
+                226,
+                31,
+                209,
+                61,
+                90,
+                8,
+                214,
+                12,
+                120,
+                222,
+                7,
+                128,
+                152,
+                5,
+                84
+              ]
+            }
+          }
+        },
+        {
+          "name": "escrow_config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  101,
                   115,
-                  117,
+                  99,
                   114,
-                  121,
+                  111,
+                  119,
                   95,
                   99,
                   111,
@@ -656,6 +716,68 @@
           }
         },
         {
+          "name": "global_config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  108,
+                  111,
+                  98,
+                  97,
+                  108,
+                  95,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                118,
+                109,
+                66,
+                74,
+                177,
+                144,
+                211,
+                97,
+                159,
+                13,
+                99,
+                204,
+                121,
+                183,
+                217,
+                255,
+                57,
+                226,
+                31,
+                209,
+                61,
+                90,
+                8,
+                214,
+                12,
+                120,
+                222,
+                7,
+                128,
+                152,
+                5,
+                84
+              ]
+            }
+          }
+        },
+        {
           "name": "escrow_config",
           "pda": {
             "seeds": [
@@ -668,33 +790,6 @@
                   114,
                   111,
                   119,
-                  95,
-                  99,
-                  111,
-                  110,
-                  102,
-                  105,
-                  103
-                ]
-              }
-            ]
-          }
-        },
-        {
-          "name": "treasury_config",
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  116,
-                  114,
-                  101,
-                  97,
-                  115,
-                  117,
-                  114,
-                  121,
                   95,
                   99,
                   111,
@@ -804,6 +899,68 @@
                 "account": "Booking"
               }
             ]
+          }
+        },
+        {
+          "name": "global_config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  108,
+                  111,
+                  98,
+                  97,
+                  108,
+                  95,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                118,
+                109,
+                66,
+                74,
+                177,
+                144,
+                211,
+                97,
+                159,
+                13,
+                99,
+                204,
+                121,
+                183,
+                217,
+                255,
+                57,
+                226,
+                31,
+                209,
+                61,
+                90,
+                8,
+                214,
+                12,
+                120,
+                222,
+                7,
+                128,
+                152,
+                5,
+                84
+              ]
+            }
           }
         },
         {
@@ -1181,20 +1338,18 @@
           }
         },
         {
-          "name": "treasury_config",
+          "name": "escrow_config",
           "pda": {
             "seeds": [
               {
                 "kind": "const",
                 "value": [
-                  116,
-                  114,
                   101,
-                  97,
                   115,
-                  117,
+                  99,
                   114,
-                  121,
+                  111,
+                  119,
                   95,
                   99,
                   111,
@@ -1205,6 +1360,68 @@
                 ]
               }
             ]
+          }
+        },
+        {
+          "name": "global_config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  108,
+                  111,
+                  98,
+                  97,
+                  108,
+                  95,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                118,
+                109,
+                66,
+                74,
+                177,
+                144,
+                211,
+                97,
+                159,
+                13,
+                99,
+                204,
+                121,
+                183,
+                217,
+                255,
+                57,
+                226,
+                31,
+                209,
+                61,
+                90,
+                8,
+                214,
+                12,
+                120,
+                222,
+                7,
+                128,
+                152,
+                5,
+                84
+              ]
+            }
           }
         },
         {
@@ -1375,20 +1592,80 @@
           }
         },
         {
-          "name": "treasury_config",
+          "name": "global_config",
           "pda": {
             "seeds": [
               {
                 "kind": "const",
                 "value": [
-                  116,
-                  114,
-                  101,
+                  103,
+                  108,
+                  111,
+                  98,
                   97,
+                  108,
+                  95,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                118,
+                109,
+                66,
+                74,
+                177,
+                144,
+                211,
+                97,
+                159,
+                13,
+                99,
+                204,
+                121,
+                183,
+                217,
+                255,
+                57,
+                226,
+                31,
+                209,
+                61,
+                90,
+                8,
+                214,
+                12,
+                120,
+                222,
+                7,
+                128,
+                152,
+                5,
+                84
+              ]
+            }
+          }
+        },
+        {
+          "name": "escrow_config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  101,
                   115,
-                  117,
+                  99,
                   114,
-                  121,
+                  111,
+                  119,
                   95,
                   99,
                   111,
@@ -1608,89 +1885,73 @@
           }
         },
         {
-          "name": "platform_vault_pda",
+          "name": "global_config",
           "pda": {
             "seeds": [
               {
                 "kind": "const",
                 "value": [
-                  112,
+                  103,
                   108,
-                  97,
-                  116,
-                  102,
                   111,
-                  114,
-                  109,
-                  95,
-                  118,
+                  98,
                   97,
-                  117,
                   108,
-                  116
+                  95,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
                 ]
               }
-            ]
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                118,
+                109,
+                66,
+                74,
+                177,
+                144,
+                211,
+                97,
+                159,
+                13,
+                99,
+                204,
+                121,
+                183,
+                217,
+                255,
+                57,
+                226,
+                31,
+                209,
+                61,
+                90,
+                8,
+                214,
+                12,
+                120,
+                222,
+                7,
+                128,
+                152,
+                5,
+                84
+              ]
+            }
           }
-        },
-        {
-          "name": "platform_vault",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  112,
-                  108,
-                  97,
-                  116,
-                  102,
-                  111,
-                  114,
-                  109,
-                  95,
-                  118,
-                  97,
-                  117,
-                  108,
-                  116,
-                  95,
-                  116,
-                  111,
-                  107,
-                  101,
-                  110
-                ]
-              }
-            ]
-          }
-        },
-        {
-          "name": "usdc_mint"
-        },
-        {
-          "name": "token_program"
         },
         {
           "name": "system_program",
           "address": "11111111111111111111111111111111"
         }
       ],
-      "args": [
-        {
-          "name": "fee_bps",
-          "type": "u16"
-        },
-        {
-          "name": "minimum_deposit",
-          "type": "u64"
-        },
-        {
-          "name": "price_per_night",
-          "type": "u64"
-        }
-      ]
+      "args": []
     },
     {
       "name": "review_completed",
@@ -2150,11 +2411,6 @@
       "code": 6023,
       "name": "UnauthorizedAdmin",
       "msg": "Unauthorized admin action"
-    },
-    {
-      "code": 6024,
-      "name": "InvalidBps",
-      "msg": "Fee basis points must be less than 10 000"
     }
   ],
   "types": [
@@ -2372,6 +2628,46 @@
             "type": "pubkey"
           },
           {
+            "name": "global_config",
+            "type": "pubkey"
+          },
+          {
+            "name": "is_initialized",
+            "type": "bool"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "GlobalConfig",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "minimum_deposit",
+            "type": "u64"
+          },
+          {
+            "name": "fee_bps",
+            "type": "u64"
+          },
+          {
+            "name": "usdc_mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "is_initialized",
+            "type": "bool"
+          },
+          {
             "name": "platform_vault",
             "docs": [
               "Platform fee vault token account."
@@ -2384,24 +2680,6 @@
               "Bump of the platform vault authority PDA."
             ],
             "type": "u8"
-          },
-          {
-            "name": "usdc_mint",
-            "docs": [
-              "USDC mint accepted by this escrow program."
-            ],
-            "type": "pubkey"
-          },
-          {
-            "name": "fee_bps",
-            "docs": [
-              "Platform fee in basis points (e.g. 500 = 5%)."
-            ],
-            "type": "u16"
-          },
-          {
-            "name": "is_initialized",
-            "type": "bool"
           },
           {
             "name": "bump",
@@ -2550,66 +2828,6 @@
       }
     },
     {
-      "name": "TreasuryConfig",
-      "docs": [
-        "Config account for the Treasury program.",
-        "Stores the authority allowed to manage treasury operations",
-        "and the references to the on-chain token vaults."
-      ],
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "authority",
-            "docs": [
-              "The admin/authority pubkey that can manage the treasury."
-            ],
-            "type": "pubkey"
-          },
-          {
-            "name": "treasury_vault",
-            "docs": [
-              "Pubkey of the treasury token account (controlled by treasury_pda).",
-              "Holds user USDC guarantee deposits."
-            ],
-            "type": "pubkey"
-          },
-          {
-            "name": "treasury_bump",
-            "docs": [
-              "Bump of the treasury PDA ([b\"treasury\"]) — used to sign CPI calls."
-            ],
-            "type": "u8"
-          },
-          {
-            "name": "usdc_mint",
-            "docs": [
-              "The USDC mint accepted by this treasury."
-            ],
-            "type": "pubkey"
-          },
-          {
-            "name": "minimum_deposit",
-            "docs": [
-              "Minimum deposit amount (in USDC lamports) required from each user."
-            ],
-            "type": "u64"
-          },
-          {
-            "name": "is_initialized",
-            "docs": [
-              "Guard flag to prevent re-initialization."
-            ],
-            "type": "bool"
-          },
-          {
-            "name": "bump",
-            "type": "u8"
-          }
-        ]
-      }
-    },
-    {
       "name": "UserProfile",
       "type": {
         "kind": "struct",
@@ -2672,6 +2890,28 @@
           }
         ]
       }
+    }
+  ],
+  "constants": [
+    {
+      "name": "BOOKING_DAYS_SEED",
+      "type": "string",
+      "value": "\"booking_days\""
+    },
+    {
+      "name": "BOOKING_SEED",
+      "type": "string",
+      "value": "\"booking\""
+    },
+    {
+      "name": "ESCROW_CONFIG_SEED",
+      "type": "string",
+      "value": "\"escrow_config\""
+    },
+    {
+      "name": "ESCROW_PDA_SEED",
+      "type": "string",
+      "value": "\"escrow\""
     }
   ]
 }

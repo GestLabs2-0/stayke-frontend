@@ -59,6 +59,7 @@ export type ResolveDisputeInstruction<
   TAccountDispute extends string | AccountMeta<string> = string,
   TAccountBooking extends string | AccountMeta<string> = string,
   TAccountEscrowConfig extends string | AccountMeta<string> = string,
+  TAccountGlobalConfig extends string | AccountMeta<string> = string,
   TAccountEscrowTokenAccount extends string | AccountMeta<string> = string,
   TAccountHostTokenAccount extends string | AccountMeta<string> = string,
   TAccountGuestTokenAccount extends string | AccountMeta<string> = string,
@@ -90,6 +91,9 @@ export type ResolveDisputeInstruction<
       TAccountEscrowConfig extends string
         ? ReadonlyAccount<TAccountEscrowConfig>
         : TAccountEscrowConfig,
+      TAccountGlobalConfig extends string
+        ? ReadonlyAccount<TAccountGlobalConfig>
+        : TAccountGlobalConfig,
       TAccountEscrowTokenAccount extends string
         ? WritableAccount<TAccountEscrowTokenAccount>
         : TAccountEscrowTokenAccount,
@@ -161,6 +165,7 @@ export type ResolveDisputeAsyncInput<
   TAccountDispute extends string = string,
   TAccountBooking extends string = string,
   TAccountEscrowConfig extends string = string,
+  TAccountGlobalConfig extends string = string,
   TAccountEscrowTokenAccount extends string = string,
   TAccountHostTokenAccount extends string = string,
   TAccountGuestTokenAccount extends string = string,
@@ -174,6 +179,7 @@ export type ResolveDisputeAsyncInput<
   dispute?: Address<TAccountDispute>;
   booking: Address<TAccountBooking>;
   escrowConfig: Address<TAccountEscrowConfig>;
+  globalConfig: Address<TAccountGlobalConfig>;
   escrowTokenAccount: Address<TAccountEscrowTokenAccount>;
   hostTokenAccount: Address<TAccountHostTokenAccount>;
   guestTokenAccount: Address<TAccountGuestTokenAccount>;
@@ -191,6 +197,7 @@ export async function getResolveDisputeInstructionAsync<
   TAccountDispute extends string,
   TAccountBooking extends string,
   TAccountEscrowConfig extends string,
+  TAccountGlobalConfig extends string,
   TAccountEscrowTokenAccount extends string,
   TAccountHostTokenAccount extends string,
   TAccountGuestTokenAccount extends string,
@@ -206,6 +213,7 @@ export async function getResolveDisputeInstructionAsync<
     TAccountDispute,
     TAccountBooking,
     TAccountEscrowConfig,
+    TAccountGlobalConfig,
     TAccountEscrowTokenAccount,
     TAccountHostTokenAccount,
     TAccountGuestTokenAccount,
@@ -223,6 +231,7 @@ export async function getResolveDisputeInstructionAsync<
     TAccountDispute,
     TAccountBooking,
     TAccountEscrowConfig,
+    TAccountGlobalConfig,
     TAccountEscrowTokenAccount,
     TAccountHostTokenAccount,
     TAccountGuestTokenAccount,
@@ -243,6 +252,7 @@ export async function getResolveDisputeInstructionAsync<
     dispute: { value: input.dispute ?? null, isWritable: true },
     booking: { value: input.booking ?? null, isWritable: true },
     escrowConfig: { value: input.escrowConfig ?? null, isWritable: false },
+    globalConfig: { value: input.globalConfig ?? null, isWritable: false },
     escrowTokenAccount: {
       value: input.escrowTokenAccount ?? null,
       isWritable: true,
@@ -300,6 +310,7 @@ export async function getResolveDisputeInstructionAsync<
       getAccountMeta(accounts.dispute),
       getAccountMeta(accounts.booking),
       getAccountMeta(accounts.escrowConfig),
+      getAccountMeta(accounts.globalConfig),
       getAccountMeta(accounts.escrowTokenAccount),
       getAccountMeta(accounts.hostTokenAccount),
       getAccountMeta(accounts.guestTokenAccount),
@@ -319,6 +330,7 @@ export async function getResolveDisputeInstructionAsync<
     TAccountDispute,
     TAccountBooking,
     TAccountEscrowConfig,
+    TAccountGlobalConfig,
     TAccountEscrowTokenAccount,
     TAccountHostTokenAccount,
     TAccountGuestTokenAccount,
@@ -335,6 +347,7 @@ export type ResolveDisputeInput<
   TAccountDispute extends string = string,
   TAccountBooking extends string = string,
   TAccountEscrowConfig extends string = string,
+  TAccountGlobalConfig extends string = string,
   TAccountEscrowTokenAccount extends string = string,
   TAccountHostTokenAccount extends string = string,
   TAccountGuestTokenAccount extends string = string,
@@ -348,6 +361,7 @@ export type ResolveDisputeInput<
   dispute: Address<TAccountDispute>;
   booking: Address<TAccountBooking>;
   escrowConfig: Address<TAccountEscrowConfig>;
+  globalConfig: Address<TAccountGlobalConfig>;
   escrowTokenAccount: Address<TAccountEscrowTokenAccount>;
   hostTokenAccount: Address<TAccountHostTokenAccount>;
   guestTokenAccount: Address<TAccountGuestTokenAccount>;
@@ -365,6 +379,7 @@ export function getResolveDisputeInstruction<
   TAccountDispute extends string,
   TAccountBooking extends string,
   TAccountEscrowConfig extends string,
+  TAccountGlobalConfig extends string,
   TAccountEscrowTokenAccount extends string,
   TAccountHostTokenAccount extends string,
   TAccountGuestTokenAccount extends string,
@@ -380,6 +395,7 @@ export function getResolveDisputeInstruction<
     TAccountDispute,
     TAccountBooking,
     TAccountEscrowConfig,
+    TAccountGlobalConfig,
     TAccountEscrowTokenAccount,
     TAccountHostTokenAccount,
     TAccountGuestTokenAccount,
@@ -396,6 +412,7 @@ export function getResolveDisputeInstruction<
   TAccountDispute,
   TAccountBooking,
   TAccountEscrowConfig,
+  TAccountGlobalConfig,
   TAccountEscrowTokenAccount,
   TAccountHostTokenAccount,
   TAccountGuestTokenAccount,
@@ -415,6 +432,7 @@ export function getResolveDisputeInstruction<
     dispute: { value: input.dispute ?? null, isWritable: true },
     booking: { value: input.booking ?? null, isWritable: true },
     escrowConfig: { value: input.escrowConfig ?? null, isWritable: false },
+    globalConfig: { value: input.globalConfig ?? null, isWritable: false },
     escrowTokenAccount: {
       value: input.escrowTokenAccount ?? null,
       isWritable: true,
@@ -464,6 +482,7 @@ export function getResolveDisputeInstruction<
       getAccountMeta(accounts.dispute),
       getAccountMeta(accounts.booking),
       getAccountMeta(accounts.escrowConfig),
+      getAccountMeta(accounts.globalConfig),
       getAccountMeta(accounts.escrowTokenAccount),
       getAccountMeta(accounts.hostTokenAccount),
       getAccountMeta(accounts.guestTokenAccount),
@@ -483,6 +502,7 @@ export function getResolveDisputeInstruction<
     TAccountDispute,
     TAccountBooking,
     TAccountEscrowConfig,
+    TAccountGlobalConfig,
     TAccountEscrowTokenAccount,
     TAccountHostTokenAccount,
     TAccountGuestTokenAccount,
@@ -504,13 +524,14 @@ export type ParsedResolveDisputeInstruction<
     dispute: TAccountMetas[2];
     booking: TAccountMetas[3];
     escrowConfig: TAccountMetas[4];
-    escrowTokenAccount: TAccountMetas[5];
-    hostTokenAccount: TAccountMetas[6];
-    guestTokenAccount: TAccountMetas[7];
-    platformVaultTokenAccount: TAccountMetas[8];
-    usdcMint: TAccountMetas[9];
-    staykeEscrowProgram: TAccountMetas[10];
-    tokenProgram: TAccountMetas[11];
+    globalConfig: TAccountMetas[5];
+    escrowTokenAccount: TAccountMetas[6];
+    hostTokenAccount: TAccountMetas[7];
+    guestTokenAccount: TAccountMetas[8];
+    platformVaultTokenAccount: TAccountMetas[9];
+    usdcMint: TAccountMetas[10];
+    staykeEscrowProgram: TAccountMetas[11];
+    tokenProgram: TAccountMetas[12];
   };
   data: ResolveDisputeInstructionData;
 };
@@ -523,7 +544,7 @@ export function parseResolveDisputeInstruction<
     InstructionWithAccounts<TAccountMetas> &
     InstructionWithData<ReadonlyUint8Array>,
 ): ParsedResolveDisputeInstruction<TProgram, TAccountMetas> {
-  if (instruction.accounts.length < 12) {
+  if (instruction.accounts.length < 13) {
     // TODO: Coded error.
     throw new Error("Not enough accounts");
   }
@@ -541,6 +562,7 @@ export function parseResolveDisputeInstruction<
       dispute: getNextAccount(),
       booking: getNextAccount(),
       escrowConfig: getNextAccount(),
+      globalConfig: getNextAccount(),
       escrowTokenAccount: getNextAccount(),
       hostTokenAccount: getNextAccount(),
       guestTokenAccount: getNextAccount(),

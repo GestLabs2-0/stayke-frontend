@@ -12,6 +12,7 @@ import {
   fixEncoderSize,
   getBytesDecoder,
   getBytesEncoder,
+  getProgramDerivedAddress,
   getStructDecoder,
   getStructEncoder,
   getU64Decoder,
@@ -50,6 +51,7 @@ export type CpiPenalizeTransferInstruction<
   TProgram extends string = typeof STAYKE_TREASURY_PROGRAM_ADDRESS,
   TAccountAuthority extends string | AccountMeta<string> = string,
   TAccountConfig extends string | AccountMeta<string> = string,
+  TAccountGlobalConfig extends string | AccountMeta<string> = string,
   TAccountTreasuryVault extends string | AccountMeta<string> = string,
   TAccountTreasuryPda extends string | AccountMeta<string> = string,
   TAccountDestinationTokenAccount extends string | AccountMeta<string> = string,
@@ -68,6 +70,9 @@ export type CpiPenalizeTransferInstruction<
       TAccountConfig extends string
         ? ReadonlyAccount<TAccountConfig>
         : TAccountConfig,
+      TAccountGlobalConfig extends string
+        ? ReadonlyAccount<TAccountGlobalConfig>
+        : TAccountGlobalConfig,
       TAccountTreasuryVault extends string
         ? WritableAccount<TAccountTreasuryVault>
         : TAccountTreasuryVault,
@@ -129,6 +134,7 @@ export function getCpiPenalizeTransferInstructionDataCodec(): FixedSizeCodec<
 export type CpiPenalizeTransferAsyncInput<
   TAccountAuthority extends string = string,
   TAccountConfig extends string = string,
+  TAccountGlobalConfig extends string = string,
   TAccountTreasuryVault extends string = string,
   TAccountTreasuryPda extends string = string,
   TAccountDestinationTokenAccount extends string = string,
@@ -137,6 +143,7 @@ export type CpiPenalizeTransferAsyncInput<
 > = {
   authority: TransactionSigner<TAccountAuthority>;
   config?: Address<TAccountConfig>;
+  globalConfig?: Address<TAccountGlobalConfig>;
   treasuryVault: Address<TAccountTreasuryVault>;
   treasuryPda?: Address<TAccountTreasuryPda>;
   /** Destination: the destination token account owned by the affected party. */
@@ -149,6 +156,7 @@ export type CpiPenalizeTransferAsyncInput<
 export async function getCpiPenalizeTransferInstructionAsync<
   TAccountAuthority extends string,
   TAccountConfig extends string,
+  TAccountGlobalConfig extends string,
   TAccountTreasuryVault extends string,
   TAccountTreasuryPda extends string,
   TAccountDestinationTokenAccount extends string,
@@ -159,6 +167,7 @@ export async function getCpiPenalizeTransferInstructionAsync<
   input: CpiPenalizeTransferAsyncInput<
     TAccountAuthority,
     TAccountConfig,
+    TAccountGlobalConfig,
     TAccountTreasuryVault,
     TAccountTreasuryPda,
     TAccountDestinationTokenAccount,
@@ -171,6 +180,7 @@ export async function getCpiPenalizeTransferInstructionAsync<
     TProgramAddress,
     TAccountAuthority,
     TAccountConfig,
+    TAccountGlobalConfig,
     TAccountTreasuryVault,
     TAccountTreasuryPda,
     TAccountDestinationTokenAccount,
@@ -186,6 +196,7 @@ export async function getCpiPenalizeTransferInstructionAsync<
   const originalAccounts = {
     authority: { value: input.authority ?? null, isWritable: false },
     config: { value: input.config ?? null, isWritable: false },
+    globalConfig: { value: input.globalConfig ?? null, isWritable: false },
     treasuryVault: { value: input.treasuryVault ?? null, isWritable: true },
     treasuryPda: { value: input.treasuryPda ?? null, isWritable: false },
     destinationTokenAccount: {
@@ -207,6 +218,19 @@ export async function getCpiPenalizeTransferInstructionAsync<
   if (!accounts.config.value) {
     accounts.config.value = await findConfigPda();
   }
+  if (!accounts.globalConfig.value) {
+    accounts.globalConfig.value = await getProgramDerivedAddress({
+      programAddress:
+        "8yHjmyUgA9x4pzftX1cwJt8SnG8iV1zxLjEP77HKc9YP" as Address<"8yHjmyUgA9x4pzftX1cwJt8SnG8iV1zxLjEP77HKc9YP">,
+      seeds: [
+        getBytesEncoder().encode(
+          new Uint8Array([
+            103, 108, 111, 98, 97, 108, 95, 99, 111, 110, 102, 105, 103,
+          ]),
+        ),
+      ],
+    });
+  }
   if (!accounts.treasuryPda.value) {
     accounts.treasuryPda.value = await findTreasuryPdaPda();
   }
@@ -220,6 +244,7 @@ export async function getCpiPenalizeTransferInstructionAsync<
     accounts: [
       getAccountMeta(accounts.authority),
       getAccountMeta(accounts.config),
+      getAccountMeta(accounts.globalConfig),
       getAccountMeta(accounts.treasuryVault),
       getAccountMeta(accounts.treasuryPda),
       getAccountMeta(accounts.destinationTokenAccount),
@@ -234,6 +259,7 @@ export async function getCpiPenalizeTransferInstructionAsync<
     TProgramAddress,
     TAccountAuthority,
     TAccountConfig,
+    TAccountGlobalConfig,
     TAccountTreasuryVault,
     TAccountTreasuryPda,
     TAccountDestinationTokenAccount,
@@ -245,6 +271,7 @@ export async function getCpiPenalizeTransferInstructionAsync<
 export type CpiPenalizeTransferInput<
   TAccountAuthority extends string = string,
   TAccountConfig extends string = string,
+  TAccountGlobalConfig extends string = string,
   TAccountTreasuryVault extends string = string,
   TAccountTreasuryPda extends string = string,
   TAccountDestinationTokenAccount extends string = string,
@@ -253,6 +280,7 @@ export type CpiPenalizeTransferInput<
 > = {
   authority: TransactionSigner<TAccountAuthority>;
   config: Address<TAccountConfig>;
+  globalConfig: Address<TAccountGlobalConfig>;
   treasuryVault: Address<TAccountTreasuryVault>;
   treasuryPda: Address<TAccountTreasuryPda>;
   /** Destination: the destination token account owned by the affected party. */
@@ -265,6 +293,7 @@ export type CpiPenalizeTransferInput<
 export function getCpiPenalizeTransferInstruction<
   TAccountAuthority extends string,
   TAccountConfig extends string,
+  TAccountGlobalConfig extends string,
   TAccountTreasuryVault extends string,
   TAccountTreasuryPda extends string,
   TAccountDestinationTokenAccount extends string,
@@ -275,6 +304,7 @@ export function getCpiPenalizeTransferInstruction<
   input: CpiPenalizeTransferInput<
     TAccountAuthority,
     TAccountConfig,
+    TAccountGlobalConfig,
     TAccountTreasuryVault,
     TAccountTreasuryPda,
     TAccountDestinationTokenAccount,
@@ -286,6 +316,7 @@ export function getCpiPenalizeTransferInstruction<
   TProgramAddress,
   TAccountAuthority,
   TAccountConfig,
+  TAccountGlobalConfig,
   TAccountTreasuryVault,
   TAccountTreasuryPda,
   TAccountDestinationTokenAccount,
@@ -300,6 +331,7 @@ export function getCpiPenalizeTransferInstruction<
   const originalAccounts = {
     authority: { value: input.authority ?? null, isWritable: false },
     config: { value: input.config ?? null, isWritable: false },
+    globalConfig: { value: input.globalConfig ?? null, isWritable: false },
     treasuryVault: { value: input.treasuryVault ?? null, isWritable: true },
     treasuryPda: { value: input.treasuryPda ?? null, isWritable: false },
     destinationTokenAccount: {
@@ -328,6 +360,7 @@ export function getCpiPenalizeTransferInstruction<
     accounts: [
       getAccountMeta(accounts.authority),
       getAccountMeta(accounts.config),
+      getAccountMeta(accounts.globalConfig),
       getAccountMeta(accounts.treasuryVault),
       getAccountMeta(accounts.treasuryPda),
       getAccountMeta(accounts.destinationTokenAccount),
@@ -342,6 +375,7 @@ export function getCpiPenalizeTransferInstruction<
     TProgramAddress,
     TAccountAuthority,
     TAccountConfig,
+    TAccountGlobalConfig,
     TAccountTreasuryVault,
     TAccountTreasuryPda,
     TAccountDestinationTokenAccount,
@@ -358,12 +392,13 @@ export type ParsedCpiPenalizeTransferInstruction<
   accounts: {
     authority: TAccountMetas[0];
     config: TAccountMetas[1];
-    treasuryVault: TAccountMetas[2];
-    treasuryPda: TAccountMetas[3];
+    globalConfig: TAccountMetas[2];
+    treasuryVault: TAccountMetas[3];
+    treasuryPda: TAccountMetas[4];
     /** Destination: the destination token account owned by the affected party. */
-    destinationTokenAccount: TAccountMetas[4];
-    usdcMint: TAccountMetas[5];
-    tokenProgram: TAccountMetas[6];
+    destinationTokenAccount: TAccountMetas[5];
+    usdcMint: TAccountMetas[6];
+    tokenProgram: TAccountMetas[7];
   };
   data: CpiPenalizeTransferInstructionData;
 };
@@ -376,7 +411,7 @@ export function parseCpiPenalizeTransferInstruction<
     InstructionWithAccounts<TAccountMetas> &
     InstructionWithData<ReadonlyUint8Array>,
 ): ParsedCpiPenalizeTransferInstruction<TProgram, TAccountMetas> {
-  if (instruction.accounts.length < 7) {
+  if (instruction.accounts.length < 8) {
     // TODO: Coded error.
     throw new Error("Not enough accounts");
   }
@@ -391,6 +426,7 @@ export function parseCpiPenalizeTransferInstruction<
     accounts: {
       authority: getNextAccount(),
       config: getNextAccount(),
+      globalConfig: getNextAccount(),
       treasuryVault: getNextAccount(),
       treasuryPda: getNextAccount(),
       destinationTokenAccount: getNextAccount(),

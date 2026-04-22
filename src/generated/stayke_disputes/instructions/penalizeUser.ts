@@ -60,6 +60,7 @@ export type PenalizeUserInstruction<
   TAccountAffectedTokenAccount extends string | AccountMeta<string> = string,
   TAccountAffectedWallet extends string | AccountMeta<string> = string,
   TAccountTreasuryConfig extends string | AccountMeta<string> = string,
+  TAccountGlobalConfig extends string | AccountMeta<string> = string,
   TAccountTreasuryVault extends string | AccountMeta<string> = string,
   TAccountTreasuryPda extends string | AccountMeta<string> = string,
   TAccountUsdcMint extends string | AccountMeta<string> = string,
@@ -96,6 +97,9 @@ export type PenalizeUserInstruction<
       TAccountTreasuryConfig extends string
         ? ReadonlyAccount<TAccountTreasuryConfig>
         : TAccountTreasuryConfig,
+      TAccountGlobalConfig extends string
+        ? ReadonlyAccount<TAccountGlobalConfig>
+        : TAccountGlobalConfig,
       TAccountTreasuryVault extends string
         ? WritableAccount<TAccountTreasuryVault>
         : TAccountTreasuryVault,
@@ -160,6 +164,7 @@ export type PenalizeUserAsyncInput<
   TAccountAffectedTokenAccount extends string = string,
   TAccountAffectedWallet extends string = string,
   TAccountTreasuryConfig extends string = string,
+  TAccountGlobalConfig extends string = string,
   TAccountTreasuryVault extends string = string,
   TAccountTreasuryPda extends string = string,
   TAccountUsdcMint extends string = string,
@@ -178,6 +183,7 @@ export type PenalizeUserAsyncInput<
   affectedWallet: Address<TAccountAffectedWallet>;
   /** The treasury program config. */
   treasuryConfig: Address<TAccountTreasuryConfig>;
+  globalConfig: Address<TAccountGlobalConfig>;
   /** The global treasury vault from stayke-treasury. */
   treasuryVault: Address<TAccountTreasuryVault>;
   treasuryPda: Address<TAccountTreasuryPda>;
@@ -196,6 +202,7 @@ export async function getPenalizeUserInstructionAsync<
   TAccountAffectedTokenAccount extends string,
   TAccountAffectedWallet extends string,
   TAccountTreasuryConfig extends string,
+  TAccountGlobalConfig extends string,
   TAccountTreasuryVault extends string,
   TAccountTreasuryPda extends string,
   TAccountUsdcMint extends string,
@@ -212,6 +219,7 @@ export async function getPenalizeUserInstructionAsync<
     TAccountAffectedTokenAccount,
     TAccountAffectedWallet,
     TAccountTreasuryConfig,
+    TAccountGlobalConfig,
     TAccountTreasuryVault,
     TAccountTreasuryPda,
     TAccountUsdcMint,
@@ -230,6 +238,7 @@ export async function getPenalizeUserInstructionAsync<
     TAccountAffectedTokenAccount,
     TAccountAffectedWallet,
     TAccountTreasuryConfig,
+    TAccountGlobalConfig,
     TAccountTreasuryVault,
     TAccountTreasuryPda,
     TAccountUsdcMint,
@@ -260,6 +269,7 @@ export async function getPenalizeUserInstructionAsync<
     },
     affectedWallet: { value: input.affectedWallet ?? null, isWritable: false },
     treasuryConfig: { value: input.treasuryConfig ?? null, isWritable: false },
+    globalConfig: { value: input.globalConfig ?? null, isWritable: false },
     treasuryVault: { value: input.treasuryVault ?? null, isWritable: true },
     treasuryPda: { value: input.treasuryPda ?? null, isWritable: false },
     usdcMint: { value: input.usdcMint ?? null, isWritable: true },
@@ -308,6 +318,7 @@ export async function getPenalizeUserInstructionAsync<
       getAccountMeta(accounts.affectedTokenAccount),
       getAccountMeta(accounts.affectedWallet),
       getAccountMeta(accounts.treasuryConfig),
+      getAccountMeta(accounts.globalConfig),
       getAccountMeta(accounts.treasuryVault),
       getAccountMeta(accounts.treasuryPda),
       getAccountMeta(accounts.usdcMint),
@@ -328,6 +339,7 @@ export async function getPenalizeUserInstructionAsync<
     TAccountAffectedTokenAccount,
     TAccountAffectedWallet,
     TAccountTreasuryConfig,
+    TAccountGlobalConfig,
     TAccountTreasuryVault,
     TAccountTreasuryPda,
     TAccountUsdcMint,
@@ -345,6 +357,7 @@ export type PenalizeUserInput<
   TAccountAffectedTokenAccount extends string = string,
   TAccountAffectedWallet extends string = string,
   TAccountTreasuryConfig extends string = string,
+  TAccountGlobalConfig extends string = string,
   TAccountTreasuryVault extends string = string,
   TAccountTreasuryPda extends string = string,
   TAccountUsdcMint extends string = string,
@@ -363,6 +376,7 @@ export type PenalizeUserInput<
   affectedWallet: Address<TAccountAffectedWallet>;
   /** The treasury program config. */
   treasuryConfig: Address<TAccountTreasuryConfig>;
+  globalConfig: Address<TAccountGlobalConfig>;
   /** The global treasury vault from stayke-treasury. */
   treasuryVault: Address<TAccountTreasuryVault>;
   treasuryPda: Address<TAccountTreasuryPda>;
@@ -381,6 +395,7 @@ export function getPenalizeUserInstruction<
   TAccountAffectedTokenAccount extends string,
   TAccountAffectedWallet extends string,
   TAccountTreasuryConfig extends string,
+  TAccountGlobalConfig extends string,
   TAccountTreasuryVault extends string,
   TAccountTreasuryPda extends string,
   TAccountUsdcMint extends string,
@@ -397,6 +412,7 @@ export function getPenalizeUserInstruction<
     TAccountAffectedTokenAccount,
     TAccountAffectedWallet,
     TAccountTreasuryConfig,
+    TAccountGlobalConfig,
     TAccountTreasuryVault,
     TAccountTreasuryPda,
     TAccountUsdcMint,
@@ -414,6 +430,7 @@ export function getPenalizeUserInstruction<
   TAccountAffectedTokenAccount,
   TAccountAffectedWallet,
   TAccountTreasuryConfig,
+  TAccountGlobalConfig,
   TAccountTreasuryVault,
   TAccountTreasuryPda,
   TAccountUsdcMint,
@@ -443,6 +460,7 @@ export function getPenalizeUserInstruction<
     },
     affectedWallet: { value: input.affectedWallet ?? null, isWritable: false },
     treasuryConfig: { value: input.treasuryConfig ?? null, isWritable: false },
+    globalConfig: { value: input.globalConfig ?? null, isWritable: false },
     treasuryVault: { value: input.treasuryVault ?? null, isWritable: true },
     treasuryPda: { value: input.treasuryPda ?? null, isWritable: false },
     usdcMint: { value: input.usdcMint ?? null, isWritable: true },
@@ -488,6 +506,7 @@ export function getPenalizeUserInstruction<
       getAccountMeta(accounts.affectedTokenAccount),
       getAccountMeta(accounts.affectedWallet),
       getAccountMeta(accounts.treasuryConfig),
+      getAccountMeta(accounts.globalConfig),
       getAccountMeta(accounts.treasuryVault),
       getAccountMeta(accounts.treasuryPda),
       getAccountMeta(accounts.usdcMint),
@@ -508,6 +527,7 @@ export function getPenalizeUserInstruction<
     TAccountAffectedTokenAccount,
     TAccountAffectedWallet,
     TAccountTreasuryConfig,
+    TAccountGlobalConfig,
     TAccountTreasuryVault,
     TAccountTreasuryPda,
     TAccountUsdcMint,
@@ -534,13 +554,14 @@ export type ParsedPenalizeUserInstruction<
     affectedWallet: TAccountMetas[5];
     /** The treasury program config. */
     treasuryConfig: TAccountMetas[6];
+    globalConfig: TAccountMetas[7];
     /** The global treasury vault from stayke-treasury. */
-    treasuryVault: TAccountMetas[7];
-    treasuryPda: TAccountMetas[8];
-    usdcMint: TAccountMetas[9];
-    staykeCoreProgram: TAccountMetas[10];
-    staykeTreasuryProgram: TAccountMetas[11];
-    tokenProgram: TAccountMetas[12];
+    treasuryVault: TAccountMetas[8];
+    treasuryPda: TAccountMetas[9];
+    usdcMint: TAccountMetas[10];
+    staykeCoreProgram: TAccountMetas[11];
+    staykeTreasuryProgram: TAccountMetas[12];
+    tokenProgram: TAccountMetas[13];
   };
   data: PenalizeUserInstructionData;
 };
@@ -553,7 +574,7 @@ export function parsePenalizeUserInstruction<
     InstructionWithAccounts<TAccountMetas> &
     InstructionWithData<ReadonlyUint8Array>,
 ): ParsedPenalizeUserInstruction<TProgram, TAccountMetas> {
-  if (instruction.accounts.length < 13) {
+  if (instruction.accounts.length < 14) {
     // TODO: Coded error.
     throw new Error("Not enough accounts");
   }
@@ -573,6 +594,7 @@ export function parsePenalizeUserInstruction<
       affectedTokenAccount: getNextAccount(),
       affectedWallet: getNextAccount(),
       treasuryConfig: getNextAccount(),
+      globalConfig: getNextAccount(),
       treasuryVault: getNextAccount(),
       treasuryPda: getNextAccount(),
       usdcMint: getNextAccount(),

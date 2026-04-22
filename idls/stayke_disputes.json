@@ -358,6 +358,9 @@
           ]
         },
         {
+          "name": "global_config"
+        },
+        {
           "name": "treasury_vault",
           "docs": [
             "The global treasury vault from stayke-treasury."
@@ -468,6 +471,9 @@
         },
         {
           "name": "escrow_config"
+        },
+        {
+          "name": "global_config"
         },
         {
           "name": "escrow_token_account",
@@ -626,21 +632,11 @@
     },
     {
       "code": 6009,
-      "name": "InvalidVaultAccount",
-      "msg": "The treasury/vault account does not match the configured one"
-    },
-    {
-      "code": 6010,
-      "name": "InvalidTokenMint",
-      "msg": "The token mint does not match the configured USDC mint"
-    },
-    {
-      "code": 6011,
       "name": "UserBanned",
       "msg": "User is banned"
     },
     {
-      "code": 6012,
+      "code": 6010,
       "name": "UserNotVerified",
       "msg": "User is not verified"
     }
@@ -1182,6 +1178,18 @@
           }
         ]
       }
+    }
+  ],
+  "constants": [
+    {
+      "name": "DISPUTE_CONFIG_PDA_SEED",
+      "type": "string",
+      "value": "\"dispute_config\""
+    },
+    {
+      "name": "DISPUTE_PDA_SEED",
+      "type": "string",
+      "value": "\"dispute\""
     }
   ]
 }

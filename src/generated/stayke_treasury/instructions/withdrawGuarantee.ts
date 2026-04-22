@@ -12,6 +12,7 @@ import {
   fixEncoderSize,
   getBytesDecoder,
   getBytesEncoder,
+  getProgramDerivedAddress,
   getStructDecoder,
   getStructEncoder,
   getU64Decoder,
@@ -54,6 +55,7 @@ export type WithdrawGuaranteeInstruction<
   TProgram extends string = typeof STAYKE_TREASURY_PROGRAM_ADDRESS,
   TAccountSigner extends string | AccountMeta<string> = string,
   TAccountConfig extends string | AccountMeta<string> = string,
+  TAccountGlobalConfig extends string | AccountMeta<string> = string,
   TAccountTreasuryVault extends string | AccountMeta<string> = string,
   TAccountTreasuryPda extends string | AccountMeta<string> = string,
   TAccountUserTokenAccount extends string | AccountMeta<string> = string,
@@ -75,6 +77,9 @@ export type WithdrawGuaranteeInstruction<
       TAccountConfig extends string
         ? ReadonlyAccount<TAccountConfig>
         : TAccountConfig,
+      TAccountGlobalConfig extends string
+        ? ReadonlyAccount<TAccountGlobalConfig>
+        : TAccountGlobalConfig,
       TAccountTreasuryVault extends string
         ? WritableAccount<TAccountTreasuryVault>
         : TAccountTreasuryVault,
@@ -137,6 +142,7 @@ export function getWithdrawGuaranteeInstructionDataCodec(): FixedSizeCodec<
 export type WithdrawGuaranteeAsyncInput<
   TAccountSigner extends string = string,
   TAccountConfig extends string = string,
+  TAccountGlobalConfig extends string = string,
   TAccountTreasuryVault extends string = string,
   TAccountTreasuryPda extends string = string,
   TAccountUserTokenAccount extends string = string,
@@ -147,6 +153,7 @@ export type WithdrawGuaranteeAsyncInput<
 > = {
   signer: TransactionSigner<TAccountSigner>;
   config?: Address<TAccountConfig>;
+  globalConfig?: Address<TAccountGlobalConfig>;
   /** Treasury vault — source of the withdrawal. */
   treasuryVault: Address<TAccountTreasuryVault>;
   treasuryPda?: Address<TAccountTreasuryPda>;
@@ -162,6 +169,7 @@ export type WithdrawGuaranteeAsyncInput<
 export async function getWithdrawGuaranteeInstructionAsync<
   TAccountSigner extends string,
   TAccountConfig extends string,
+  TAccountGlobalConfig extends string,
   TAccountTreasuryVault extends string,
   TAccountTreasuryPda extends string,
   TAccountUserTokenAccount extends string,
@@ -174,6 +182,7 @@ export async function getWithdrawGuaranteeInstructionAsync<
   input: WithdrawGuaranteeAsyncInput<
     TAccountSigner,
     TAccountConfig,
+    TAccountGlobalConfig,
     TAccountTreasuryVault,
     TAccountTreasuryPda,
     TAccountUserTokenAccount,
@@ -188,6 +197,7 @@ export async function getWithdrawGuaranteeInstructionAsync<
     TProgramAddress,
     TAccountSigner,
     TAccountConfig,
+    TAccountGlobalConfig,
     TAccountTreasuryVault,
     TAccountTreasuryPda,
     TAccountUserTokenAccount,
@@ -205,6 +215,7 @@ export async function getWithdrawGuaranteeInstructionAsync<
   const originalAccounts = {
     signer: { value: input.signer ?? null, isWritable: true },
     config: { value: input.config ?? null, isWritable: false },
+    globalConfig: { value: input.globalConfig ?? null, isWritable: false },
     treasuryVault: { value: input.treasuryVault ?? null, isWritable: true },
     treasuryPda: { value: input.treasuryPda ?? null, isWritable: false },
     userTokenAccount: {
@@ -231,6 +242,19 @@ export async function getWithdrawGuaranteeInstructionAsync<
   if (!accounts.config.value) {
     accounts.config.value = await findConfigPda();
   }
+  if (!accounts.globalConfig.value) {
+    accounts.globalConfig.value = await getProgramDerivedAddress({
+      programAddress:
+        "8yHjmyUgA9x4pzftX1cwJt8SnG8iV1zxLjEP77HKc9YP" as Address<"8yHjmyUgA9x4pzftX1cwJt8SnG8iV1zxLjEP77HKc9YP">,
+      seeds: [
+        getBytesEncoder().encode(
+          new Uint8Array([
+            103, 108, 111, 98, 97, 108, 95, 99, 111, 110, 102, 105, 103,
+          ]),
+        ),
+      ],
+    });
+  }
   if (!accounts.treasuryPda.value) {
     accounts.treasuryPda.value = await findTreasuryPdaPda();
   }
@@ -253,6 +277,7 @@ export async function getWithdrawGuaranteeInstructionAsync<
     accounts: [
       getAccountMeta(accounts.signer),
       getAccountMeta(accounts.config),
+      getAccountMeta(accounts.globalConfig),
       getAccountMeta(accounts.treasuryVault),
       getAccountMeta(accounts.treasuryPda),
       getAccountMeta(accounts.userTokenAccount),
@@ -269,6 +294,7 @@ export async function getWithdrawGuaranteeInstructionAsync<
     TProgramAddress,
     TAccountSigner,
     TAccountConfig,
+    TAccountGlobalConfig,
     TAccountTreasuryVault,
     TAccountTreasuryPda,
     TAccountUserTokenAccount,
@@ -282,6 +308,7 @@ export async function getWithdrawGuaranteeInstructionAsync<
 export type WithdrawGuaranteeInput<
   TAccountSigner extends string = string,
   TAccountConfig extends string = string,
+  TAccountGlobalConfig extends string = string,
   TAccountTreasuryVault extends string = string,
   TAccountTreasuryPda extends string = string,
   TAccountUserTokenAccount extends string = string,
@@ -292,6 +319,7 @@ export type WithdrawGuaranteeInput<
 > = {
   signer: TransactionSigner<TAccountSigner>;
   config: Address<TAccountConfig>;
+  globalConfig: Address<TAccountGlobalConfig>;
   /** Treasury vault — source of the withdrawal. */
   treasuryVault: Address<TAccountTreasuryVault>;
   treasuryPda: Address<TAccountTreasuryPda>;
@@ -307,6 +335,7 @@ export type WithdrawGuaranteeInput<
 export function getWithdrawGuaranteeInstruction<
   TAccountSigner extends string,
   TAccountConfig extends string,
+  TAccountGlobalConfig extends string,
   TAccountTreasuryVault extends string,
   TAccountTreasuryPda extends string,
   TAccountUserTokenAccount extends string,
@@ -319,6 +348,7 @@ export function getWithdrawGuaranteeInstruction<
   input: WithdrawGuaranteeInput<
     TAccountSigner,
     TAccountConfig,
+    TAccountGlobalConfig,
     TAccountTreasuryVault,
     TAccountTreasuryPda,
     TAccountUserTokenAccount,
@@ -332,6 +362,7 @@ export function getWithdrawGuaranteeInstruction<
   TProgramAddress,
   TAccountSigner,
   TAccountConfig,
+  TAccountGlobalConfig,
   TAccountTreasuryVault,
   TAccountTreasuryPda,
   TAccountUserTokenAccount,
@@ -348,6 +379,7 @@ export function getWithdrawGuaranteeInstruction<
   const originalAccounts = {
     signer: { value: input.signer ?? null, isWritable: true },
     config: { value: input.config ?? null, isWritable: false },
+    globalConfig: { value: input.globalConfig ?? null, isWritable: false },
     treasuryVault: { value: input.treasuryVault ?? null, isWritable: true },
     treasuryPda: { value: input.treasuryPda ?? null, isWritable: false },
     userTokenAccount: {
@@ -385,6 +417,7 @@ export function getWithdrawGuaranteeInstruction<
     accounts: [
       getAccountMeta(accounts.signer),
       getAccountMeta(accounts.config),
+      getAccountMeta(accounts.globalConfig),
       getAccountMeta(accounts.treasuryVault),
       getAccountMeta(accounts.treasuryPda),
       getAccountMeta(accounts.userTokenAccount),
@@ -401,6 +434,7 @@ export function getWithdrawGuaranteeInstruction<
     TProgramAddress,
     TAccountSigner,
     TAccountConfig,
+    TAccountGlobalConfig,
     TAccountTreasuryVault,
     TAccountTreasuryPda,
     TAccountUserTokenAccount,
@@ -419,15 +453,16 @@ export type ParsedWithdrawGuaranteeInstruction<
   accounts: {
     signer: TAccountMetas[0];
     config: TAccountMetas[1];
+    globalConfig: TAccountMetas[2];
     /** Treasury vault — source of the withdrawal. */
-    treasuryVault: TAccountMetas[2];
-    treasuryPda: TAccountMetas[3];
+    treasuryVault: TAccountMetas[3];
+    treasuryPda: TAccountMetas[4];
     /** Destination: the user's own USDC token account. */
-    userTokenAccount: TAccountMetas[4];
-    usdcMint: TAccountMetas[5];
-    tokenProgram: TAccountMetas[6];
-    userProfile: TAccountMetas[7];
-    staykeCoreProgram: TAccountMetas[8];
+    userTokenAccount: TAccountMetas[5];
+    usdcMint: TAccountMetas[6];
+    tokenProgram: TAccountMetas[7];
+    userProfile: TAccountMetas[8];
+    staykeCoreProgram: TAccountMetas[9];
   };
   data: WithdrawGuaranteeInstructionData;
 };
@@ -440,7 +475,7 @@ export function parseWithdrawGuaranteeInstruction<
     InstructionWithAccounts<TAccountMetas> &
     InstructionWithData<ReadonlyUint8Array>,
 ): ParsedWithdrawGuaranteeInstruction<TProgram, TAccountMetas> {
-  if (instruction.accounts.length < 9) {
+  if (instruction.accounts.length < 10) {
     // TODO: Coded error.
     throw new Error("Not enough accounts");
   }
@@ -455,6 +490,7 @@ export function parseWithdrawGuaranteeInstruction<
     accounts: {
       signer: getNextAccount(),
       config: getNextAccount(),
+      globalConfig: getNextAccount(),
       treasuryVault: getNextAccount(),
       treasuryPda: getNextAccount(),
       userTokenAccount: getNextAccount(),

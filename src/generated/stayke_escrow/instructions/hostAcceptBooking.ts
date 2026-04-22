@@ -32,7 +32,7 @@ import {
   type WritableAccount,
   type WritableSignerAccount,
 } from "@solana/kit";
-import { findTreasuryConfigPda } from "../pdas";
+import { findEscrowConfigPda } from "../pdas";
 import { STAYKE_ESCROW_PROGRAM_ADDRESS } from "../programs";
 import {
   expectAddress,
@@ -55,7 +55,8 @@ export type HostAcceptBookingInstruction<
   TAccountHost extends string | AccountMeta<string> = string,
   TAccountHostProfile extends string | AccountMeta<string> = string,
   TAccountBooking extends string | AccountMeta<string> = string,
-  TAccountTreasuryConfig extends string | AccountMeta<string> = string,
+  TAccountGlobalConfig extends string | AccountMeta<string> = string,
+  TAccountEscrowConfig extends string | AccountMeta<string> = string,
   TRemainingAccounts extends readonly AccountMeta<string>[] = [],
 > = Instruction<TProgram> &
   InstructionWithData<ReadonlyUint8Array> &
@@ -70,9 +71,12 @@ export type HostAcceptBookingInstruction<
       TAccountBooking extends string
         ? WritableAccount<TAccountBooking>
         : TAccountBooking,
-      TAccountTreasuryConfig extends string
-        ? ReadonlyAccount<TAccountTreasuryConfig>
-        : TAccountTreasuryConfig,
+      TAccountGlobalConfig extends string
+        ? ReadonlyAccount<TAccountGlobalConfig>
+        : TAccountGlobalConfig,
+      TAccountEscrowConfig extends string
+        ? ReadonlyAccount<TAccountEscrowConfig>
+        : TAccountEscrowConfig,
       ...TRemainingAccounts,
     ]
   >;
@@ -110,26 +114,30 @@ export type HostAcceptBookingAsyncInput<
   TAccountHost extends string = string,
   TAccountHostProfile extends string = string,
   TAccountBooking extends string = string,
-  TAccountTreasuryConfig extends string = string,
+  TAccountGlobalConfig extends string = string,
+  TAccountEscrowConfig extends string = string,
 > = {
   host: TransactionSigner<TAccountHost>;
   hostProfile?: Address<TAccountHostProfile>;
   booking: Address<TAccountBooking>;
-  treasuryConfig?: Address<TAccountTreasuryConfig>;
+  globalConfig?: Address<TAccountGlobalConfig>;
+  escrowConfig?: Address<TAccountEscrowConfig>;
 };
 
 export async function getHostAcceptBookingInstructionAsync<
   TAccountHost extends string,
   TAccountHostProfile extends string,
   TAccountBooking extends string,
-  TAccountTreasuryConfig extends string,
+  TAccountGlobalConfig extends string,
+  TAccountEscrowConfig extends string,
   TProgramAddress extends Address = typeof STAYKE_ESCROW_PROGRAM_ADDRESS,
 >(
   input: HostAcceptBookingAsyncInput<
     TAccountHost,
     TAccountHostProfile,
     TAccountBooking,
-    TAccountTreasuryConfig
+    TAccountGlobalConfig,
+    TAccountEscrowConfig
   >,
   config?: { programAddress?: TProgramAddress },
 ): Promise<
@@ -138,7 +146,8 @@ export async function getHostAcceptBookingInstructionAsync<
     TAccountHost,
     TAccountHostProfile,
     TAccountBooking,
-    TAccountTreasuryConfig
+    TAccountGlobalConfig,
+    TAccountEscrowConfig
   >
 > {
   // Program address.
@@ -150,7 +159,8 @@ export async function getHostAcceptBookingInstructionAsync<
     host: { value: input.host ?? null, isWritable: true },
     hostProfile: { value: input.hostProfile ?? null, isWritable: false },
     booking: { value: input.booking ?? null, isWritable: true },
-    treasuryConfig: { value: input.treasuryConfig ?? null, isWritable: false },
+    globalConfig: { value: input.globalConfig ?? null, isWritable: false },
+    escrowConfig: { value: input.escrowConfig ?? null, isWritable: false },
   };
   const accounts = originalAccounts as Record<
     keyof typeof originalAccounts,
@@ -172,8 +182,21 @@ export async function getHostAcceptBookingInstructionAsync<
       ],
     });
   }
-  if (!accounts.treasuryConfig.value) {
-    accounts.treasuryConfig.value = await findTreasuryConfigPda();
+  if (!accounts.globalConfig.value) {
+    accounts.globalConfig.value = await getProgramDerivedAddress({
+      programAddress:
+        "8yHjmyUgA9x4pzftX1cwJt8SnG8iV1zxLjEP77HKc9YP" as Address<"8yHjmyUgA9x4pzftX1cwJt8SnG8iV1zxLjEP77HKc9YP">,
+      seeds: [
+        getBytesEncoder().encode(
+          new Uint8Array([
+            103, 108, 111, 98, 97, 108, 95, 99, 111, 110, 102, 105, 103,
+          ]),
+        ),
+      ],
+    });
+  }
+  if (!accounts.escrowConfig.value) {
+    accounts.escrowConfig.value = await findEscrowConfigPda();
   }
 
   const getAccountMeta = getAccountMetaFactory(programAddress, "programId");
@@ -182,7 +205,8 @@ export async function getHostAcceptBookingInstructionAsync<
       getAccountMeta(accounts.host),
       getAccountMeta(accounts.hostProfile),
       getAccountMeta(accounts.booking),
-      getAccountMeta(accounts.treasuryConfig),
+      getAccountMeta(accounts.globalConfig),
+      getAccountMeta(accounts.escrowConfig),
     ],
     data: getHostAcceptBookingInstructionDataEncoder().encode({}),
     programAddress,
@@ -191,7 +215,8 @@ export async function getHostAcceptBookingInstructionAsync<
     TAccountHost,
     TAccountHostProfile,
     TAccountBooking,
-    TAccountTreasuryConfig
+    TAccountGlobalConfig,
+    TAccountEscrowConfig
   >);
 }
 
@@ -199,26 +224,30 @@ export type HostAcceptBookingInput<
   TAccountHost extends string = string,
   TAccountHostProfile extends string = string,
   TAccountBooking extends string = string,
-  TAccountTreasuryConfig extends string = string,
+  TAccountGlobalConfig extends string = string,
+  TAccountEscrowConfig extends string = string,
 > = {
   host: TransactionSigner<TAccountHost>;
   hostProfile: Address<TAccountHostProfile>;
   booking: Address<TAccountBooking>;
-  treasuryConfig: Address<TAccountTreasuryConfig>;
+  globalConfig: Address<TAccountGlobalConfig>;
+  escrowConfig: Address<TAccountEscrowConfig>;
 };
 
 export function getHostAcceptBookingInstruction<
   TAccountHost extends string,
   TAccountHostProfile extends string,
   TAccountBooking extends string,
-  TAccountTreasuryConfig extends string,
+  TAccountGlobalConfig extends string,
+  TAccountEscrowConfig extends string,
   TProgramAddress extends Address = typeof STAYKE_ESCROW_PROGRAM_ADDRESS,
 >(
   input: HostAcceptBookingInput<
     TAccountHost,
     TAccountHostProfile,
     TAccountBooking,
-    TAccountTreasuryConfig
+    TAccountGlobalConfig,
+    TAccountEscrowConfig
   >,
   config?: { programAddress?: TProgramAddress },
 ): HostAcceptBookingInstruction<
@@ -226,7 +255,8 @@ export function getHostAcceptBookingInstruction<
   TAccountHost,
   TAccountHostProfile,
   TAccountBooking,
-  TAccountTreasuryConfig
+  TAccountGlobalConfig,
+  TAccountEscrowConfig
 > {
   // Program address.
   const programAddress =
@@ -237,7 +267,8 @@ export function getHostAcceptBookingInstruction<
     host: { value: input.host ?? null, isWritable: true },
     hostProfile: { value: input.hostProfile ?? null, isWritable: false },
     booking: { value: input.booking ?? null, isWritable: true },
-    treasuryConfig: { value: input.treasuryConfig ?? null, isWritable: false },
+    globalConfig: { value: input.globalConfig ?? null, isWritable: false },
+    escrowConfig: { value: input.escrowConfig ?? null, isWritable: false },
   };
   const accounts = originalAccounts as Record<
     keyof typeof originalAccounts,
@@ -250,7 +281,8 @@ export function getHostAcceptBookingInstruction<
       getAccountMeta(accounts.host),
       getAccountMeta(accounts.hostProfile),
       getAccountMeta(accounts.booking),
-      getAccountMeta(accounts.treasuryConfig),
+      getAccountMeta(accounts.globalConfig),
+      getAccountMeta(accounts.escrowConfig),
     ],
     data: getHostAcceptBookingInstructionDataEncoder().encode({}),
     programAddress,
@@ -259,7 +291,8 @@ export function getHostAcceptBookingInstruction<
     TAccountHost,
     TAccountHostProfile,
     TAccountBooking,
-    TAccountTreasuryConfig
+    TAccountGlobalConfig,
+    TAccountEscrowConfig
   >);
 }
 
@@ -272,7 +305,8 @@ export type ParsedHostAcceptBookingInstruction<
     host: TAccountMetas[0];
     hostProfile: TAccountMetas[1];
     booking: TAccountMetas[2];
-    treasuryConfig: TAccountMetas[3];
+    globalConfig: TAccountMetas[3];
+    escrowConfig: TAccountMetas[4];
   };
   data: HostAcceptBookingInstructionData;
 };
@@ -285,7 +319,7 @@ export function parseHostAcceptBookingInstruction<
     InstructionWithAccounts<TAccountMetas> &
     InstructionWithData<ReadonlyUint8Array>,
 ): ParsedHostAcceptBookingInstruction<TProgram, TAccountMetas> {
-  if (instruction.accounts.length < 4) {
+  if (instruction.accounts.length < 5) {
     // TODO: Coded error.
     throw new Error("Not enough accounts");
   }
@@ -301,7 +335,8 @@ export function parseHostAcceptBookingInstruction<
       host: getNextAccount(),
       hostProfile: getNextAccount(),
       booking: getNextAccount(),
-      treasuryConfig: getNextAccount(),
+      globalConfig: getNextAccount(),
+      escrowConfig: getNextAccount(),
     },
     data: getHostAcceptBookingInstructionDataDecoder().decode(instruction.data),
   };

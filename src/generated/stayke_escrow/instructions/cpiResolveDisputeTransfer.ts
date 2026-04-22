@@ -14,6 +14,7 @@ import {
   getBooleanEncoder,
   getBytesDecoder,
   getBytesEncoder,
+  getProgramDerivedAddress,
   getStructDecoder,
   getStructEncoder,
   getU16Decoder,
@@ -56,6 +57,7 @@ export type CpiResolveDisputeTransferInstruction<
   TProgram extends string = typeof STAYKE_ESCROW_PROGRAM_ADDRESS,
   TAccountAuthority extends string | AccountMeta<string> = string,
   TAccountBooking extends string | AccountMeta<string> = string,
+  TAccountGlobalConfig extends string | AccountMeta<string> = string,
   TAccountEscrowConfig extends string | AccountMeta<string> = string,
   TAccountEscrowTokenAccount extends string | AccountMeta<string> = string,
   TAccountHostTokenAccount extends string | AccountMeta<string> = string,
@@ -77,6 +79,9 @@ export type CpiResolveDisputeTransferInstruction<
       TAccountBooking extends string
         ? WritableAccount<TAccountBooking>
         : TAccountBooking,
+      TAccountGlobalConfig extends string
+        ? ReadonlyAccount<TAccountGlobalConfig>
+        : TAccountGlobalConfig,
       TAccountEscrowConfig extends string
         ? ReadonlyAccount<TAccountEscrowConfig>
         : TAccountEscrowConfig,
@@ -148,6 +153,7 @@ export function getCpiResolveDisputeTransferInstructionDataCodec(): FixedSizeCod
 export type CpiResolveDisputeTransferAsyncInput<
   TAccountAuthority extends string = string,
   TAccountBooking extends string = string,
+  TAccountGlobalConfig extends string = string,
   TAccountEscrowConfig extends string = string,
   TAccountEscrowTokenAccount extends string = string,
   TAccountHostTokenAccount extends string = string,
@@ -158,6 +164,7 @@ export type CpiResolveDisputeTransferAsyncInput<
 > = {
   authority: TransactionSigner<TAccountAuthority>;
   booking: Address<TAccountBooking>;
+  globalConfig?: Address<TAccountGlobalConfig>;
   escrowConfig?: Address<TAccountEscrowConfig>;
   escrowTokenAccount?: Address<TAccountEscrowTokenAccount>;
   /** Host's USDC */
@@ -175,6 +182,7 @@ export type CpiResolveDisputeTransferAsyncInput<
 export async function getCpiResolveDisputeTransferInstructionAsync<
   TAccountAuthority extends string,
   TAccountBooking extends string,
+  TAccountGlobalConfig extends string,
   TAccountEscrowConfig extends string,
   TAccountEscrowTokenAccount extends string,
   TAccountHostTokenAccount extends string,
@@ -187,6 +195,7 @@ export async function getCpiResolveDisputeTransferInstructionAsync<
   input: CpiResolveDisputeTransferAsyncInput<
     TAccountAuthority,
     TAccountBooking,
+    TAccountGlobalConfig,
     TAccountEscrowConfig,
     TAccountEscrowTokenAccount,
     TAccountHostTokenAccount,
@@ -201,6 +210,7 @@ export async function getCpiResolveDisputeTransferInstructionAsync<
     TProgramAddress,
     TAccountAuthority,
     TAccountBooking,
+    TAccountGlobalConfig,
     TAccountEscrowConfig,
     TAccountEscrowTokenAccount,
     TAccountHostTokenAccount,
@@ -218,6 +228,7 @@ export async function getCpiResolveDisputeTransferInstructionAsync<
   const originalAccounts = {
     authority: { value: input.authority ?? null, isWritable: false },
     booking: { value: input.booking ?? null, isWritable: true },
+    globalConfig: { value: input.globalConfig ?? null, isWritable: false },
     escrowConfig: { value: input.escrowConfig ?? null, isWritable: false },
     escrowTokenAccount: {
       value: input.escrowTokenAccount ?? null,
@@ -247,6 +258,19 @@ export async function getCpiResolveDisputeTransferInstructionAsync<
   const args = { ...input };
 
   // Resolve default values.
+  if (!accounts.globalConfig.value) {
+    accounts.globalConfig.value = await getProgramDerivedAddress({
+      programAddress:
+        "8yHjmyUgA9x4pzftX1cwJt8SnG8iV1zxLjEP77HKc9YP" as Address<"8yHjmyUgA9x4pzftX1cwJt8SnG8iV1zxLjEP77HKc9YP">,
+      seeds: [
+        getBytesEncoder().encode(
+          new Uint8Array([
+            103, 108, 111, 98, 97, 108, 95, 99, 111, 110, 102, 105, 103,
+          ]),
+        ),
+      ],
+    });
+  }
   if (!accounts.escrowConfig.value) {
     accounts.escrowConfig.value = await findEscrowConfigPda();
   }
@@ -265,6 +289,7 @@ export async function getCpiResolveDisputeTransferInstructionAsync<
     accounts: [
       getAccountMeta(accounts.authority),
       getAccountMeta(accounts.booking),
+      getAccountMeta(accounts.globalConfig),
       getAccountMeta(accounts.escrowConfig),
       getAccountMeta(accounts.escrowTokenAccount),
       getAccountMeta(accounts.hostTokenAccount),
@@ -281,6 +306,7 @@ export async function getCpiResolveDisputeTransferInstructionAsync<
     TProgramAddress,
     TAccountAuthority,
     TAccountBooking,
+    TAccountGlobalConfig,
     TAccountEscrowConfig,
     TAccountEscrowTokenAccount,
     TAccountHostTokenAccount,
@@ -294,6 +320,7 @@ export async function getCpiResolveDisputeTransferInstructionAsync<
 export type CpiResolveDisputeTransferInput<
   TAccountAuthority extends string = string,
   TAccountBooking extends string = string,
+  TAccountGlobalConfig extends string = string,
   TAccountEscrowConfig extends string = string,
   TAccountEscrowTokenAccount extends string = string,
   TAccountHostTokenAccount extends string = string,
@@ -304,6 +331,7 @@ export type CpiResolveDisputeTransferInput<
 > = {
   authority: TransactionSigner<TAccountAuthority>;
   booking: Address<TAccountBooking>;
+  globalConfig: Address<TAccountGlobalConfig>;
   escrowConfig: Address<TAccountEscrowConfig>;
   escrowTokenAccount: Address<TAccountEscrowTokenAccount>;
   /** Host's USDC */
@@ -321,6 +349,7 @@ export type CpiResolveDisputeTransferInput<
 export function getCpiResolveDisputeTransferInstruction<
   TAccountAuthority extends string,
   TAccountBooking extends string,
+  TAccountGlobalConfig extends string,
   TAccountEscrowConfig extends string,
   TAccountEscrowTokenAccount extends string,
   TAccountHostTokenAccount extends string,
@@ -333,6 +362,7 @@ export function getCpiResolveDisputeTransferInstruction<
   input: CpiResolveDisputeTransferInput<
     TAccountAuthority,
     TAccountBooking,
+    TAccountGlobalConfig,
     TAccountEscrowConfig,
     TAccountEscrowTokenAccount,
     TAccountHostTokenAccount,
@@ -346,6 +376,7 @@ export function getCpiResolveDisputeTransferInstruction<
   TProgramAddress,
   TAccountAuthority,
   TAccountBooking,
+  TAccountGlobalConfig,
   TAccountEscrowConfig,
   TAccountEscrowTokenAccount,
   TAccountHostTokenAccount,
@@ -362,6 +393,7 @@ export function getCpiResolveDisputeTransferInstruction<
   const originalAccounts = {
     authority: { value: input.authority ?? null, isWritable: false },
     booking: { value: input.booking ?? null, isWritable: true },
+    globalConfig: { value: input.globalConfig ?? null, isWritable: false },
     escrowConfig: { value: input.escrowConfig ?? null, isWritable: false },
     escrowTokenAccount: {
       value: input.escrowTokenAccount ?? null,
@@ -401,6 +433,7 @@ export function getCpiResolveDisputeTransferInstruction<
     accounts: [
       getAccountMeta(accounts.authority),
       getAccountMeta(accounts.booking),
+      getAccountMeta(accounts.globalConfig),
       getAccountMeta(accounts.escrowConfig),
       getAccountMeta(accounts.escrowTokenAccount),
       getAccountMeta(accounts.hostTokenAccount),
@@ -417,6 +450,7 @@ export function getCpiResolveDisputeTransferInstruction<
     TProgramAddress,
     TAccountAuthority,
     TAccountBooking,
+    TAccountGlobalConfig,
     TAccountEscrowConfig,
     TAccountEscrowTokenAccount,
     TAccountHostTokenAccount,
@@ -435,16 +469,17 @@ export type ParsedCpiResolveDisputeTransferInstruction<
   accounts: {
     authority: TAccountMetas[0];
     booking: TAccountMetas[1];
-    escrowConfig: TAccountMetas[2];
-    escrowTokenAccount: TAccountMetas[3];
+    globalConfig: TAccountMetas[2];
+    escrowConfig: TAccountMetas[3];
+    escrowTokenAccount: TAccountMetas[4];
     /** Host's USDC */
-    hostTokenAccount: TAccountMetas[4];
+    hostTokenAccount: TAccountMetas[5];
     /** Guest's USDC */
-    guestTokenAccount: TAccountMetas[5];
+    guestTokenAccount: TAccountMetas[6];
     /** Platform vault */
-    platformVaultTokenAccount: TAccountMetas[6];
-    mint: TAccountMetas[7];
-    tokenProgram: TAccountMetas[8];
+    platformVaultTokenAccount: TAccountMetas[7];
+    mint: TAccountMetas[8];
+    tokenProgram: TAccountMetas[9];
   };
   data: CpiResolveDisputeTransferInstructionData;
 };
@@ -457,7 +492,7 @@ export function parseCpiResolveDisputeTransferInstruction<
     InstructionWithAccounts<TAccountMetas> &
     InstructionWithData<ReadonlyUint8Array>,
 ): ParsedCpiResolveDisputeTransferInstruction<TProgram, TAccountMetas> {
-  if (instruction.accounts.length < 9) {
+  if (instruction.accounts.length < 10) {
     // TODO: Coded error.
     throw new Error("Not enough accounts");
   }
@@ -472,6 +507,7 @@ export function parseCpiResolveDisputeTransferInstruction<
     accounts: {
       authority: getNextAccount(),
       booking: getNextAccount(),
+      globalConfig: getNextAccount(),
       escrowConfig: getNextAccount(),
       escrowTokenAccount: getNextAccount(),
       hostTokenAccount: getNextAccount(),

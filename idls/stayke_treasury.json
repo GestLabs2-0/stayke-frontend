@@ -52,6 +52,68 @@
           }
         },
         {
+          "name": "global_config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  108,
+                  111,
+                  98,
+                  97,
+                  108,
+                  95,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                118,
+                109,
+                66,
+                74,
+                177,
+                144,
+                211,
+                97,
+                159,
+                13,
+                99,
+                204,
+                121,
+                183,
+                217,
+                255,
+                57,
+                226,
+                31,
+                209,
+                61,
+                90,
+                8,
+                214,
+                12,
+                120,
+                222,
+                7,
+                128,
+                152,
+                5,
+                84
+              ]
+            }
+          }
+        },
+        {
           "name": "treasury_vault",
           "writable": true
         },
@@ -139,6 +201,68 @@
                 ]
               }
             ]
+          }
+        },
+        {
+          "name": "global_config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  108,
+                  111,
+                  98,
+                  97,
+                  108,
+                  95,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                118,
+                109,
+                66,
+                74,
+                177,
+                144,
+                211,
+                97,
+                159,
+                13,
+                99,
+                204,
+                121,
+                183,
+                217,
+                255,
+                57,
+                226,
+                31,
+                209,
+                61,
+                90,
+                8,
+                214,
+                12,
+                120,
+                222,
+                7,
+                128,
+                152,
+                5,
+                84
+              ]
+            }
           }
         },
         {
@@ -309,6 +433,68 @@
           "name": "usdc_mint"
         },
         {
+          "name": "global_config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  108,
+                  111,
+                  98,
+                  97,
+                  108,
+                  95,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                118,
+                109,
+                66,
+                74,
+                177,
+                144,
+                211,
+                97,
+                159,
+                13,
+                99,
+                204,
+                121,
+                183,
+                217,
+                255,
+                57,
+                226,
+                31,
+                209,
+                61,
+                90,
+                8,
+                214,
+                12,
+                120,
+                222,
+                7,
+                128,
+                152,
+                5,
+                84
+              ]
+            }
+          }
+        },
+        {
           "name": "token_program"
         },
         {
@@ -316,12 +502,7 @@
           "address": "11111111111111111111111111111111"
         }
       ],
-      "args": [
-        {
-          "name": "minimum_deposit",
-          "type": "u64"
-        }
-      ]
+      "args": []
     },
     {
       "name": "lend",
@@ -444,6 +625,68 @@
           }
         },
         {
+          "name": "global_config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  108,
+                  111,
+                  98,
+                  97,
+                  108,
+                  95,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                118,
+                109,
+                66,
+                74,
+                177,
+                144,
+                211,
+                97,
+                159,
+                13,
+                99,
+                204,
+                121,
+                183,
+                217,
+                255,
+                57,
+                226,
+                31,
+                209,
+                61,
+                90,
+                8,
+                214,
+                12,
+                120,
+                222,
+                7,
+                128,
+                152,
+                5,
+                84
+              ]
+            }
+          }
+        },
+        {
           "name": "treasury_vault",
           "docs": [
             "Treasury vault — source of the withdrawal."
@@ -562,41 +805,82 @@
     },
     {
       "code": 6003,
-      "name": "InvalidTokenMint",
-      "msg": "The token mint does not match the configured USDC mint"
-    },
-    {
-      "code": 6004,
       "name": "InsufficientBalance",
       "msg": "Insufficient guarantee balance to withdraw the requested amount"
     },
     {
-      "code": 6005,
+      "code": 6004,
       "name": "ZeroWithdrawal",
       "msg": "Withdrawal amount must be greater than zero"
     },
     {
-      "code": 6006,
+      "code": 6005,
       "name": "ActiveBookingExists",
       "msg": "User has an active booking and cannot withdraw their guarantee"
     },
     {
-      "code": 6007,
+      "code": 6006,
       "name": "UserBanned",
       "msg": "User is banned and cannot perform this action"
     },
     {
-      "code": 6008,
+      "code": 6007,
       "name": "Unauthorized",
       "msg": "Only the authority can perform this action"
     },
     {
-      "code": 6009,
+      "code": 6008,
       "name": "LendingNotEnabled",
       "msg": "Lending is not yet enabled"
     }
   ],
   "types": [
+    {
+      "name": "GlobalConfig",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "minimum_deposit",
+            "type": "u64"
+          },
+          {
+            "name": "fee_bps",
+            "type": "u64"
+          },
+          {
+            "name": "usdc_mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "is_initialized",
+            "type": "bool"
+          },
+          {
+            "name": "platform_vault",
+            "docs": [
+              "Platform fee vault token account."
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "platform_vault_bump",
+            "docs": [
+              "Bump of the platform vault authority PDA."
+            ],
+            "type": "u8"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
     {
       "name": "TreasuryConfig",
       "docs": [
@@ -630,18 +914,8 @@
             "type": "u8"
           },
           {
-            "name": "usdc_mint",
-            "docs": [
-              "The USDC mint accepted by this treasury."
-            ],
+            "name": "global_config",
             "type": "pubkey"
-          },
-          {
-            "name": "minimum_deposit",
-            "docs": [
-              "Minimum deposit amount (in USDC lamports) required from each user."
-            ],
-            "type": "u64"
           },
           {
             "name": "is_initialized",
@@ -724,9 +998,19 @@
   ],
   "constants": [
     {
-      "name": "SEED",
+      "name": "TREASURY_CONFIG_SEED",
       "type": "string",
-      "value": "\"anchor\""
+      "value": "\"treasury_config\""
+    },
+    {
+      "name": "TREASURY_SEED",
+      "type": "string",
+      "value": "\"treasury\""
+    },
+    {
+      "name": "TREASURY_VAULT_SEED",
+      "type": "string",
+      "value": "\"treasury_vault\""
     }
   ]
 }
