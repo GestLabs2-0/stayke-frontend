@@ -5,4 +5,10 @@ export const ENVIRONMENT = process.env.NEXT_PUBLIC_ENVIRONMENT || "development";
 
 export const API_CONFIG = {
   BASE_URL: process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3030",
+  URI_API: "/api/v1.0",
+};
+
+//TODO: Esperar a tener el Token correcto
+export const LOCAL_STORAGE_KEYS = {
+  token: "access-token",
 };

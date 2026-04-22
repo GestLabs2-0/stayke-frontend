@@ -6,7 +6,6 @@ export interface ApiResponse<T> {
 }
 
 export interface HttpClientInterface {
-  baseUrl: string;
   get<T>(uri: string, config?: object): Promise<T>;
   post<T>(uri: string, data?: object, config?: object): Promise<T>;
   put<T>(uri: string, data?: object, config?: object): Promise<T>;
