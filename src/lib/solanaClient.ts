@@ -41,3 +41,5 @@ export function createSolanaClient(cluster: ClusterMoniker) {
 }
 
 export type SolanaClient = ReturnType<typeof createSolanaClient>;
+
+export type RpcType = Pick<SolanaClient, "rpc">;
