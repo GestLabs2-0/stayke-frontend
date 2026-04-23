@@ -5,7 +5,6 @@ import {
   findIdentityPda,
   findReputationProfilePda,
 } from "@/src/generated/stayke_core";
-import { getExplorerUrl } from "@/src/lib/explorer";
 import type { registerUserOnChain } from "@/src/types/staykeWeb3";
 import {
   address,
