@@ -5,6 +5,9 @@ export interface RegisterFormData {
   wallet: string;
   firstName: string;
   lastName: string;
+  country: string;
+  documentType: string;
+  documentNumber: string | number;
   email: string;
   phone: string;
   address: string;
