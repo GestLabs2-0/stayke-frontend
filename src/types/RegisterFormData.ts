@@ -17,5 +17,8 @@ export interface RegisterFormData {
 
 export type StepRenderer = (props: {
   form: RegisterFormData;
-  onChange: (field: keyof RegisterFormData, value: unknown) => void;
+  onChange: <K extends keyof RegisterFormData>(
+    field: K,
+    value: RegisterFormData[K]
+  ) => void;
 }) => React.ReactNode;

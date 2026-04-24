@@ -22,9 +22,30 @@ export const Register = () => {
 
   const totalSteps = STEPS.length;
 
-  const [form, setForm] = useState<Partial<RegisterFormData>>({});
+  //Start Data Registration
+  const [form, setForm] = useState<RegisterFormData>({
+    dni: "",
+    wallet: "",
+    firstName: "",
+    lastName: "",
+    country: "",
+    documentType: "",
+    documentNumber: "",
+    email: "",
+    phone: "",
+    address: "",
+    image: "",
+    isHost: false,
+  });
 
-  const onChange = (field: keyof RegisterFormData, value: any) => {
+  const onChange = <K extends keyof RegisterFormData>(
+    field: K,
+    value: RegisterFormData[K]
+  ) => {
+    console.log("FIELD:", field);
+    console.log("VALUE:", value);
+    console.log("TYPE:", typeof value);
+
     setForm((prev) => ({
       ...prev,
       [field]: value,

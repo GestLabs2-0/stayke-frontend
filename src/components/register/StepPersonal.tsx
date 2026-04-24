@@ -6,18 +6,26 @@ import { Field } from "../shared/Field/Field";
 import { CountrySelector } from "../shared/Field/CountrySelector";
 import type { SelectMenuOption } from "@/src/types/SelectMenuOption";
 import type { RegisterFormData } from "@/src/types/RegisterFormData";
+import { countries } from "country-data-list";
+import { DOCUMENT_TYPES } from "../ui/DOCUMENT_TYPES";
+import { DocumentTypeSelector } from "../shared/Field/DocumentSelector";
 
 interface Props {
   form: RegisterFormData;
   onChange: (field: keyof RegisterFormData, value: string) => void;
 }
-import { COUNTRIES } from "../ui/COUNTRIES";
-import { DOCUMENT_TYPES } from "../ui/DOCUMENT_TYPES";
-import { DocumentTypeSelector } from "../shared/Field/DocumentSelector";
 
 export const StepPersonal = ({ form, onChange }: Props) => {
   const [countryOpen, setCountryOpen] = useState<boolean>(false);
   const [docTypeOpen, setDocTypeOpen] = useState<boolean>(false);
+
+  const COUNTRIESLIST: SelectMenuOption[] = countries.all
+    .filter((c) => c.alpha2 && c.alpha2.trim() !== "")
+    .map((c) => ({
+      value: c.alpha2.toLowerCase(),
+      title: c.name,
+      label: c.alpha2.toLowerCase(),
+    }));
 
   const handleImage = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -29,7 +37,7 @@ export const StepPersonal = ({ form, onChange }: Props) => {
   };
 
   const selectedCountry =
-    COUNTRIES.find((c) => c.value === form.country) ??
+    COUNTRIESLIST.find((c) => c.value === form.country) ??
     ({
       value: "",
       title: "Select nationality",

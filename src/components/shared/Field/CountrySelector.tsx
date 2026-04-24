@@ -1,11 +1,19 @@
 "use client";
 
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronDown, Search } from "lucide-react";
-import { useState } from "react";
-import { COUNTRIES } from "../../ui/COUNTRIES";
+import { countries } from "country-data-list";
+import { CircleFlag } from "react-circle-flags";
 import type { SelectMenuOption } from "@/src/types/SelectMenuOption";
+
+const COUNTRIESLIST = countries.all
+  .filter((c) => c.alpha2 && c.alpha2.trim() !== "")
+  .map((c) => ({
+    value: c.alpha2.toLowerCase(),
+    title: c.name,
+    label: c.alpha2.toLowerCase(),
+  }));
 
 interface CountrySelectorProps {
   id: string;
@@ -25,7 +33,10 @@ export const CountrySelector = ({
   const ref = useRef<HTMLDivElement>(null);
   const [query, setQuery] = useState("");
 
-  // Cierra al hacer click fuera
+  const filtered = COUNTRIESLIST.filter((c) =>
+    c.title.toLowerCase().includes(query.toLowerCase())
+  );
+
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (ref.current && !ref.current.contains(e.target as Node)) {
@@ -36,9 +47,9 @@ export const CountrySelector = ({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [open, onToggle]);
 
-  const filtered = COUNTRIES.filter((c) =>
-    c.title.toLowerCase().includes(query.toLowerCase())
-  );
+  useEffect(() => {
+    if (!open) setQuery("");
+  }, [open]);
 
   return (
     <div ref={ref} className="relative w-full">
@@ -46,14 +57,29 @@ export const CountrySelector = ({
       <button
         type="button"
         onClick={onToggle}
-        className="w-full flex items-center justify-between gap-2 rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm hover:bg-muted/40  focus:border-primary focus:outline-none  transition-colors"
+        className="w-full flex items-center justify-between gap-2 rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm hover:bg-muted/40 focus:border-primary focus:outline-none transition-colors"
         aria-haspopup="listbox"
         aria-expanded={open}
         id={id}
       >
         <span className="flex items-center gap-2 truncate">
-          <span className="text-lg leading-none">{selectedValue.label}</span>
-          <span className="truncate">{selectedValue.title}</span>
+          {selectedValue.value ? (
+            <>
+              <CircleFlag
+                countryCode={selectedValue.value}
+                height={20}
+                width={20}
+                className="shrink-0"
+              />
+              <span className="truncate text-foreground">
+                {selectedValue.title}
+              </span>
+            </>
+          ) : (
+            <span className="truncate text-muted-foreground">
+              🌎 Select nationality
+            </span>
+          )}
         </span>
         <motion.span
           animate={{ rotate: open ? 180 : 0 }}
@@ -83,7 +109,7 @@ export const CountrySelector = ({
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search country..."
-                className="w-full bg-transparent text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
+                className="w-full text-sm text-foreground placeholder:text-muted-foreground focus:outline-none "
               />
             </div>
 
@@ -97,9 +123,9 @@ export const CountrySelector = ({
                   No countries found
                 </li>
               ) : (
-                filtered.map((country) => (
+                filtered.map((country, index) => (
                   <li
-                    key={country.value}
+                    key={`${country.value}-${index}`}
                     role="option"
                     aria-selected={selectedValue.value === country.value}
                     onClick={() => {
@@ -114,9 +140,12 @@ export const CountrySelector = ({
                           : "text-popover-foreground hover:bg-muted"
                       }`}
                   >
-                    <span className="text-base leading-none">
-                      {country.label}
-                    </span>
+                    <CircleFlag
+                      countryCode={country.value}
+                      height={20}
+                      width={20}
+                      className="shrink-0"
+                    />
                     <span>{country.title}</span>
                   </li>
                 ))
