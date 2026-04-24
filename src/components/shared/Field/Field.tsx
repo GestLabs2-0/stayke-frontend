@@ -18,7 +18,7 @@ export const Field = ({
       value={value}
       onChange={(e) => onChange(e.target.value)}
       placeholder={placeholder}
-      className="rounded-xl border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none transition-colors"
+      className="rounded-md border border-border bg-background  px-3 py-2 shadow-sm  text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none transition-colors"
     />
   </div>
 );

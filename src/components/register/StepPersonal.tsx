@@ -1,36 +1,47 @@
 "use client";
-
-//Library
 import { Upload } from "lucide-react";
-//React
 import { useState } from "react";
-//Next
 import Image from "next/image";
-//Own components
 import { Field } from "../shared/Field/Field";
-//Type
+import { CountrySelector } from "../shared/Field/CountrySelector";
+import type { SelectMenuOption } from "@/src/types/SelectMenuOption";
 import type { RegisterFormData } from "@/src/types/RegisterFormData";
 
 interface Props {
   form: RegisterFormData;
   onChange: (field: keyof RegisterFormData, value: string) => void;
 }
+import { COUNTRIES } from "../ui/COUNTRIES";
+import { DOCUMENT_TYPES } from "../ui/DOCUMENT_TYPES";
+import { DocumentTypeSelector } from "../shared/Field/DocumentSelector";
 
 export const StepPersonal = ({ form, onChange }: Props) => {
+  const [countryOpen, setCountryOpen] = useState<boolean>(false);
+  const [docTypeOpen, setDocTypeOpen] = useState<boolean>(false);
+
   const handleImage = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
-      reader.onloadend = () => {
-        const base64String = reader.result as string;
-        onChange("image", base64String);
-      };
+      reader.onloadend = () => onChange("image", reader.result as string);
       reader.readAsDataURL(file);
     }
   };
 
+  const selectedCountry =
+    COUNTRIES.find((c) => c.value === form.country) ??
+    ({
+      value: "",
+      title: "Select nationality",
+      label: "🌍",
+    } as SelectMenuOption);
+
+  const selectedDocType =
+    DOCUMENT_TYPES.find((d) => d.value === form.documentType) ?? null;
+
   return (
     <div className="flex flex-col gap-5">
+      {/* Foto de perfil */}
       <div className="flex flex-col items-center gap-3">
         <label className="relative h-24 w-24 rounded-full border-2 border-dashed border-border bg-muted/30 flex items-center justify-center overflow-hidden cursor-pointer hover:border-primary transition-colors">
           {form.image ? (
@@ -56,7 +67,8 @@ export const StepPersonal = ({ form, onChange }: Props) => {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      {/* Nombre */}
+      <div className="grid grid-cols-1 gap-4 ">
         <Field
           label="First Name"
           value={form.firstName}
@@ -71,12 +83,55 @@ export const StepPersonal = ({ form, onChange }: Props) => {
         />
       </div>
 
-      <Field
-        label="DNI / ID Number"
-        value={form.dni}
-        onChange={(v) => onChange("dni", v)}
-        placeholder="12345678"
-      />
+      {/* Identidad */}
+      <div className="flex flex-col gap-3">
+        <span className="text-md font-medium leading-none pb-1">Identity</span>
+
+        {/* Nacionalidad — CountrySelector estilo driaug */}
+        <div className="flex flex-col gap-1.5">
+          <label className="text-xs text-muted-foreground">Nationality</label>
+          <CountrySelector
+            id="nationality"
+            open={countryOpen}
+            onToggle={() => setCountryOpen((prev) => !prev)}
+            onChange={(val) => onChange("country", val)}
+            selectedValue={selectedCountry}
+          />
+        </div>
+
+        {/* Tipo de documento + Número */}
+        <div className="grid grid-cols-1 gap-3">
+          <div className="flex flex-col gap-1.5">
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs text-muted-foreground">
+                Document Type
+              </label>
+              <DocumentTypeSelector
+                id="document-type"
+                open={docTypeOpen}
+                onToggle={() => setDocTypeOpen((p) => !p)}
+                onChange={(val) => onChange("documentType", val)}
+                selectedValue={selectedDocType}
+              />
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <label className="text-xs text-muted-foreground">
+              Document Number
+            </label>
+            <input
+              type="text"
+              value={form.documentNumber}
+              onChange={(e) =>
+                onChange("documentNumber", e.target.value.toUpperCase())
+              }
+              placeholder="e.g. AB123456"
+              className="w-full rounded-md border bg-background px-3 py-2 text-sm text-foreground shadow-sm placeholder:text-muted-foreground focus:border-primary focus:outline-none "
+            />
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
