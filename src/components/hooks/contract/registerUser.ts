@@ -45,7 +45,6 @@ export const useRegisterUser = () => {
 
     try {
       setLoading(true);
-      console.log(id);
 
       let authority = createNoopSigner(authorityAddr);
 
@@ -64,7 +63,7 @@ export const useRegisterUser = () => {
         (tx) => appendTransactionMessageInstructions([registerInstruction], tx),
         (tx) => compileTransaction(tx)
       );
-      console.log(tx);
+
       const signedTxs = await signer.signTransactions([tx]);
       const signedTx = signedTxs[0];
       // Required to avoid "Transaction too large" errors. This checks the transaction size before sending.
