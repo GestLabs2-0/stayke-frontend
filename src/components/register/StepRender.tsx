@@ -1,7 +1,6 @@
 //Own components
 import { StepPersonal } from "./StepPersonal";
 import { StepContact } from "./StepContact";
-import { StepRole } from "./StepRole";
 import { RegisterFormData } from "@/src/types/RegisterFormData";
 //Type
 
@@ -15,8 +14,5 @@ export const STEP_COMPONENTS: Record<number, StepRenderer> = {
   1: ({ form, onChange }) => <StepPersonal form={form} onChange={onChange} />,
   2: ({ form, onChange }) => (
     <StepContact form={form} onChange={onChange as any} />
-  ),
-  3: ({ form, onChange }) => (
-    <StepRole form={form} onChange={onChange as any} />
   ),
 };

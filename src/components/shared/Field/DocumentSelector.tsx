@@ -3,7 +3,7 @@
 import { useRef, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronDown, FileText } from "lucide-react";
-import { DOCUMENT_TYPES } from "../../ui/DOCUMENT_TYPES";
+import { DOCUMENT_TYPES } from "../../../constants/DocumentTypes";
 import { DocumentTypeSelectorProps } from "@/src/types/DocumentMenuOption";
 
 export const DocumentTypeSelector = ({

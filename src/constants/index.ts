@@ -170,7 +170,6 @@ export const properties = [
 export const STEPS = [
   { id: 1, label: "Personal", icon: User },
   { id: 2, label: "Contact", icon: MapPin },
-  { id: 3, label: "Role", icon: Shield },
 ] as const;
 
 export const footerLinks = [

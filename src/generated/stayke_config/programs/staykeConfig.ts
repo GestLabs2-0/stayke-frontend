@@ -22,7 +22,7 @@ import {
 } from "../instructions";
 
 export const STAYKE_CONFIG_PROGRAM_ADDRESS =
-  "8yHjmyUgA9x4pzftX1cwJt8SnG8iV1zxLjEP77HKc9YP" as Address<"8yHjmyUgA9x4pzftX1cwJt8SnG8iV1zxLjEP77HKc9YP">;
+  "2GM2yLmDtz2Hyb8T5VBftERmiyJ5whKUmv6V4hBjNXMW" as Address<"2GM2yLmDtz2Hyb8T5VBftERmiyJ5whKUmv6V4hBjNXMW">;
 
 export enum StaykeConfigAccount {
   GlobalConfig,
@@ -73,7 +73,7 @@ export function identifyStaykeConfigInstruction(
 }
 
 export type ParsedStaykeConfigInstruction<
-  TProgram extends string = "8yHjmyUgA9x4pzftX1cwJt8SnG8iV1zxLjEP77HKc9YP",
+  TProgram extends string = "2GM2yLmDtz2Hyb8T5VBftERmiyJ5whKUmv6V4hBjNXMW",
 > = {
   instructionType: StaykeConfigInstruction.InitializeConfig;
 } & ParsedInitializeConfigInstruction<TProgram>;

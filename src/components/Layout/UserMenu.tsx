@@ -18,7 +18,13 @@ import { useState } from "react";
 import { usePrivy, useWallets } from "@privy-io/react-auth";
 
 import { useSolBalance } from "../hooks/useSolBalance";
-import { useCreateWallet } from "@privy-io/react-auth/solana";
+
+const userThings = {
+  firstName: "User",
+  image: null,
+  reputation: 4.8,
+  isHost: true,
+};
 
 export const UserMenu = () => {
   const { user, logout } = usePrivy();
@@ -31,25 +37,10 @@ export const UserMenu = () => {
     (acc) => acc.type === "wallet" && acc.chainType === "solana"
   );
 
-  //   if (!solanaWallet) {
-  //     useCreateWallet;
-  //   }
-
   //@ts-ignore
   const address = solanaWallet?.address;
 
   const { balance, isLoading: loadingBalance } = useSolBalance(address);
-
-  const userThings = {
-    firstName: "User",
-    image: null,
-    reputation: 4.8,
-    isHost: true,
-  };
-
-  console.log(solanaWallet);
-  console.log(wallets);
-  console.log(user);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(address);
@@ -101,13 +92,6 @@ export const UserMenu = () => {
             <div className="relative">
               {/* Top: Phantom pill + copy */}
               <div className="flex items-center justify-between mb-4">
-                <div className="inline-flex items-center gap-1.5 rounded-full border border-border/50 bg-background/60 backdrop-blur-sm px-2.5 py-1">
-                  <div className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-                  <span className="text-xs font-medium text-foreground">
-                    Phantom
-                  </span>
-                </div>
-
                 <button
                   onClick={handleCopy}
                   className="inline-flex items-center gap-1.5 rounded-full border border-border/50 bg-background/60 backdrop-blur-sm px-2.5 py-1 text-xs text-muted-foreground hover:text-primary hover:border-primary/50 transition-colors cursor-pointer"

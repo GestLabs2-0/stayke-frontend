@@ -7,7 +7,7 @@ import { CountrySelector } from "../shared/Field/CountrySelector";
 import type { SelectMenuOption } from "@/src/types/SelectMenuOption";
 import type { RegisterFormData } from "@/src/types/RegisterFormData";
 import { countries } from "country-data-list";
-import { DOCUMENT_TYPES } from "../ui/DOCUMENT_TYPES";
+import { DOCUMENT_TYPES } from "../../constants/DocumentTypes";
 import { DocumentTypeSelector } from "../shared/Field/DocumentSelector";
 
 interface Props {

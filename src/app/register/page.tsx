@@ -15,17 +15,23 @@ import { StepIndicator } from "@/src/components/register/StepIndicator";
 
 //Type
 import type { RegisterFormData } from "@/src/types/RegisterFormData";
+import { useSignStaykeTx } from "@/src/components/hooks/useSignStaykeTx";
+import { useRegisterUser } from "@/src/components/hooks/contract/registerUser";
+import { parseDoctype } from "@/src/constants/DocumentTypes";
 
 export const Register = () => {
   const [step, setStep] = useState(1);
   const [submitting, setSubmitting] = useState(false);
-
+  const signStayke = useSignStaykeTx();
+  const {
+    loading: loadingOnChain,
+    registerUser,
+    success: successOnChain,
+  } = useRegisterUser();
   const totalSteps = STEPS.length;
 
   //Start Data Registration
   const [form, setForm] = useState<RegisterFormData>({
-    dni: "",
-    wallet: "",
     firstName: "",
     lastName: "",
     country: "",
@@ -35,17 +41,12 @@ export const Register = () => {
     phone: "",
     address: "",
     image: "",
-    isHost: false,
   });
 
   const onChange = <K extends keyof RegisterFormData>(
     field: K,
     value: RegisterFormData[K]
   ) => {
-    console.log("FIELD:", field);
-    console.log("VALUE:", value);
-    console.log("TYPE:", typeof value);
-
     setForm((prev) => ({
       ...prev,
       [field]: value,
@@ -60,12 +61,28 @@ export const Register = () => {
     if (step > 1) setStep((s) => s - 1);
   };
 
-  // 🔥 Simulación de submit (loading real)
   const handleSubmit = async () => {
     try {
       setSubmitting(true);
 
-      // Simulación de request
+      const encoder = new TextEncoder();
+      const countryBytes = encoder.encode(form.country);
+
+      const documentation = `${form.country}:${form.documentType}:${form.documentNumber}`;
+      const documentationBytes = encoder.encode(documentation);
+
+      const dniHash = await window.crypto.subtle.digest(
+        "SHA-256",
+        documentationBytes
+      );
+
+      await registerUser({
+        props: signStayke,
+        id: new Uint8Array(dniHash),
+        doctype: parseDoctype(form.documentType),
+        countryCode: countryBytes,
+      });
+
       await new Promise((res) => setTimeout(res, 2000));
 
       console.log("Mock submit done");

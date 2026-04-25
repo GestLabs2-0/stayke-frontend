@@ -4,6 +4,7 @@ import {
   FullySignedTransaction,
   sendAndConfirmTransactionFactory,
   Transaction,
+  TransactionWithBlockhashLifetime,
 } from "@solana/kit";
 import { RpcType } from "../lib/solanaClient";
 import { DocType } from "../generated/stayke_core";
@@ -11,9 +12,11 @@ import { DocType } from "../generated/stayke_core";
 export interface SignStaykeTx extends RpcType {
   signer: {
     address: Address;
-    signTransactions<T extends Transaction>(
+    signTransactions<T extends Transaction & TransactionWithBlockhashLifetime>(
       transactions: readonly T[]
-    ): Promise<readonly (T & FullySignedTransaction)[]>;
+    ): Promise<
+      readonly (T & TransactionWithBlockhashLifetime & FullySignedTransaction)[]
+    >;
   } | null;
   wallet: ConnectedStandardSolanaWallet;
   sendAndConfirm: ReturnType<typeof sendAndConfirmTransactionFactory>;

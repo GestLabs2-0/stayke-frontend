@@ -7,9 +7,9 @@ import {
   FullySignedTransaction,
   getTransactionDecoder,
   getTransactionEncoder,
-  ReadonlyUint8Array,
   sendAndConfirmTransactionFactory,
   Transaction,
+  type TransactionWithBlockhashLifetime,
 } from "@solana/kit";
 import { useSolanaClient } from "@/src/lib/solanaClientContext";
 import { SignStaykeTx } from "@/src/types/staykeWeb3";
@@ -31,9 +31,15 @@ export const useSignStaykeTx = (): SignStaykeTx => {
     return {
       address: wallet.address as Address,
 
-      async signTransactions<T extends Transaction>(
+      async signTransactions<
+        T extends Transaction & TransactionWithBlockhashLifetime,
+      >(
         transactions: readonly T[]
-      ): Promise<readonly (T & FullySignedTransaction)[]> {
+      ): Promise<
+        readonly (T &
+          TransactionWithBlockhashLifetime &
+          FullySignedTransaction)[]
+      > {
         if (!wallet.signTransaction) {
           throw new Error("La wallet no admite firma de transacciones");
         }
@@ -49,11 +55,8 @@ export const useSignStaykeTx = (): SignStaykeTx => {
             const signedTx = decoder.decode(signedTransaction);
 
             return {
-              ...tx,
-              signatures: {
-                ...tx.signatures,
-                ...signedTx.signatures,
-              },
+              ...signedTx,
+              lifetimeConstraint: tx.lifetimeConstraint,
             } as T & FullySignedTransaction;
           })
         );

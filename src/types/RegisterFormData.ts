@@ -1,8 +1,6 @@
 export type Role = "host" | "client";
 
 export interface RegisterFormData {
-  dni: string;
-  wallet: string;
   firstName: string;
   lastName: string;
   country: string;
@@ -12,7 +10,6 @@ export interface RegisterFormData {
   phone: string;
   address: string;
   image: string;
-  isHost: boolean;
 }
 
 export type StepRenderer = (props: {
