@@ -1,5 +1,6 @@
 import axios, { AxiosRequestConfig } from "axios";
 import { API_CONFIG, LOCAL_STORAGE_KEYS } from "../constant";
+import { getAccessToken } from "@privy-io/react-auth";
 
 const URL_BASE = `${API_CONFIG.BASE_URL}${API_CONFIG.URI_API}`;
 
@@ -54,25 +55,25 @@ interface DeleteParams {
   options?: AxiosRequestConfig;
 }
 
-const get = ({ url = "", options = {} }: GetParams) => {
-  const { token } = getToken();
+const get = async ({ url = "", options = {} }: GetParams) => {
+  const authToken = await getAccessToken();
 
   return axios.get(readUrl(url), {
     headers: {
       ...HEADERS_DEFAULT,
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${authToken}`,
     },
     ...options,
   });
 };
 
-const post = ({
+const post = async ({
   url = "",
   body = {},
   headers = {},
   options = {},
 }: PostParams) => {
-  const { token } = getToken();
+  const authToken = await getAccessToken();
 
   const { headers: headers_, ...restOptions } = options;
 
@@ -81,38 +82,42 @@ const post = ({
       ...HEADERS_DEFAULT,
       ...headers,
       ...headers_,
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${authToken}`,
     },
     ...restOptions,
   });
 };
 
-const put = ({
+const put = async ({
   url = "",
   body = {},
   headers = {},
   options = {},
 }: PutParams) => {
-  const { token } = getToken();
+  const authToken = await getAccessToken();
 
   return axios.put(readUrl(url), body, {
     headers: {
       ...HEADERS_DEFAULT,
       ...headers,
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${authToken}`,
     },
     ...options,
   });
 };
 
-const _delete = ({ url = "", headers = {}, options = {} }: DeleteParams) => {
-  const { token } = getToken();
+const _delete = async ({
+  url = "",
+  headers = {},
+  options = {},
+}: DeleteParams) => {
+  const authToken = await getAccessToken();
 
   return axios.delete(readUrl(url), {
     headers: {
       ...HEADERS_DEFAULT,
       ...headers,
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${authToken}`,
     },
     ...options,
   });

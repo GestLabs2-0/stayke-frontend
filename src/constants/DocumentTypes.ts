@@ -2,18 +2,18 @@ import { DocumentTypeOption } from "@/src/types/DocumentMenuOption";
 import { DocType } from "../generated/stayke_core";
 
 export const DOCUMENT_TYPES: DocumentTypeOption[] = [
-  { value: "passport", label: "Passport", icon: "📘" },
-  { value: "driving_license", label: "Driver's License", icon: "🚗" },
-  { value: "dni", label: "National ID", icon: "🪪" },
+  { value: "Passport", label: "Passport", icon: "📘" },
+  { value: "DriversLicense", label: "Driver's License", icon: "🚗" },
+  { value: "IdCard", label: "National ID", icon: "🪪" },
 ];
 
 export const parseDoctype = (doctype: string): DocType => {
   switch (doctype) {
-    case "passport":
+    case "Passport":
       return DocType.Passport;
-    case "id_card":
+    case "IdCard":
       return DocType.IdCard;
-    case "driver_license":
+    case "DriversLicense":
       return DocType.DriversLicense;
     default:
       throw new Error(`Unknown doctype: ${doctype}`);
