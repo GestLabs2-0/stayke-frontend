@@ -1,9 +1,10 @@
-import { createFromRoot } from "codama";
-import { rootNodeFromAnchor } from "@codama/nodes-from-anchor";
 import type { AnchorIdl } from "@codama/nodes-from-anchor";
+
+import { rootNodeFromAnchor } from "@codama/nodes-from-anchor";
 import { renderVisitor } from "@codama/renderers-js";
-import path from "path";
+import { createFromRoot } from "codama";
 import { promises as fs } from "fs";
+import path from "path";
 
 const dirname = import.meta.dirname;
 
@@ -38,8 +39,8 @@ async function main() {
     }
 
     return {
-      name: name,
       codama: createFromRoot(rootNodeFromAnchor(idl)),
+      name: name,
     };
   });
 
@@ -49,12 +50,15 @@ async function main() {
       "../src/generated",
       program.name.toLowerCase()
     );
-    program.codama.accept(renderVisitor(generatedPath));
-    // codama.accept(renderVisitor(generatedPath));
+    program.codama
+      .accept(renderVisitor(generatedPath))
+      .then(() => {
+        console.log(generatedPath, ": Done");
+      })
+      .catch((err: unknown) => {
+        console.log(err);
+      });
   });
-  // console.log(`Loaded ${idls.length} IDL files`);
-  // console.log(idls[0]);
-  // Here you would add logic to generate clients based on the IDL files
 }
 
 await main();
