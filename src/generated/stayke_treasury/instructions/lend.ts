@@ -70,7 +70,7 @@ export function getLendInstructionDataEncoder(): FixedSizeEncoder<LendInstructio
       ["discriminator", fixEncoderSize(getBytesEncoder(), 8)],
       ["amount", getU64Encoder()],
     ]),
-    (value) => ({ ...value, discriminator: LEND_DISCRIMINATOR }),
+    (value) => ({ ...value, discriminator: LEND_DISCRIMINATOR })
   );
 }
 
@@ -87,7 +87,7 @@ export function getLendInstructionDataCodec(): FixedSizeCodec<
 > {
   return combineCodec(
     getLendInstructionDataEncoder(),
-    getLendInstructionDataDecoder(),
+    getLendInstructionDataDecoder()
   );
 }
 
@@ -101,7 +101,7 @@ export function getLendInstruction<
   TProgramAddress extends Address = typeof STAYKE_TREASURY_PROGRAM_ADDRESS,
 >(
   input: LendInput<TAccountSigner>,
-  config?: { programAddress?: TProgramAddress },
+  config?: { programAddress?: TProgramAddress }
 ): LendInstruction<TProgramAddress, TAccountSigner> {
   // Program address.
   const programAddress =
@@ -123,7 +123,7 @@ export function getLendInstruction<
   return Object.freeze({
     accounts: [getAccountMeta(accounts.signer)],
     data: getLendInstructionDataEncoder().encode(
-      args as LendInstructionDataArgs,
+      args as LendInstructionDataArgs
     ),
     programAddress,
   } as LendInstruction<TProgramAddress, TAccountSigner>);
@@ -146,7 +146,7 @@ export function parseLendInstruction<
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>,
+    InstructionWithData<ReadonlyUint8Array>
 ): ParsedLendInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 1) {
     // TODO: Coded error.

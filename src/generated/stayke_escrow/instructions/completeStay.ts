@@ -46,7 +46,7 @@ export const COMPLETE_STAY_DISCRIMINATOR = new Uint8Array([
 
 export function getCompleteStayDiscriminatorBytes() {
   return fixEncoderSize(getBytesEncoder(), 8).encode(
-    COMPLETE_STAY_DISCRIMINATOR,
+    COMPLETE_STAY_DISCRIMINATOR
   );
 }
 
@@ -114,7 +114,7 @@ export type CompleteStayInstructionDataArgs = {};
 export function getCompleteStayInstructionDataEncoder(): FixedSizeEncoder<CompleteStayInstructionDataArgs> {
   return transformEncoder(
     getStructEncoder([["discriminator", fixEncoderSize(getBytesEncoder(), 8)]]),
-    (value) => ({ ...value, discriminator: COMPLETE_STAY_DISCRIMINATOR }),
+    (value) => ({ ...value, discriminator: COMPLETE_STAY_DISCRIMINATOR })
   );
 }
 
@@ -130,7 +130,7 @@ export function getCompleteStayInstructionDataCodec(): FixedSizeCodec<
 > {
   return combineCodec(
     getCompleteStayInstructionDataEncoder(),
-    getCompleteStayInstructionDataDecoder(),
+    getCompleteStayInstructionDataDecoder()
   );
 }
 
@@ -190,7 +190,7 @@ export async function getCompleteStayInstructionAsync<
     TAccountMint,
     TAccountTokenProgram
   >,
-  config?: { programAddress?: TProgramAddress },
+  config?: { programAddress?: TProgramAddress }
 ): Promise<
   CompleteStayInstruction<
     TProgramAddress,
@@ -245,7 +245,7 @@ export async function getCompleteStayInstructionAsync<
         getBytesEncoder().encode(
           new Uint8Array([
             117, 115, 101, 114, 95, 112, 114, 111, 102, 105, 108, 101,
-          ]),
+          ])
         ),
         getAddressEncoder().encode(expectAddress(accounts.client.value)),
       ],
@@ -259,7 +259,7 @@ export async function getCompleteStayInstructionAsync<
         getBytesEncoder().encode(
           new Uint8Array([
             103, 108, 111, 98, 97, 108, 95, 99, 111, 110, 102, 105, 103,
-          ]),
+          ])
         ),
       ],
     });
@@ -366,7 +366,7 @@ export function getCompleteStayInstruction<
     TAccountMint,
     TAccountTokenProgram
   >,
-  config?: { programAddress?: TProgramAddress },
+  config?: { programAddress?: TProgramAddress }
 ): CompleteStayInstruction<
   TProgramAddress,
   TAccountClient,
@@ -479,7 +479,7 @@ export function parseCompleteStayInstruction<
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>,
+    InstructionWithData<ReadonlyUint8Array>
 ): ParsedCompleteStayInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 11) {
     // TODO: Coded error.

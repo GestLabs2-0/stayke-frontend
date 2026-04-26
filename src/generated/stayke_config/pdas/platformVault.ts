@@ -14,7 +14,7 @@ import {
 } from "@solana/kit";
 
 export async function findPlatformVaultPda(
-  config: { programAddress?: Address | undefined } = {},
+  config: { programAddress?: Address | undefined } = {}
 ): Promise<ProgramDerivedAddress> {
   const {
     programAddress = "2GM2yLmDtz2Hyb8T5VBftERmiyJ5whKUmv6V4hBjNXMW" as Address<"2GM2yLmDtz2Hyb8T5VBftERmiyJ5whKUmv6V4hBjNXMW">,
@@ -26,7 +26,7 @@ export async function findPlatformVaultPda(
         new Uint8Array([
           112, 108, 97, 116, 102, 111, 114, 109, 95, 118, 97, 117, 108, 116, 95,
           116, 111, 107, 101, 110,
-        ]),
+        ])
       ),
     ],
   });

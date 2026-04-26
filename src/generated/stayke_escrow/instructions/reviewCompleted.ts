@@ -47,7 +47,7 @@ export const REVIEW_COMPLETED_DISCRIMINATOR = new Uint8Array([
 
 export function getReviewCompletedDiscriminatorBytes() {
   return fixEncoderSize(getBytesEncoder(), 8).encode(
-    REVIEW_COMPLETED_DISCRIMINATOR,
+    REVIEW_COMPLETED_DISCRIMINATOR
   );
 }
 
@@ -96,7 +96,7 @@ export function getReviewCompletedInstructionDataEncoder(): FixedSizeEncoder<Rev
       ["discriminator", fixEncoderSize(getBytesEncoder(), 8)],
       ["score", getU8Encoder()],
     ]),
-    (value) => ({ ...value, discriminator: REVIEW_COMPLETED_DISCRIMINATOR }),
+    (value) => ({ ...value, discriminator: REVIEW_COMPLETED_DISCRIMINATOR })
   );
 }
 
@@ -113,7 +113,7 @@ export function getReviewCompletedInstructionDataCodec(): FixedSizeCodec<
 > {
   return combineCodec(
     getReviewCompletedInstructionDataEncoder(),
-    getReviewCompletedInstructionDataDecoder(),
+    getReviewCompletedInstructionDataDecoder()
   );
 }
 
@@ -148,7 +148,7 @@ export async function getReviewCompletedInstructionAsync<
     TAccountHostProfile,
     TAccountBooking
   >,
-  config?: { programAddress?: TProgramAddress },
+  config?: { programAddress?: TProgramAddress }
 ): Promise<
   ReviewCompletedInstruction<
     TProgramAddress,
@@ -188,7 +188,7 @@ export async function getReviewCompletedInstructionAsync<
         getBytesEncoder().encode(
           new Uint8Array([
             117, 115, 101, 114, 95, 112, 114, 111, 102, 105, 108, 101,
-          ]),
+          ])
         ),
         getAddressEncoder().encode(expectAddress(accounts.client.value)),
       ],
@@ -205,7 +205,7 @@ export async function getReviewCompletedInstructionAsync<
       getAccountMeta(accounts.booking),
     ],
     data: getReviewCompletedInstructionDataEncoder().encode(
-      args as ReviewCompletedInstructionDataArgs,
+      args as ReviewCompletedInstructionDataArgs
     ),
     programAddress,
   } as ReviewCompletedInstruction<
@@ -249,7 +249,7 @@ export function getReviewCompletedInstruction<
     TAccountHostProfile,
     TAccountBooking
   >,
-  config?: { programAddress?: TProgramAddress },
+  config?: { programAddress?: TProgramAddress }
 ): ReviewCompletedInstruction<
   TProgramAddress,
   TAccountClient,
@@ -288,7 +288,7 @@ export function getReviewCompletedInstruction<
       getAccountMeta(accounts.booking),
     ],
     data: getReviewCompletedInstructionDataEncoder().encode(
-      args as ReviewCompletedInstructionDataArgs,
+      args as ReviewCompletedInstructionDataArgs
     ),
     programAddress,
   } as ReviewCompletedInstruction<
@@ -323,7 +323,7 @@ export function parseReviewCompletedInstruction<
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>,
+    InstructionWithData<ReadonlyUint8Array>
 ): ParsedReviewCompletedInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 5) {
     // TODO: Coded error.

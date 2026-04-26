@@ -23,7 +23,7 @@ export type BookingSeeds = {
 
 export async function findBookingPda(
   seeds: BookingSeeds,
-  config: { programAddress?: Address | undefined } = {},
+  config: { programAddress?: Address | undefined } = {}
 ): Promise<ProgramDerivedAddress> {
   const {
     programAddress = "FRXoLmSWKjMBmHz2Wfn2BPV3mcjkWZ2ESMRWUiwjb2iQ" as Address<"FRXoLmSWKjMBmHz2Wfn2BPV3mcjkWZ2ESMRWUiwjb2iQ">,
@@ -32,7 +32,7 @@ export async function findBookingPda(
     programAddress,
     seeds: [
       getBytesEncoder().encode(
-        new Uint8Array([98, 111, 111, 107, 105, 110, 103]),
+        new Uint8Array([98, 111, 111, 107, 105, 110, 103])
       ),
       getAddressEncoder().encode(seeds.property),
       getAddressEncoder().encode(seeds.clientProfile),

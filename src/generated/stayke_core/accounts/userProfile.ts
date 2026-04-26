@@ -55,7 +55,7 @@ export const USER_PROFILE_DISCRIMINATOR = new Uint8Array([
 
 export function getUserProfileDiscriminatorBytes() {
   return fixEncoderSize(getBytesEncoder(), 8).encode(
-    USER_PROFILE_DISCRIMINATOR,
+    USER_PROFILE_DISCRIMINATOR
   );
 }
 
@@ -111,7 +111,7 @@ export function getUserProfileEncoder(): Encoder<UserProfileArgs> {
       ["isHost", getBooleanEncoder()],
       ["bump", getU8Encoder()],
     ]),
-    (value) => ({ ...value, discriminator: USER_PROFILE_DISCRIMINATOR }),
+    (value) => ({ ...value, discriminator: USER_PROFILE_DISCRIMINATOR })
   );
 }
 
@@ -141,24 +141,24 @@ export function getUserProfileCodec(): Codec<UserProfileArgs, UserProfile> {
 }
 
 export function decodeUserProfile<TAddress extends string = string>(
-  encodedAccount: EncodedAccount<TAddress>,
+  encodedAccount: EncodedAccount<TAddress>
 ): Account<UserProfile, TAddress>;
 export function decodeUserProfile<TAddress extends string = string>(
-  encodedAccount: MaybeEncodedAccount<TAddress>,
+  encodedAccount: MaybeEncodedAccount<TAddress>
 ): MaybeAccount<UserProfile, TAddress>;
 export function decodeUserProfile<TAddress extends string = string>(
-  encodedAccount: EncodedAccount<TAddress> | MaybeEncodedAccount<TAddress>,
+  encodedAccount: EncodedAccount<TAddress> | MaybeEncodedAccount<TAddress>
 ): Account<UserProfile, TAddress> | MaybeAccount<UserProfile, TAddress> {
   return decodeAccount(
     encodedAccount as MaybeEncodedAccount<TAddress>,
-    getUserProfileDecoder(),
+    getUserProfileDecoder()
   );
 }
 
 export async function fetchUserProfile<TAddress extends string = string>(
   rpc: Parameters<typeof fetchEncodedAccount>[0],
   address: Address<TAddress>,
-  config?: FetchAccountConfig,
+  config?: FetchAccountConfig
 ): Promise<Account<UserProfile, TAddress>> {
   const maybeAccount = await fetchMaybeUserProfile(rpc, address, config);
   assertAccountExists(maybeAccount);
@@ -168,7 +168,7 @@ export async function fetchUserProfile<TAddress extends string = string>(
 export async function fetchMaybeUserProfile<TAddress extends string = string>(
   rpc: Parameters<typeof fetchEncodedAccount>[0],
   address: Address<TAddress>,
-  config?: FetchAccountConfig,
+  config?: FetchAccountConfig
 ): Promise<MaybeAccount<UserProfile, TAddress>> {
   const maybeAccount = await fetchEncodedAccount(rpc, address, config);
   return decodeUserProfile(maybeAccount);
@@ -177,7 +177,7 @@ export async function fetchMaybeUserProfile<TAddress extends string = string>(
 export async function fetchAllUserProfile(
   rpc: Parameters<typeof fetchEncodedAccounts>[0],
   addresses: Array<Address>,
-  config?: FetchAccountsConfig,
+  config?: FetchAccountsConfig
 ): Promise<Account<UserProfile>[]> {
   const maybeAccounts = await fetchAllMaybeUserProfile(rpc, addresses, config);
   assertAccountsExist(maybeAccounts);
@@ -187,7 +187,7 @@ export async function fetchAllUserProfile(
 export async function fetchAllMaybeUserProfile(
   rpc: Parameters<typeof fetchEncodedAccounts>[0],
   addresses: Array<Address>,
-  config?: FetchAccountsConfig,
+  config?: FetchAccountsConfig
 ): Promise<MaybeAccount<UserProfile>[]> {
   const maybeAccounts = await fetchEncodedAccounts(rpc, addresses, config);
   return maybeAccounts.map((maybeAccount) => decodeUserProfile(maybeAccount));

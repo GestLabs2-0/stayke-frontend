@@ -20,7 +20,7 @@ export type EscrowTokenAccountSeeds = {
 
 export async function findEscrowTokenAccountPda(
   seeds: EscrowTokenAccountSeeds,
-  config: { programAddress?: Address | undefined } = {},
+  config: { programAddress?: Address | undefined } = {}
 ): Promise<ProgramDerivedAddress> {
   const {
     programAddress = "FRXoLmSWKjMBmHz2Wfn2BPV3mcjkWZ2ESMRWUiwjb2iQ" as Address<"FRXoLmSWKjMBmHz2Wfn2BPV3mcjkWZ2ESMRWUiwjb2iQ">,

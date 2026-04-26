@@ -39,7 +39,7 @@ export const WITHDRAW_FROM_LENDING_DISCRIMINATOR = new Uint8Array([
 
 export function getWithdrawFromLendingDiscriminatorBytes() {
   return fixEncoderSize(getBytesEncoder(), 8).encode(
-    WITHDRAW_FROM_LENDING_DISCRIMINATOR,
+    WITHDRAW_FROM_LENDING_DISCRIMINATOR
   );
 }
 
@@ -77,7 +77,7 @@ export function getWithdrawFromLendingInstructionDataEncoder(): FixedSizeEncoder
     (value) => ({
       ...value,
       discriminator: WITHDRAW_FROM_LENDING_DISCRIMINATOR,
-    }),
+    })
   );
 }
 
@@ -94,7 +94,7 @@ export function getWithdrawFromLendingInstructionDataCodec(): FixedSizeCodec<
 > {
   return combineCodec(
     getWithdrawFromLendingInstructionDataEncoder(),
-    getWithdrawFromLendingInstructionDataDecoder(),
+    getWithdrawFromLendingInstructionDataDecoder()
   );
 }
 
@@ -108,7 +108,7 @@ export function getWithdrawFromLendingInstruction<
   TProgramAddress extends Address = typeof STAYKE_TREASURY_PROGRAM_ADDRESS,
 >(
   input: WithdrawFromLendingInput<TAccountSigner>,
-  config?: { programAddress?: TProgramAddress },
+  config?: { programAddress?: TProgramAddress }
 ): WithdrawFromLendingInstruction<TProgramAddress, TAccountSigner> {
   // Program address.
   const programAddress =
@@ -130,7 +130,7 @@ export function getWithdrawFromLendingInstruction<
   return Object.freeze({
     accounts: [getAccountMeta(accounts.signer)],
     data: getWithdrawFromLendingInstructionDataEncoder().encode(
-      args as WithdrawFromLendingInstructionDataArgs,
+      args as WithdrawFromLendingInstructionDataArgs
     ),
     programAddress,
   } as WithdrawFromLendingInstruction<TProgramAddress, TAccountSigner>);
@@ -153,7 +153,7 @@ export function parseWithdrawFromLendingInstruction<
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>,
+    InstructionWithData<ReadonlyUint8Array>
 ): ParsedWithdrawFromLendingInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 1) {
     // TODO: Coded error.
@@ -169,7 +169,7 @@ export function parseWithdrawFromLendingInstruction<
     programAddress: instruction.programAddress,
     accounts: { signer: getNextAccount() },
     data: getWithdrawFromLendingInstructionDataDecoder().decode(
-      instruction.data,
+      instruction.data
     ),
   };
 }

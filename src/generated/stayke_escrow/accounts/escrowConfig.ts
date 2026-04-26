@@ -45,7 +45,7 @@ export const ESCROW_CONFIG_DISCRIMINATOR = new Uint8Array([
 
 export function getEscrowConfigDiscriminatorBytes() {
   return fixEncoderSize(getBytesEncoder(), 8).encode(
-    ESCROW_CONFIG_DISCRIMINATOR,
+    ESCROW_CONFIG_DISCRIMINATOR
   );
 }
 
@@ -74,7 +74,7 @@ export function getEscrowConfigEncoder(): FixedSizeEncoder<EscrowConfigArgs> {
       ["isInitialized", getBooleanEncoder()],
       ["bump", getU8Encoder()],
     ]),
-    (value) => ({ ...value, discriminator: ESCROW_CONFIG_DISCRIMINATOR }),
+    (value) => ({ ...value, discriminator: ESCROW_CONFIG_DISCRIMINATOR })
   );
 }
 
@@ -98,24 +98,24 @@ export function getEscrowConfigCodec(): FixedSizeCodec<
 }
 
 export function decodeEscrowConfig<TAddress extends string = string>(
-  encodedAccount: EncodedAccount<TAddress>,
+  encodedAccount: EncodedAccount<TAddress>
 ): Account<EscrowConfig, TAddress>;
 export function decodeEscrowConfig<TAddress extends string = string>(
-  encodedAccount: MaybeEncodedAccount<TAddress>,
+  encodedAccount: MaybeEncodedAccount<TAddress>
 ): MaybeAccount<EscrowConfig, TAddress>;
 export function decodeEscrowConfig<TAddress extends string = string>(
-  encodedAccount: EncodedAccount<TAddress> | MaybeEncodedAccount<TAddress>,
+  encodedAccount: EncodedAccount<TAddress> | MaybeEncodedAccount<TAddress>
 ): Account<EscrowConfig, TAddress> | MaybeAccount<EscrowConfig, TAddress> {
   return decodeAccount(
     encodedAccount as MaybeEncodedAccount<TAddress>,
-    getEscrowConfigDecoder(),
+    getEscrowConfigDecoder()
   );
 }
 
 export async function fetchEscrowConfig<TAddress extends string = string>(
   rpc: Parameters<typeof fetchEncodedAccount>[0],
   address: Address<TAddress>,
-  config?: FetchAccountConfig,
+  config?: FetchAccountConfig
 ): Promise<Account<EscrowConfig, TAddress>> {
   const maybeAccount = await fetchMaybeEscrowConfig(rpc, address, config);
   assertAccountExists(maybeAccount);
@@ -125,7 +125,7 @@ export async function fetchEscrowConfig<TAddress extends string = string>(
 export async function fetchMaybeEscrowConfig<TAddress extends string = string>(
   rpc: Parameters<typeof fetchEncodedAccount>[0],
   address: Address<TAddress>,
-  config?: FetchAccountConfig,
+  config?: FetchAccountConfig
 ): Promise<MaybeAccount<EscrowConfig, TAddress>> {
   const maybeAccount = await fetchEncodedAccount(rpc, address, config);
   return decodeEscrowConfig(maybeAccount);
@@ -134,7 +134,7 @@ export async function fetchMaybeEscrowConfig<TAddress extends string = string>(
 export async function fetchAllEscrowConfig(
   rpc: Parameters<typeof fetchEncodedAccounts>[0],
   addresses: Array<Address>,
-  config?: FetchAccountsConfig,
+  config?: FetchAccountsConfig
 ): Promise<Account<EscrowConfig>[]> {
   const maybeAccounts = await fetchAllMaybeEscrowConfig(rpc, addresses, config);
   assertAccountsExist(maybeAccounts);
@@ -144,7 +144,7 @@ export async function fetchAllEscrowConfig(
 export async function fetchAllMaybeEscrowConfig(
   rpc: Parameters<typeof fetchEncodedAccounts>[0],
   addresses: Array<Address>,
-  config?: FetchAccountsConfig,
+  config?: FetchAccountsConfig
 ): Promise<MaybeAccount<EscrowConfig>[]> {
   const maybeAccounts = await fetchEncodedAccounts(rpc, addresses, config);
   return maybeAccounts.map((maybeAccount) => decodeEscrowConfig(maybeAccount));

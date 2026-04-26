@@ -14,7 +14,7 @@ import {
 } from "@solana/kit";
 
 export async function findEscrowConfigPda(
-  config: { programAddress?: Address | undefined } = {},
+  config: { programAddress?: Address | undefined } = {}
 ): Promise<ProgramDerivedAddress> {
   const {
     programAddress = "FRXoLmSWKjMBmHz2Wfn2BPV3mcjkWZ2ESMRWUiwjb2iQ" as Address<"FRXoLmSWKjMBmHz2Wfn2BPV3mcjkWZ2ESMRWUiwjb2iQ">,
@@ -25,7 +25,7 @@ export async function findEscrowConfigPda(
       getBytesEncoder().encode(
         new Uint8Array([
           101, 115, 99, 114, 111, 119, 95, 99, 111, 110, 102, 105, 103,
-        ]),
+        ])
       ),
     ],
   });

@@ -46,7 +46,7 @@ export const INITIALIZE_CONFIG_DISCRIMINATOR = new Uint8Array([
 
 export function getInitializeConfigDiscriminatorBytes() {
   return fixEncoderSize(getBytesEncoder(), 8).encode(
-    INITIALIZE_CONFIG_DISCRIMINATOR,
+    INITIALIZE_CONFIG_DISCRIMINATOR
   );
 }
 
@@ -110,7 +110,7 @@ export function getInitializeConfigInstructionDataEncoder(): FixedSizeEncoder<In
       ["minimumDeposit", getU64Encoder()],
       ["feeBps", getU64Encoder()],
     ]),
-    (value) => ({ ...value, discriminator: INITIALIZE_CONFIG_DISCRIMINATOR }),
+    (value) => ({ ...value, discriminator: INITIALIZE_CONFIG_DISCRIMINATOR })
   );
 }
 
@@ -128,7 +128,7 @@ export function getInitializeConfigInstructionDataCodec(): FixedSizeCodec<
 > {
   return combineCodec(
     getInitializeConfigInstructionDataEncoder(),
-    getInitializeConfigInstructionDataDecoder(),
+    getInitializeConfigInstructionDataDecoder()
   );
 }
 
@@ -171,7 +171,7 @@ export async function getInitializeConfigInstructionAsync<
     TAccountTokenProgram,
     TAccountSystemProgram
   >,
-  config?: { programAddress?: TProgramAddress },
+  config?: { programAddress?: TProgramAddress }
 ): Promise<
   InitializeConfigInstruction<
     TProgramAddress,
@@ -240,7 +240,7 @@ export async function getInitializeConfigInstructionAsync<
       getAccountMeta(accounts.systemProgram),
     ],
     data: getInitializeConfigInstructionDataEncoder().encode(
-      args as InitializeConfigInstructionDataArgs,
+      args as InitializeConfigInstructionDataArgs
     ),
     programAddress,
   } as InitializeConfigInstruction<
@@ -294,7 +294,7 @@ export function getInitializeConfigInstruction<
     TAccountTokenProgram,
     TAccountSystemProgram
   >,
-  config?: { programAddress?: TProgramAddress },
+  config?: { programAddress?: TProgramAddress }
 ): InitializeConfigInstruction<
   TProgramAddress,
   TAccountGlobalConfig,
@@ -352,7 +352,7 @@ export function getInitializeConfigInstruction<
       getAccountMeta(accounts.systemProgram),
     ],
     data: getInitializeConfigInstructionDataEncoder().encode(
-      args as InitializeConfigInstructionDataArgs,
+      args as InitializeConfigInstructionDataArgs
     ),
     programAddress,
   } as InitializeConfigInstruction<
@@ -390,7 +390,7 @@ export function parseInitializeConfigInstruction<
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>,
+    InstructionWithData<ReadonlyUint8Array>
 ): ParsedInitializeConfigInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 7) {
     // TODO: Coded error.

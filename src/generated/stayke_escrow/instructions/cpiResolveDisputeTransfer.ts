@@ -49,7 +49,7 @@ export const CPI_RESOLVE_DISPUTE_TRANSFER_DISCRIMINATOR = new Uint8Array([
 
 export function getCpiResolveDisputeTransferDiscriminatorBytes() {
   return fixEncoderSize(getBytesEncoder(), 8).encode(
-    CPI_RESOLVE_DISPUTE_TRANSFER_DISCRIMINATOR,
+    CPI_RESOLVE_DISPUTE_TRANSFER_DISCRIMINATOR
   );
 }
 
@@ -128,7 +128,7 @@ export function getCpiResolveDisputeTransferInstructionDataEncoder(): FixedSizeE
     (value) => ({
       ...value,
       discriminator: CPI_RESOLVE_DISPUTE_TRANSFER_DISCRIMINATOR,
-    }),
+    })
   );
 }
 
@@ -146,7 +146,7 @@ export function getCpiResolveDisputeTransferInstructionDataCodec(): FixedSizeCod
 > {
   return combineCodec(
     getCpiResolveDisputeTransferInstructionDataEncoder(),
-    getCpiResolveDisputeTransferInstructionDataDecoder(),
+    getCpiResolveDisputeTransferInstructionDataDecoder()
   );
 }
 
@@ -204,7 +204,7 @@ export async function getCpiResolveDisputeTransferInstructionAsync<
     TAccountMint,
     TAccountTokenProgram
   >,
-  config?: { programAddress?: TProgramAddress },
+  config?: { programAddress?: TProgramAddress }
 ): Promise<
   CpiResolveDisputeTransferInstruction<
     TProgramAddress,
@@ -266,7 +266,7 @@ export async function getCpiResolveDisputeTransferInstructionAsync<
         getBytesEncoder().encode(
           new Uint8Array([
             103, 108, 111, 98, 97, 108, 95, 99, 111, 110, 102, 105, 103,
-          ]),
+          ])
         ),
       ],
     });
@@ -299,7 +299,7 @@ export async function getCpiResolveDisputeTransferInstructionAsync<
       getAccountMeta(accounts.tokenProgram),
     ],
     data: getCpiResolveDisputeTransferInstructionDataEncoder().encode(
-      args as CpiResolveDisputeTransferInstructionDataArgs,
+      args as CpiResolveDisputeTransferInstructionDataArgs
     ),
     programAddress,
   } as CpiResolveDisputeTransferInstruction<
@@ -371,7 +371,7 @@ export function getCpiResolveDisputeTransferInstruction<
     TAccountMint,
     TAccountTokenProgram
   >,
-  config?: { programAddress?: TProgramAddress },
+  config?: { programAddress?: TProgramAddress }
 ): CpiResolveDisputeTransferInstruction<
   TProgramAddress,
   TAccountAuthority,
@@ -443,7 +443,7 @@ export function getCpiResolveDisputeTransferInstruction<
       getAccountMeta(accounts.tokenProgram),
     ],
     data: getCpiResolveDisputeTransferInstructionDataEncoder().encode(
-      args as CpiResolveDisputeTransferInstructionDataArgs,
+      args as CpiResolveDisputeTransferInstructionDataArgs
     ),
     programAddress,
   } as CpiResolveDisputeTransferInstruction<
@@ -490,7 +490,7 @@ export function parseCpiResolveDisputeTransferInstruction<
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>,
+    InstructionWithData<ReadonlyUint8Array>
 ): ParsedCpiResolveDisputeTransferInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 10) {
     // TODO: Coded error.
@@ -517,7 +517,7 @@ export function parseCpiResolveDisputeTransferInstruction<
       tokenProgram: getNextAccount(),
     },
     data: getCpiResolveDisputeTransferInstructionDataDecoder().decode(
-      instruction.data,
+      instruction.data
     ),
   };
 }

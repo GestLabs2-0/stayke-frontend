@@ -62,7 +62,7 @@ if (process.env.NODE_ENV !== "production") {
 }
 
 export function getStaykeTreasuryErrorMessage(
-  code: StaykeTreasuryError,
+  code: StaykeTreasuryError
 ): string {
   if (process.env.NODE_ENV !== "production") {
     return (staykeTreasuryErrorMessages as Record<StaykeTreasuryError, string>)[
@@ -80,13 +80,13 @@ export function isStaykeTreasuryError<
   transactionMessage: {
     instructions: Record<number, { programAddress: Address }>;
   },
-  code?: TProgramErrorCode,
+  code?: TProgramErrorCode
 ): error is SolanaError<typeof SOLANA_ERROR__INSTRUCTION_ERROR__CUSTOM> &
   Readonly<{ context: Readonly<{ code: TProgramErrorCode }> }> {
   return isProgramError<TProgramErrorCode>(
     error,
     transactionMessage,
     STAYKE_TREASURY_PROGRAM_ADDRESS,
-    code,
+    code
   );
 }

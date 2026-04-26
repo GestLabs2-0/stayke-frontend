@@ -39,7 +39,7 @@ export const CLEAR_LISTING_BOOKING_DISCRIMINATOR = new Uint8Array([
 
 export function getClearListingBookingDiscriminatorBytes() {
   return fixEncoderSize(getBytesEncoder(), 8).encode(
-    CLEAR_LISTING_BOOKING_DISCRIMINATOR,
+    CLEAR_LISTING_BOOKING_DISCRIMINATOR
   );
 }
 
@@ -79,7 +79,7 @@ export function getClearListingBookingInstructionDataEncoder(): FixedSizeEncoder
     (value) => ({
       ...value,
       discriminator: CLEAR_LISTING_BOOKING_DISCRIMINATOR,
-    }),
+    })
   );
 }
 
@@ -95,7 +95,7 @@ export function getClearListingBookingInstructionDataCodec(): FixedSizeCodec<
 > {
   return combineCodec(
     getClearListingBookingInstructionDataEncoder(),
-    getClearListingBookingInstructionDataDecoder(),
+    getClearListingBookingInstructionDataDecoder()
   );
 }
 
@@ -120,7 +120,7 @@ export function getClearListingBookingInstruction<
     TAccountListing,
     TAccountAuthority
   >,
-  config?: { programAddress?: TProgramAddress },
+  config?: { programAddress?: TProgramAddress }
 ): ClearListingBookingInstruction<
   TProgramAddress,
   TAccountUserProfile,
@@ -177,7 +177,7 @@ export function parseClearListingBookingInstruction<
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>,
+    InstructionWithData<ReadonlyUint8Array>
 ): ParsedClearListingBookingInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 3) {
     // TODO: Coded error.
@@ -197,7 +197,7 @@ export function parseClearListingBookingInstruction<
       authority: getNextAccount(),
     },
     data: getClearListingBookingInstructionDataDecoder().decode(
-      instruction.data,
+      instruction.data
     ),
   };
 }

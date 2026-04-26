@@ -45,7 +45,7 @@ export const TREASURY_CONFIG_DISCRIMINATOR = new Uint8Array([
 
 export function getTreasuryConfigDiscriminatorBytes() {
   return fixEncoderSize(getBytesEncoder(), 8).encode(
-    TREASURY_CONFIG_DISCRIMINATOR,
+    TREASURY_CONFIG_DISCRIMINATOR
   );
 }
 
@@ -94,7 +94,7 @@ export function getTreasuryConfigEncoder(): FixedSizeEncoder<TreasuryConfigArgs>
       ["isInitialized", getBooleanEncoder()],
       ["bump", getU8Encoder()],
     ]),
-    (value) => ({ ...value, discriminator: TREASURY_CONFIG_DISCRIMINATOR }),
+    (value) => ({ ...value, discriminator: TREASURY_CONFIG_DISCRIMINATOR })
   );
 }
 
@@ -120,24 +120,24 @@ export function getTreasuryConfigCodec(): FixedSizeCodec<
 }
 
 export function decodeTreasuryConfig<TAddress extends string = string>(
-  encodedAccount: EncodedAccount<TAddress>,
+  encodedAccount: EncodedAccount<TAddress>
 ): Account<TreasuryConfig, TAddress>;
 export function decodeTreasuryConfig<TAddress extends string = string>(
-  encodedAccount: MaybeEncodedAccount<TAddress>,
+  encodedAccount: MaybeEncodedAccount<TAddress>
 ): MaybeAccount<TreasuryConfig, TAddress>;
 export function decodeTreasuryConfig<TAddress extends string = string>(
-  encodedAccount: EncodedAccount<TAddress> | MaybeEncodedAccount<TAddress>,
+  encodedAccount: EncodedAccount<TAddress> | MaybeEncodedAccount<TAddress>
 ): Account<TreasuryConfig, TAddress> | MaybeAccount<TreasuryConfig, TAddress> {
   return decodeAccount(
     encodedAccount as MaybeEncodedAccount<TAddress>,
-    getTreasuryConfigDecoder(),
+    getTreasuryConfigDecoder()
   );
 }
 
 export async function fetchTreasuryConfig<TAddress extends string = string>(
   rpc: Parameters<typeof fetchEncodedAccount>[0],
   address: Address<TAddress>,
-  config?: FetchAccountConfig,
+  config?: FetchAccountConfig
 ): Promise<Account<TreasuryConfig, TAddress>> {
   const maybeAccount = await fetchMaybeTreasuryConfig(rpc, address, config);
   assertAccountExists(maybeAccount);
@@ -149,7 +149,7 @@ export async function fetchMaybeTreasuryConfig<
 >(
   rpc: Parameters<typeof fetchEncodedAccount>[0],
   address: Address<TAddress>,
-  config?: FetchAccountConfig,
+  config?: FetchAccountConfig
 ): Promise<MaybeAccount<TreasuryConfig, TAddress>> {
   const maybeAccount = await fetchEncodedAccount(rpc, address, config);
   return decodeTreasuryConfig(maybeAccount);
@@ -158,12 +158,12 @@ export async function fetchMaybeTreasuryConfig<
 export async function fetchAllTreasuryConfig(
   rpc: Parameters<typeof fetchEncodedAccounts>[0],
   addresses: Array<Address>,
-  config?: FetchAccountsConfig,
+  config?: FetchAccountsConfig
 ): Promise<Account<TreasuryConfig>[]> {
   const maybeAccounts = await fetchAllMaybeTreasuryConfig(
     rpc,
     addresses,
-    config,
+    config
   );
   assertAccountsExist(maybeAccounts);
   return maybeAccounts;
@@ -172,11 +172,11 @@ export async function fetchAllTreasuryConfig(
 export async function fetchAllMaybeTreasuryConfig(
   rpc: Parameters<typeof fetchEncodedAccounts>[0],
   addresses: Array<Address>,
-  config?: FetchAccountsConfig,
+  config?: FetchAccountsConfig
 ): Promise<MaybeAccount<TreasuryConfig>[]> {
   const maybeAccounts = await fetchEncodedAccounts(rpc, addresses, config);
   return maybeAccounts.map((maybeAccount) =>
-    decodeTreasuryConfig(maybeAccount),
+    decodeTreasuryConfig(maybeAccount)
   );
 }
 

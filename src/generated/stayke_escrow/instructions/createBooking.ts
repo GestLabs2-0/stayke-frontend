@@ -53,7 +53,7 @@ export const CREATE_BOOKING_DISCRIMINATOR = new Uint8Array([
 
 export function getCreateBookingDiscriminatorBytes() {
   return fixEncoderSize(getBytesEncoder(), 8).encode(
-    CREATE_BOOKING_DISCRIMINATOR,
+    CREATE_BOOKING_DISCRIMINATOR
   );
 }
 
@@ -124,7 +124,7 @@ export function getCreateBookingInstructionDataEncoder(): FixedSizeEncoder<Creat
       ["checkIn", getI64Encoder()],
       ["checkOut", getI64Encoder()],
     ]),
-    (value) => ({ ...value, discriminator: CREATE_BOOKING_DISCRIMINATOR }),
+    (value) => ({ ...value, discriminator: CREATE_BOOKING_DISCRIMINATOR })
   );
 }
 
@@ -142,7 +142,7 @@ export function getCreateBookingInstructionDataCodec(): FixedSizeCodec<
 > {
   return combineCodec(
     getCreateBookingInstructionDataEncoder(),
-    getCreateBookingInstructionDataDecoder(),
+    getCreateBookingInstructionDataDecoder()
   );
 }
 
@@ -195,7 +195,7 @@ export async function getCreateBookingInstructionAsync<
     TAccountSystemProgram,
     TAccountBookingDays
   >,
-  config?: { programAddress?: TProgramAddress },
+  config?: { programAddress?: TProgramAddress }
 ): Promise<
   CreateBookingInstruction<
     TProgramAddress,
@@ -243,7 +243,7 @@ export async function getCreateBookingInstructionAsync<
         getBytesEncoder().encode(
           new Uint8Array([
             117, 115, 101, 114, 95, 112, 114, 111, 102, 105, 108, 101,
-          ]),
+          ])
         ),
         getAddressEncoder().encode(expectAddress(accounts.client.value)),
       ],
@@ -267,7 +267,7 @@ export async function getCreateBookingInstructionAsync<
         getBytesEncoder().encode(
           new Uint8Array([
             103, 108, 111, 98, 97, 108, 95, 99, 111, 110, 102, 105, 103,
-          ]),
+          ])
         ),
       ],
     });
@@ -297,7 +297,7 @@ export async function getCreateBookingInstructionAsync<
       getAccountMeta(accounts.bookingDays),
     ],
     data: getCreateBookingInstructionDataEncoder().encode(
-      args as CreateBookingInstructionDataArgs,
+      args as CreateBookingInstructionDataArgs
     ),
     programAddress,
   } as CreateBookingInstruction<
@@ -363,7 +363,7 @@ export function getCreateBookingInstruction<
     TAccountSystemProgram,
     TAccountBookingDays
   >,
-  config?: { programAddress?: TProgramAddress },
+  config?: { programAddress?: TProgramAddress }
 ): CreateBookingInstruction<
   TProgramAddress,
   TAccountClient,
@@ -420,7 +420,7 @@ export function getCreateBookingInstruction<
       getAccountMeta(accounts.bookingDays),
     ],
     data: getCreateBookingInstructionDataEncoder().encode(
-      args as CreateBookingInstructionDataArgs,
+      args as CreateBookingInstructionDataArgs
     ),
     programAddress,
   } as CreateBookingInstruction<
@@ -464,7 +464,7 @@ export function parseCreateBookingInstruction<
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>,
+    InstructionWithData<ReadonlyUint8Array>
 ): ParsedCreateBookingInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 9) {
     // TODO: Coded error.

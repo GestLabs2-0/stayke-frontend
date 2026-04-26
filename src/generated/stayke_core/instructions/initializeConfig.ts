@@ -40,7 +40,7 @@ export const INITIALIZE_CONFIG_DISCRIMINATOR = new Uint8Array([
 
 export function getInitializeConfigDiscriminatorBytes() {
   return fixEncoderSize(getBytesEncoder(), 8).encode(
-    INITIALIZE_CONFIG_DISCRIMINATOR,
+    INITIALIZE_CONFIG_DISCRIMINATOR
   );
 }
 
@@ -78,7 +78,7 @@ export type InitializeConfigInstructionDataArgs = {};
 export function getInitializeConfigInstructionDataEncoder(): FixedSizeEncoder<InitializeConfigInstructionDataArgs> {
   return transformEncoder(
     getStructEncoder([["discriminator", fixEncoderSize(getBytesEncoder(), 8)]]),
-    (value) => ({ ...value, discriminator: INITIALIZE_CONFIG_DISCRIMINATOR }),
+    (value) => ({ ...value, discriminator: INITIALIZE_CONFIG_DISCRIMINATOR })
   );
 }
 
@@ -94,7 +94,7 @@ export function getInitializeConfigInstructionDataCodec(): FixedSizeCodec<
 > {
   return combineCodec(
     getInitializeConfigInstructionDataEncoder(),
-    getInitializeConfigInstructionDataDecoder(),
+    getInitializeConfigInstructionDataDecoder()
   );
 }
 
@@ -119,7 +119,7 @@ export async function getInitializeConfigInstructionAsync<
     TAccountAuthority,
     TAccountSystemProgram
   >,
-  config?: { programAddress?: TProgramAddress },
+  config?: { programAddress?: TProgramAddress }
 ): Promise<
   InitializeConfigInstruction<
     TProgramAddress,
@@ -189,7 +189,7 @@ export function getInitializeConfigInstruction<
     TAccountAuthority,
     TAccountSystemProgram
   >,
-  config?: { programAddress?: TProgramAddress },
+  config?: { programAddress?: TProgramAddress }
 ): InitializeConfigInstruction<
   TProgramAddress,
   TAccountConfig,
@@ -252,7 +252,7 @@ export function parseInitializeConfigInstruction<
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>,
+    InstructionWithData<ReadonlyUint8Array>
 ): ParsedInitializeConfigInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 3) {
     // TODO: Coded error.

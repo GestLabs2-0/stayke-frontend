@@ -41,7 +41,7 @@ export const INITIALIZE_ESCROW_DISCRIMINATOR = new Uint8Array([
 
 export function getInitializeEscrowDiscriminatorBytes() {
   return fixEncoderSize(getBytesEncoder(), 8).encode(
-    INITIALIZE_ESCROW_DISCRIMINATOR,
+    INITIALIZE_ESCROW_DISCRIMINATOR
   );
 }
 
@@ -83,7 +83,7 @@ export type InitializeEscrowInstructionDataArgs = {};
 export function getInitializeEscrowInstructionDataEncoder(): FixedSizeEncoder<InitializeEscrowInstructionDataArgs> {
   return transformEncoder(
     getStructEncoder([["discriminator", fixEncoderSize(getBytesEncoder(), 8)]]),
-    (value) => ({ ...value, discriminator: INITIALIZE_ESCROW_DISCRIMINATOR }),
+    (value) => ({ ...value, discriminator: INITIALIZE_ESCROW_DISCRIMINATOR })
   );
 }
 
@@ -99,7 +99,7 @@ export function getInitializeEscrowInstructionDataCodec(): FixedSizeCodec<
 > {
   return combineCodec(
     getInitializeEscrowInstructionDataEncoder(),
-    getInitializeEscrowInstructionDataDecoder(),
+    getInitializeEscrowInstructionDataDecoder()
   );
 }
 
@@ -128,7 +128,7 @@ export async function getInitializeEscrowInstructionAsync<
     TAccountGlobalConfig,
     TAccountSystemProgram
   >,
-  config?: { programAddress?: TProgramAddress },
+  config?: { programAddress?: TProgramAddress }
 ): Promise<
   InitializeEscrowInstruction<
     TProgramAddress,
@@ -166,7 +166,7 @@ export async function getInitializeEscrowInstructionAsync<
         getBytesEncoder().encode(
           new Uint8Array([
             103, 108, 111, 98, 97, 108, 95, 99, 111, 110, 102, 105, 103,
-          ]),
+          ])
         ),
       ],
     });
@@ -220,7 +220,7 @@ export function getInitializeEscrowInstruction<
     TAccountGlobalConfig,
     TAccountSystemProgram
   >,
-  config?: { programAddress?: TProgramAddress },
+  config?: { programAddress?: TProgramAddress }
 ): InitializeEscrowInstruction<
   TProgramAddress,
   TAccountAuthority,
@@ -289,7 +289,7 @@ export function parseInitializeEscrowInstruction<
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>,
+    InstructionWithData<ReadonlyUint8Array>
 ): ParsedInitializeEscrowInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 4) {
     // TODO: Coded error.

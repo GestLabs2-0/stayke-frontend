@@ -40,7 +40,7 @@ export const VERIFY_IDENTITY_DISCRIMINATOR = new Uint8Array([
 
 export function getVerifyIdentityDiscriminatorBytes() {
   return fixEncoderSize(getBytesEncoder(), 8).encode(
-    VERIFY_IDENTITY_DISCRIMINATOR,
+    VERIFY_IDENTITY_DISCRIMINATOR
   );
 }
 
@@ -81,7 +81,7 @@ export type VerifyIdentityInstructionDataArgs = {};
 export function getVerifyIdentityInstructionDataEncoder(): FixedSizeEncoder<VerifyIdentityInstructionDataArgs> {
   return transformEncoder(
     getStructEncoder([["discriminator", fixEncoderSize(getBytesEncoder(), 8)]]),
-    (value) => ({ ...value, discriminator: VERIFY_IDENTITY_DISCRIMINATOR }),
+    (value) => ({ ...value, discriminator: VERIFY_IDENTITY_DISCRIMINATOR })
   );
 }
 
@@ -97,7 +97,7 @@ export function getVerifyIdentityInstructionDataCodec(): FixedSizeCodec<
 > {
   return combineCodec(
     getVerifyIdentityInstructionDataEncoder(),
-    getVerifyIdentityInstructionDataDecoder(),
+    getVerifyIdentityInstructionDataDecoder()
   );
 }
 
@@ -126,7 +126,7 @@ export async function getVerifyIdentityInstructionAsync<
     TAccountIdentity,
     TAccountConfig
   >,
-  config?: { programAddress?: TProgramAddress },
+  config?: { programAddress?: TProgramAddress }
 ): Promise<
   VerifyIdentityInstruction<
     TProgramAddress,
@@ -200,7 +200,7 @@ export function getVerifyIdentityInstruction<
     TAccountIdentity,
     TAccountConfig
   >,
-  config?: { programAddress?: TProgramAddress },
+  config?: { programAddress?: TProgramAddress }
 ): VerifyIdentityInstruction<
   TProgramAddress,
   TAccountAuthority,
@@ -262,7 +262,7 @@ export function parseVerifyIdentityInstruction<
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>,
+    InstructionWithData<ReadonlyUint8Array>
 ): ParsedVerifyIdentityInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 4) {
     // TODO: Coded error.

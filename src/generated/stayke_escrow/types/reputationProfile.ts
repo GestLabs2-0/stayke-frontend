@@ -90,6 +90,6 @@ export function getReputationProfileCodec(): FixedSizeCodec<
 > {
   return combineCodec(
     getReputationProfileEncoder(),
-    getReputationProfileDecoder(),
+    getReputationProfileDecoder()
   );
 }

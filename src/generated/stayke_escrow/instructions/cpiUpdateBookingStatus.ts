@@ -44,7 +44,7 @@ export const CPI_UPDATE_BOOKING_STATUS_DISCRIMINATOR = new Uint8Array([
 
 export function getCpiUpdateBookingStatusDiscriminatorBytes() {
   return fixEncoderSize(getBytesEncoder(), 8).encode(
-    CPI_UPDATE_BOOKING_STATUS_DISCRIMINATOR,
+    CPI_UPDATE_BOOKING_STATUS_DISCRIMINATOR
   );
 }
 
@@ -86,7 +86,7 @@ export function getCpiUpdateBookingStatusInstructionDataEncoder(): FixedSizeEnco
     (value) => ({
       ...value,
       discriminator: CPI_UPDATE_BOOKING_STATUS_DISCRIMINATOR,
-    }),
+    })
   );
 }
 
@@ -103,7 +103,7 @@ export function getCpiUpdateBookingStatusInstructionDataCodec(): FixedSizeCodec<
 > {
   return combineCodec(
     getCpiUpdateBookingStatusInstructionDataEncoder(),
-    getCpiUpdateBookingStatusInstructionDataDecoder(),
+    getCpiUpdateBookingStatusInstructionDataDecoder()
   );
 }
 
@@ -122,7 +122,7 @@ export function getCpiUpdateBookingStatusInstruction<
   TProgramAddress extends Address = typeof STAYKE_ESCROW_PROGRAM_ADDRESS,
 >(
   input: CpiUpdateBookingStatusInput<TAccountBooking, TAccountAuthority>,
-  config?: { programAddress?: TProgramAddress },
+  config?: { programAddress?: TProgramAddress }
 ): CpiUpdateBookingStatusInstruction<
   TProgramAddress,
   TAccountBooking,
@@ -152,7 +152,7 @@ export function getCpiUpdateBookingStatusInstruction<
       getAccountMeta(accounts.authority),
     ],
     data: getCpiUpdateBookingStatusInstructionDataEncoder().encode(
-      args as CpiUpdateBookingStatusInstructionDataArgs,
+      args as CpiUpdateBookingStatusInstructionDataArgs
     ),
     programAddress,
   } as CpiUpdateBookingStatusInstruction<
@@ -180,7 +180,7 @@ export function parseCpiUpdateBookingStatusInstruction<
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>,
+    InstructionWithData<ReadonlyUint8Array>
 ): ParsedCpiUpdateBookingStatusInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 2) {
     // TODO: Coded error.
@@ -196,7 +196,7 @@ export function parseCpiUpdateBookingStatusInstruction<
     programAddress: instruction.programAddress,
     accounts: { booking: getNextAccount(), authority: getNextAccount() },
     data: getCpiUpdateBookingStatusInstructionDataDecoder().decode(
-      instruction.data,
+      instruction.data
     ),
   };
 }

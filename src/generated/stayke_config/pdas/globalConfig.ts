@@ -14,7 +14,7 @@ import {
 } from "@solana/kit";
 
 export async function findGlobalConfigPda(
-  config: { programAddress?: Address | undefined } = {},
+  config: { programAddress?: Address | undefined } = {}
 ): Promise<ProgramDerivedAddress> {
   const {
     programAddress = "2GM2yLmDtz2Hyb8T5VBftERmiyJ5whKUmv6V4hBjNXMW" as Address<"2GM2yLmDtz2Hyb8T5VBftERmiyJ5whKUmv6V4hBjNXMW">,
@@ -25,7 +25,7 @@ export async function findGlobalConfigPda(
       getBytesEncoder().encode(
         new Uint8Array([
           103, 108, 111, 98, 97, 108, 95, 99, 111, 110, 102, 105, 103,
-        ]),
+        ])
       ),
     ],
   });

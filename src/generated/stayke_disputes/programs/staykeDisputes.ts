@@ -38,16 +38,16 @@ export enum StaykeDisputesAccount {
 }
 
 export function identifyStaykeDisputesAccount(
-  account: { data: ReadonlyUint8Array } | ReadonlyUint8Array,
+  account: { data: ReadonlyUint8Array } | ReadonlyUint8Array
 ): StaykeDisputesAccount {
   const data = "data" in account ? account.data : account;
   if (
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([36, 49, 241, 67, 40, 36, 241, 74]),
+        new Uint8Array([36, 49, 241, 67, 40, 36, 241, 74])
       ),
-      0,
+      0
     )
   ) {
     return StaykeDisputesAccount.Dispute;
@@ -56,15 +56,15 @@ export function identifyStaykeDisputesAccount(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([230, 88, 200, 99, 12, 93, 56, 156]),
+        new Uint8Array([230, 88, 200, 99, 12, 93, 56, 156])
       ),
-      0,
+      0
     )
   ) {
     return StaykeDisputesAccount.DisputeConfig;
   }
   throw new Error(
-    "The provided account could not be identified as a staykeDisputes account.",
+    "The provided account could not be identified as a staykeDisputes account."
   );
 }
 
@@ -77,16 +77,16 @@ export enum StaykeDisputesInstruction {
 }
 
 export function identifyStaykeDisputesInstruction(
-  instruction: { data: ReadonlyUint8Array } | ReadonlyUint8Array,
+  instruction: { data: ReadonlyUint8Array } | ReadonlyUint8Array
 ): StaykeDisputesInstruction {
   const data = "data" in instruction ? instruction.data : instruction;
   if (
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([60, 18, 92, 170, 100, 195, 146, 196]),
+        new Uint8Array([60, 18, 92, 170, 100, 195, 146, 196])
       ),
-      0,
+      0
     )
   ) {
     return StaykeDisputesInstruction.CloseDispute;
@@ -95,9 +95,9 @@ export function identifyStaykeDisputesInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([208, 127, 21, 1, 194, 190, 196, 70]),
+        new Uint8Array([208, 127, 21, 1, 194, 190, 196, 70])
       ),
-      0,
+      0
     )
   ) {
     return StaykeDisputesInstruction.InitializeConfig;
@@ -106,9 +106,9 @@ export function identifyStaykeDisputesInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([137, 25, 99, 119, 23, 223, 161, 42]),
+        new Uint8Array([137, 25, 99, 119, 23, 223, 161, 42])
       ),
-      0,
+      0
     )
   ) {
     return StaykeDisputesInstruction.OpenDispute;
@@ -117,9 +117,9 @@ export function identifyStaykeDisputesInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([4, 118, 74, 208, 212, 28, 119, 50]),
+        new Uint8Array([4, 118, 74, 208, 212, 28, 119, 50])
       ),
-      0,
+      0
     )
   ) {
     return StaykeDisputesInstruction.PenalizeUser;
@@ -128,15 +128,15 @@ export function identifyStaykeDisputesInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([231, 6, 202, 6, 96, 103, 12, 230]),
+        new Uint8Array([231, 6, 202, 6, 96, 103, 12, 230])
       ),
-      0,
+      0
     )
   ) {
     return StaykeDisputesInstruction.ResolveDispute;
   }
   throw new Error(
-    "The provided instruction could not be identified as a staykeDisputes instruction.",
+    "The provided instruction could not be identified as a staykeDisputes instruction."
   );
 }
 
@@ -160,7 +160,7 @@ export type ParsedStaykeDisputesInstruction<
     } & ParsedResolveDisputeInstruction<TProgram>);
 
 export function parseStaykeDisputesInstruction<TProgram extends string>(
-  instruction: Instruction<TProgram> & InstructionWithData<ReadonlyUint8Array>,
+  instruction: Instruction<TProgram> & InstructionWithData<ReadonlyUint8Array>
 ): ParsedStaykeDisputesInstruction<TProgram> {
   const instructionType = identifyStaykeDisputesInstruction(instruction);
   switch (instructionType) {
@@ -201,7 +201,7 @@ export function parseStaykeDisputesInstruction<TProgram extends string>(
     }
     default:
       throw new Error(
-        `Unrecognized instruction type: ${instructionType as string}`,
+        `Unrecognized instruction type: ${instructionType as string}`
       );
   }
 }

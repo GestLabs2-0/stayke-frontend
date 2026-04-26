@@ -48,7 +48,7 @@ export const RESOLVE_DISPUTE_DISCRIMINATOR = new Uint8Array([
 
 export function getResolveDisputeDiscriminatorBytes() {
   return fixEncoderSize(getBytesEncoder(), 8).encode(
-    RESOLVE_DISPUTE_DISCRIMINATOR,
+    RESOLVE_DISPUTE_DISCRIMINATOR
   );
 }
 
@@ -137,7 +137,7 @@ export function getResolveDisputeInstructionDataEncoder(): FixedSizeEncoder<Reso
       ["hostShareBps", getU16Encoder()],
       ["rejected", getBooleanEncoder()],
     ]),
-    (value) => ({ ...value, discriminator: RESOLVE_DISPUTE_DISCRIMINATOR }),
+    (value) => ({ ...value, discriminator: RESOLVE_DISPUTE_DISCRIMINATOR })
   );
 }
 
@@ -155,7 +155,7 @@ export function getResolveDisputeInstructionDataCodec(): FixedSizeCodec<
 > {
   return combineCodec(
     getResolveDisputeInstructionDataEncoder(),
-    getResolveDisputeInstructionDataDecoder(),
+    getResolveDisputeInstructionDataDecoder()
   );
 }
 
@@ -222,7 +222,7 @@ export async function getResolveDisputeInstructionAsync<
     TAccountStaykeEscrowProgram,
     TAccountTokenProgram
   >,
-  config?: { programAddress?: TProgramAddress },
+  config?: { programAddress?: TProgramAddress }
 ): Promise<
   ResolveDisputeInstruction<
     TProgramAddress,
@@ -320,7 +320,7 @@ export async function getResolveDisputeInstructionAsync<
       getAccountMeta(accounts.tokenProgram),
     ],
     data: getResolveDisputeInstructionDataEncoder().encode(
-      args as ResolveDisputeInstructionDataArgs,
+      args as ResolveDisputeInstructionDataArgs
     ),
     programAddress,
   } as ResolveDisputeInstruction<
@@ -404,7 +404,7 @@ export function getResolveDisputeInstruction<
     TAccountStaykeEscrowProgram,
     TAccountTokenProgram
   >,
-  config?: { programAddress?: TProgramAddress },
+  config?: { programAddress?: TProgramAddress }
 ): ResolveDisputeInstruction<
   TProgramAddress,
   TAccountAdmin,
@@ -492,7 +492,7 @@ export function getResolveDisputeInstruction<
       getAccountMeta(accounts.tokenProgram),
     ],
     data: getResolveDisputeInstructionDataEncoder().encode(
-      args as ResolveDisputeInstructionDataArgs,
+      args as ResolveDisputeInstructionDataArgs
     ),
     programAddress,
   } as ResolveDisputeInstruction<
@@ -542,7 +542,7 @@ export function parseResolveDisputeInstruction<
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>,
+    InstructionWithData<ReadonlyUint8Array>
 ): ParsedResolveDisputeInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 13) {
     // TODO: Coded error.

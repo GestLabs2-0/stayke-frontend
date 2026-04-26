@@ -47,16 +47,16 @@ export enum StaykeCoreAccount {
 }
 
 export function identifyStaykeCoreAccount(
-  account: { data: ReadonlyUint8Array } | ReadonlyUint8Array,
+  account: { data: ReadonlyUint8Array } | ReadonlyUint8Array
 ): StaykeCoreAccount {
   const data = "data" in account ? account.data : account;
   if (
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([107, 39, 92, 214, 247, 156, 30, 126]),
+        new Uint8Array([107, 39, 92, 214, 247, 156, 30, 126])
       ),
-      0,
+      0
     )
   ) {
     return StaykeCoreAccount.ConfigAcc;
@@ -65,9 +65,9 @@ export function identifyStaykeCoreAccount(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([58, 132, 5, 12, 176, 164, 85, 112]),
+        new Uint8Array([58, 132, 5, 12, 176, 164, 85, 112])
       ),
-      0,
+      0
     )
   ) {
     return StaykeCoreAccount.Identity;
@@ -76,9 +76,9 @@ export function identifyStaykeCoreAccount(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([218, 32, 50, 73, 43, 134, 26, 58]),
+        new Uint8Array([218, 32, 50, 73, 43, 134, 26, 58])
       ),
-      0,
+      0
     )
   ) {
     return StaykeCoreAccount.Listing;
@@ -87,9 +87,9 @@ export function identifyStaykeCoreAccount(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([73, 32, 193, 201, 177, 91, 104, 136]),
+        new Uint8Array([73, 32, 193, 201, 177, 91, 104, 136])
       ),
-      0,
+      0
     )
   ) {
     return StaykeCoreAccount.ReputationProfile;
@@ -98,15 +98,15 @@ export function identifyStaykeCoreAccount(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([32, 37, 119, 205, 179, 180, 13, 194]),
+        new Uint8Array([32, 37, 119, 205, 179, 180, 13, 194])
       ),
-      0,
+      0
     )
   ) {
     return StaykeCoreAccount.UserProfile;
   }
   throw new Error(
-    "The provided account could not be identified as a staykeCore account.",
+    "The provided account could not be identified as a staykeCore account."
   );
 }
 
@@ -122,16 +122,16 @@ export enum StaykeCoreInstruction {
 }
 
 export function identifyStaykeCoreInstruction(
-  instruction: { data: ReadonlyUint8Array } | ReadonlyUint8Array,
+  instruction: { data: ReadonlyUint8Array } | ReadonlyUint8Array
 ): StaykeCoreInstruction {
   const data = "data" in instruction ? instruction.data : instruction;
   if (
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([238, 116, 210, 154, 186, 175, 136, 151]),
+        new Uint8Array([238, 116, 210, 154, 186, 175, 136, 151])
       ),
-      0,
+      0
     )
   ) {
     return StaykeCoreInstruction.AddInfraction;
@@ -140,9 +140,9 @@ export function identifyStaykeCoreInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([109, 41, 40, 136, 10, 34, 239, 89]),
+        new Uint8Array([109, 41, 40, 136, 10, 34, 239, 89])
       ),
-      0,
+      0
     )
   ) {
     return StaykeCoreInstruction.ClearActiveBooking;
@@ -151,9 +151,9 @@ export function identifyStaykeCoreInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([115, 33, 218, 127, 147, 182, 108, 120]),
+        new Uint8Array([115, 33, 218, 127, 147, 182, 108, 120])
       ),
-      0,
+      0
     )
   ) {
     return StaykeCoreInstruction.ClearListingBooking;
@@ -162,9 +162,9 @@ export function identifyStaykeCoreInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([208, 127, 21, 1, 194, 190, 196, 70]),
+        new Uint8Array([208, 127, 21, 1, 194, 190, 196, 70])
       ),
-      0,
+      0
     )
   ) {
     return StaykeCoreInstruction.InitializeConfig;
@@ -173,9 +173,9 @@ export function identifyStaykeCoreInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([192, 144, 204, 140, 113, 25, 59, 102]),
+        new Uint8Array([192, 144, 204, 140, 113, 25, 59, 102])
       ),
-      0,
+      0
     )
   ) {
     return StaykeCoreInstruction.InitializeUserProfile;
@@ -184,9 +184,9 @@ export function identifyStaykeCoreInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([127, 70, 76, 106, 152, 218, 71, 254]),
+        new Uint8Array([127, 70, 76, 106, 152, 218, 71, 254])
       ),
-      0,
+      0
     )
   ) {
     return StaykeCoreInstruction.SetHostStatus;
@@ -195,9 +195,9 @@ export function identifyStaykeCoreInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([126, 116, 15, 164, 238, 179, 155, 59]),
+        new Uint8Array([126, 116, 15, 164, 238, 179, 155, 59])
       ),
-      0,
+      0
     )
   ) {
     return StaykeCoreInstruction.UpdateDeposit;
@@ -206,15 +206,15 @@ export function identifyStaykeCoreInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([177, 162, 9, 111, 44, 84, 80, 21]),
+        new Uint8Array([177, 162, 9, 111, 44, 84, 80, 21])
       ),
-      0,
+      0
     )
   ) {
     return StaykeCoreInstruction.VerifyIdentity;
   }
   throw new Error(
-    "The provided instruction could not be identified as a staykeCore instruction.",
+    "The provided instruction could not be identified as a staykeCore instruction."
   );
 }
 
@@ -247,7 +247,7 @@ export type ParsedStaykeCoreInstruction<
     } & ParsedVerifyIdentityInstruction<TProgram>);
 
 export function parseStaykeCoreInstruction<TProgram extends string>(
-  instruction: Instruction<TProgram> & InstructionWithData<ReadonlyUint8Array>,
+  instruction: Instruction<TProgram> & InstructionWithData<ReadonlyUint8Array>
 ): ParsedStaykeCoreInstruction<TProgram> {
   const instructionType = identifyStaykeCoreInstruction(instruction);
   switch (instructionType) {
@@ -309,7 +309,7 @@ export function parseStaykeCoreInstruction<TProgram extends string>(
     }
     default:
       throw new Error(
-        `Unrecognized instruction type: ${instructionType as string}`,
+        `Unrecognized instruction type: ${instructionType as string}`
       );
   }
 }

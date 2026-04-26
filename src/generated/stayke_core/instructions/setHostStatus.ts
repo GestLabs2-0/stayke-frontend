@@ -40,7 +40,7 @@ export const SET_HOST_STATUS_DISCRIMINATOR = new Uint8Array([
 
 export function getSetHostStatusDiscriminatorBytes() {
   return fixEncoderSize(getBytesEncoder(), 8).encode(
-    SET_HOST_STATUS_DISCRIMINATOR,
+    SET_HOST_STATUS_DISCRIMINATOR
   );
 }
 
@@ -77,7 +77,7 @@ export function getSetHostStatusInstructionDataEncoder(): FixedSizeEncoder<SetHo
       ["discriminator", fixEncoderSize(getBytesEncoder(), 8)],
       ["status", getBooleanEncoder()],
     ]),
-    (value) => ({ ...value, discriminator: SET_HOST_STATUS_DISCRIMINATOR }),
+    (value) => ({ ...value, discriminator: SET_HOST_STATUS_DISCRIMINATOR })
   );
 }
 
@@ -94,7 +94,7 @@ export function getSetHostStatusInstructionDataCodec(): FixedSizeCodec<
 > {
   return combineCodec(
     getSetHostStatusInstructionDataEncoder(),
-    getSetHostStatusInstructionDataDecoder(),
+    getSetHostStatusInstructionDataDecoder()
   );
 }
 
@@ -113,7 +113,7 @@ export function getSetHostStatusInstruction<
   TProgramAddress extends Address = typeof STAYKE_CORE_PROGRAM_ADDRESS,
 >(
   input: SetHostStatusInput<TAccountUserProfile, TAccountAuthority>,
-  config?: { programAddress?: TProgramAddress },
+  config?: { programAddress?: TProgramAddress }
 ): SetHostStatusInstruction<
   TProgramAddress,
   TAccountUserProfile,
@@ -142,7 +142,7 @@ export function getSetHostStatusInstruction<
       getAccountMeta(accounts.authority),
     ],
     data: getSetHostStatusInstructionDataEncoder().encode(
-      args as SetHostStatusInstructionDataArgs,
+      args as SetHostStatusInstructionDataArgs
     ),
     programAddress,
   } as SetHostStatusInstruction<
@@ -170,7 +170,7 @@ export function parseSetHostStatusInstruction<
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>,
+    InstructionWithData<ReadonlyUint8Array>
 ): ParsedSetHostStatusInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 2) {
     // TODO: Coded error.

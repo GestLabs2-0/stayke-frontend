@@ -46,7 +46,7 @@ export const HOST_ACCEPT_BOOKING_DISCRIMINATOR = new Uint8Array([
 
 export function getHostAcceptBookingDiscriminatorBytes() {
   return fixEncoderSize(getBytesEncoder(), 8).encode(
-    HOST_ACCEPT_BOOKING_DISCRIMINATOR,
+    HOST_ACCEPT_BOOKING_DISCRIMINATOR
   );
 }
 
@@ -90,7 +90,7 @@ export type HostAcceptBookingInstructionDataArgs = {};
 export function getHostAcceptBookingInstructionDataEncoder(): FixedSizeEncoder<HostAcceptBookingInstructionDataArgs> {
   return transformEncoder(
     getStructEncoder([["discriminator", fixEncoderSize(getBytesEncoder(), 8)]]),
-    (value) => ({ ...value, discriminator: HOST_ACCEPT_BOOKING_DISCRIMINATOR }),
+    (value) => ({ ...value, discriminator: HOST_ACCEPT_BOOKING_DISCRIMINATOR })
   );
 }
 
@@ -106,7 +106,7 @@ export function getHostAcceptBookingInstructionDataCodec(): FixedSizeCodec<
 > {
   return combineCodec(
     getHostAcceptBookingInstructionDataEncoder(),
-    getHostAcceptBookingInstructionDataDecoder(),
+    getHostAcceptBookingInstructionDataDecoder()
   );
 }
 
@@ -139,7 +139,7 @@ export async function getHostAcceptBookingInstructionAsync<
     TAccountGlobalConfig,
     TAccountEscrowConfig
   >,
-  config?: { programAddress?: TProgramAddress },
+  config?: { programAddress?: TProgramAddress }
 ): Promise<
   HostAcceptBookingInstruction<
     TProgramAddress,
@@ -176,7 +176,7 @@ export async function getHostAcceptBookingInstructionAsync<
         getBytesEncoder().encode(
           new Uint8Array([
             117, 115, 101, 114, 95, 112, 114, 111, 102, 105, 108, 101,
-          ]),
+          ])
         ),
         getAddressEncoder().encode(expectAddress(accounts.host.value)),
       ],
@@ -190,7 +190,7 @@ export async function getHostAcceptBookingInstructionAsync<
         getBytesEncoder().encode(
           new Uint8Array([
             103, 108, 111, 98, 97, 108, 95, 99, 111, 110, 102, 105, 103,
-          ]),
+          ])
         ),
       ],
     });
@@ -249,7 +249,7 @@ export function getHostAcceptBookingInstruction<
     TAccountGlobalConfig,
     TAccountEscrowConfig
   >,
-  config?: { programAddress?: TProgramAddress },
+  config?: { programAddress?: TProgramAddress }
 ): HostAcceptBookingInstruction<
   TProgramAddress,
   TAccountHost,
@@ -317,7 +317,7 @@ export function parseHostAcceptBookingInstruction<
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>,
+    InstructionWithData<ReadonlyUint8Array>
 ): ParsedHostAcceptBookingInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 5) {
     // TODO: Coded error.

@@ -90,7 +90,7 @@ export function getListingEncoder(): Encoder<ListingArgs> {
       ["stateHash", fixEncoderSize(getBytesEncoder(), 32)],
       ["bump", getU8Encoder()],
     ]),
-    (value) => ({ ...value, discriminator: LISTING_DISCRIMINATOR }),
+    (value) => ({ ...value, discriminator: LISTING_DISCRIMINATOR })
   );
 }
 
@@ -115,24 +115,24 @@ export function getListingCodec(): Codec<ListingArgs, Listing> {
 }
 
 export function decodeListing<TAddress extends string = string>(
-  encodedAccount: EncodedAccount<TAddress>,
+  encodedAccount: EncodedAccount<TAddress>
 ): Account<Listing, TAddress>;
 export function decodeListing<TAddress extends string = string>(
-  encodedAccount: MaybeEncodedAccount<TAddress>,
+  encodedAccount: MaybeEncodedAccount<TAddress>
 ): MaybeAccount<Listing, TAddress>;
 export function decodeListing<TAddress extends string = string>(
-  encodedAccount: EncodedAccount<TAddress> | MaybeEncodedAccount<TAddress>,
+  encodedAccount: EncodedAccount<TAddress> | MaybeEncodedAccount<TAddress>
 ): Account<Listing, TAddress> | MaybeAccount<Listing, TAddress> {
   return decodeAccount(
     encodedAccount as MaybeEncodedAccount<TAddress>,
-    getListingDecoder(),
+    getListingDecoder()
   );
 }
 
 export async function fetchListing<TAddress extends string = string>(
   rpc: Parameters<typeof fetchEncodedAccount>[0],
   address: Address<TAddress>,
-  config?: FetchAccountConfig,
+  config?: FetchAccountConfig
 ): Promise<Account<Listing, TAddress>> {
   const maybeAccount = await fetchMaybeListing(rpc, address, config);
   assertAccountExists(maybeAccount);
@@ -142,7 +142,7 @@ export async function fetchListing<TAddress extends string = string>(
 export async function fetchMaybeListing<TAddress extends string = string>(
   rpc: Parameters<typeof fetchEncodedAccount>[0],
   address: Address<TAddress>,
-  config?: FetchAccountConfig,
+  config?: FetchAccountConfig
 ): Promise<MaybeAccount<Listing, TAddress>> {
   const maybeAccount = await fetchEncodedAccount(rpc, address, config);
   return decodeListing(maybeAccount);
@@ -151,7 +151,7 @@ export async function fetchMaybeListing<TAddress extends string = string>(
 export async function fetchAllListing(
   rpc: Parameters<typeof fetchEncodedAccounts>[0],
   addresses: Array<Address>,
-  config?: FetchAccountsConfig,
+  config?: FetchAccountsConfig
 ): Promise<Account<Listing>[]> {
   const maybeAccounts = await fetchAllMaybeListing(rpc, addresses, config);
   assertAccountsExist(maybeAccounts);
@@ -161,7 +161,7 @@ export async function fetchAllListing(
 export async function fetchAllMaybeListing(
   rpc: Parameters<typeof fetchEncodedAccounts>[0],
   addresses: Array<Address>,
-  config?: FetchAccountsConfig,
+  config?: FetchAccountsConfig
 ): Promise<MaybeAccount<Listing>[]> {
   const maybeAccounts = await fetchEncodedAccounts(rpc, addresses, config);
   return maybeAccounts.map((maybeAccount) => decodeListing(maybeAccount));

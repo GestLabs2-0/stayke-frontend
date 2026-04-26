@@ -44,7 +44,7 @@ export const CLOSE_DISPUTE_DISCRIMINATOR = new Uint8Array([
 
 export function getCloseDisputeDiscriminatorBytes() {
   return fixEncoderSize(getBytesEncoder(), 8).encode(
-    CLOSE_DISPUTE_DISCRIMINATOR,
+    CLOSE_DISPUTE_DISCRIMINATOR
   );
 }
 
@@ -100,7 +100,7 @@ export type CloseDisputeInstructionDataArgs = {};
 export function getCloseDisputeInstructionDataEncoder(): FixedSizeEncoder<CloseDisputeInstructionDataArgs> {
   return transformEncoder(
     getStructEncoder([["discriminator", fixEncoderSize(getBytesEncoder(), 8)]]),
-    (value) => ({ ...value, discriminator: CLOSE_DISPUTE_DISCRIMINATOR }),
+    (value) => ({ ...value, discriminator: CLOSE_DISPUTE_DISCRIMINATOR })
   );
 }
 
@@ -116,7 +116,7 @@ export function getCloseDisputeInstructionDataCodec(): FixedSizeCodec<
 > {
   return combineCodec(
     getCloseDisputeInstructionDataEncoder(),
-    getCloseDisputeInstructionDataDecoder(),
+    getCloseDisputeInstructionDataDecoder()
   );
 }
 
@@ -161,7 +161,7 @@ export async function getCloseDisputeInstructionAsync<
     TAccountListing,
     TAccountStaykeCoreProgram
   >,
-  config?: { programAddress?: TProgramAddress },
+  config?: { programAddress?: TProgramAddress }
 ): Promise<
   CloseDisputeInstruction<
     TProgramAddress,
@@ -280,7 +280,7 @@ export function getCloseDisputeInstruction<
     TAccountListing,
     TAccountStaykeCoreProgram
   >,
-  config?: { programAddress?: TProgramAddress },
+  config?: { programAddress?: TProgramAddress }
 ): CloseDisputeInstruction<
   TProgramAddress,
   TAccountAdmin,
@@ -372,7 +372,7 @@ export function parseCloseDisputeInstruction<
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>,
+    InstructionWithData<ReadonlyUint8Array>
 ): ParsedCloseDisputeInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 8) {
     // TODO: Coded error.

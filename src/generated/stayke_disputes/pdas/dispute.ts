@@ -20,7 +20,7 @@ export type DisputeSeeds = {
 
 export async function findDisputePda(
   seeds: DisputeSeeds,
-  config: { programAddress?: Address | undefined } = {},
+  config: { programAddress?: Address | undefined } = {}
 ): Promise<ProgramDerivedAddress> {
   const {
     programAddress = "7SQdT9RxCjsEbap9vCmyVdAURwC7XRJkZtPNSJBcDxRB" as Address<"7SQdT9RxCjsEbap9vCmyVdAURwC7XRJkZtPNSJBcDxRB">,
@@ -29,7 +29,7 @@ export async function findDisputePda(
     programAddress,
     seeds: [
       getBytesEncoder().encode(
-        new Uint8Array([100, 105, 115, 112, 117, 116, 101]),
+        new Uint8Array([100, 105, 115, 112, 117, 116, 101])
       ),
       getAddressEncoder().encode(seeds.booking),
     ],

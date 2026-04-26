@@ -21,7 +21,7 @@ export type IdentitySeeds = {
 
 export async function findIdentityPda(
   seeds: IdentitySeeds,
-  config: { programAddress?: Address | undefined } = {},
+  config: { programAddress?: Address | undefined } = {}
 ): Promise<ProgramDerivedAddress> {
   const {
     programAddress = "8yHjmyUgA9x4pzftX1cwJt8SnG8iV1zxLjEP77HKc9YP" as Address<"8yHjmyUgA9x4pzftX1cwJt8SnG8iV1zxLjEP77HKc9YP">,
@@ -30,7 +30,7 @@ export async function findIdentityPda(
     programAddress,
     seeds: [
       getBytesEncoder().encode(
-        new Uint8Array([105, 100, 101, 110, 116, 105, 116, 121]),
+        new Uint8Array([105, 100, 101, 110, 116, 105, 116, 121])
       ),
       fixEncoderSize(getBytesEncoder(), 32).encode(seeds.id),
     ],

@@ -47,7 +47,7 @@ export const BOOKING_DAYS_DISCRIMINATOR = new Uint8Array([
 
 export function getBookingDaysDiscriminatorBytes() {
   return fixEncoderSize(getBytesEncoder(), 8).encode(
-    BOOKING_DAYS_DISCRIMINATOR,
+    BOOKING_DAYS_DISCRIMINATOR
   );
 }
 
@@ -84,7 +84,7 @@ export function getBookingDaysEncoder(): FixedSizeEncoder<BookingDaysArgs> {
       ["initialized", getBooleanEncoder()],
       ["bump", getU8Encoder()],
     ]),
-    (value) => ({ ...value, discriminator: BOOKING_DAYS_DISCRIMINATOR }),
+    (value) => ({ ...value, discriminator: BOOKING_DAYS_DISCRIMINATOR })
   );
 }
 
@@ -110,24 +110,24 @@ export function getBookingDaysCodec(): FixedSizeCodec<
 }
 
 export function decodeBookingDays<TAddress extends string = string>(
-  encodedAccount: EncodedAccount<TAddress>,
+  encodedAccount: EncodedAccount<TAddress>
 ): Account<BookingDays, TAddress>;
 export function decodeBookingDays<TAddress extends string = string>(
-  encodedAccount: MaybeEncodedAccount<TAddress>,
+  encodedAccount: MaybeEncodedAccount<TAddress>
 ): MaybeAccount<BookingDays, TAddress>;
 export function decodeBookingDays<TAddress extends string = string>(
-  encodedAccount: EncodedAccount<TAddress> | MaybeEncodedAccount<TAddress>,
+  encodedAccount: EncodedAccount<TAddress> | MaybeEncodedAccount<TAddress>
 ): Account<BookingDays, TAddress> | MaybeAccount<BookingDays, TAddress> {
   return decodeAccount(
     encodedAccount as MaybeEncodedAccount<TAddress>,
-    getBookingDaysDecoder(),
+    getBookingDaysDecoder()
   );
 }
 
 export async function fetchBookingDays<TAddress extends string = string>(
   rpc: Parameters<typeof fetchEncodedAccount>[0],
   address: Address<TAddress>,
-  config?: FetchAccountConfig,
+  config?: FetchAccountConfig
 ): Promise<Account<BookingDays, TAddress>> {
   const maybeAccount = await fetchMaybeBookingDays(rpc, address, config);
   assertAccountExists(maybeAccount);
@@ -137,7 +137,7 @@ export async function fetchBookingDays<TAddress extends string = string>(
 export async function fetchMaybeBookingDays<TAddress extends string = string>(
   rpc: Parameters<typeof fetchEncodedAccount>[0],
   address: Address<TAddress>,
-  config?: FetchAccountConfig,
+  config?: FetchAccountConfig
 ): Promise<MaybeAccount<BookingDays, TAddress>> {
   const maybeAccount = await fetchEncodedAccount(rpc, address, config);
   return decodeBookingDays(maybeAccount);
@@ -146,7 +146,7 @@ export async function fetchMaybeBookingDays<TAddress extends string = string>(
 export async function fetchAllBookingDays(
   rpc: Parameters<typeof fetchEncodedAccounts>[0],
   addresses: Array<Address>,
-  config?: FetchAccountsConfig,
+  config?: FetchAccountsConfig
 ): Promise<Account<BookingDays>[]> {
   const maybeAccounts = await fetchAllMaybeBookingDays(rpc, addresses, config);
   assertAccountsExist(maybeAccounts);
@@ -156,7 +156,7 @@ export async function fetchAllBookingDays(
 export async function fetchAllMaybeBookingDays(
   rpc: Parameters<typeof fetchEncodedAccounts>[0],
   addresses: Array<Address>,
-  config?: FetchAccountsConfig,
+  config?: FetchAccountsConfig
 ): Promise<MaybeAccount<BookingDays>[]> {
   const maybeAccounts = await fetchEncodedAccounts(rpc, addresses, config);
   return maybeAccounts.map((maybeAccount) => decodeBookingDays(maybeAccount));

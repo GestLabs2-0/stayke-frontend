@@ -70,7 +70,7 @@ if (process.env.NODE_ENV !== "production") {
 }
 
 export function getStaykeDisputesErrorMessage(
-  code: StaykeDisputesError,
+  code: StaykeDisputesError
 ): string {
   if (process.env.NODE_ENV !== "production") {
     return (staykeDisputesErrorMessages as Record<StaykeDisputesError, string>)[
@@ -88,13 +88,13 @@ export function isStaykeDisputesError<
   transactionMessage: {
     instructions: Record<number, { programAddress: Address }>;
   },
-  code?: TProgramErrorCode,
+  code?: TProgramErrorCode
 ): error is SolanaError<typeof SOLANA_ERROR__INSTRUCTION_ERROR__CUSTOM> &
   Readonly<{ context: Readonly<{ code: TProgramErrorCode }> }> {
   return isProgramError<TProgramErrorCode>(
     error,
     transactionMessage,
     STAYKE_DISPUTES_PROGRAM_ADDRESS,
-    code,
+    code
   );
 }

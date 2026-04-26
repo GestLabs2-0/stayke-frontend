@@ -45,7 +45,7 @@ export const INITIALIZE_TREASURY_DISCRIMINATOR = new Uint8Array([
 
 export function getInitializeTreasuryDiscriminatorBytes() {
   return fixEncoderSize(getBytesEncoder(), 8).encode(
-    INITIALIZE_TREASURY_DISCRIMINATOR,
+    INITIALIZE_TREASURY_DISCRIMINATOR
   );
 }
 
@@ -104,7 +104,7 @@ export type InitializeTreasuryInstructionDataArgs = {};
 export function getInitializeTreasuryInstructionDataEncoder(): FixedSizeEncoder<InitializeTreasuryInstructionDataArgs> {
   return transformEncoder(
     getStructEncoder([["discriminator", fixEncoderSize(getBytesEncoder(), 8)]]),
-    (value) => ({ ...value, discriminator: INITIALIZE_TREASURY_DISCRIMINATOR }),
+    (value) => ({ ...value, discriminator: INITIALIZE_TREASURY_DISCRIMINATOR })
   );
 }
 
@@ -120,7 +120,7 @@ export function getInitializeTreasuryInstructionDataCodec(): FixedSizeCodec<
 > {
   return combineCodec(
     getInitializeTreasuryInstructionDataEncoder(),
-    getInitializeTreasuryInstructionDataDecoder(),
+    getInitializeTreasuryInstructionDataDecoder()
   );
 }
 
@@ -166,7 +166,7 @@ export async function getInitializeTreasuryInstructionAsync<
     TAccountTokenProgram,
     TAccountSystemProgram
   >,
-  config?: { programAddress?: TProgramAddress },
+  config?: { programAddress?: TProgramAddress }
 ): Promise<
   InitializeTreasuryInstruction<
     TProgramAddress,
@@ -218,7 +218,7 @@ export async function getInitializeTreasuryInstructionAsync<
         getBytesEncoder().encode(
           new Uint8Array([
             103, 108, 111, 98, 97, 108, 95, 99, 111, 110, 102, 105, 103,
-          ]),
+          ])
         ),
       ],
     });
@@ -301,7 +301,7 @@ export function getInitializeTreasuryInstruction<
     TAccountTokenProgram,
     TAccountSystemProgram
   >,
-  config?: { programAddress?: TProgramAddress },
+  config?: { programAddress?: TProgramAddress }
 ): InitializeTreasuryInstruction<
   TProgramAddress,
   TAccountAuthority,
@@ -395,7 +395,7 @@ export function parseInitializeTreasuryInstruction<
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>,
+    InstructionWithData<ReadonlyUint8Array>
 ): ParsedInitializeTreasuryInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 8) {
     // TODO: Coded error.
@@ -420,7 +420,7 @@ export function parseInitializeTreasuryInstruction<
       systemProgram: getNextAccount(),
     },
     data: getInitializeTreasuryInstructionDataDecoder().decode(
-      instruction.data,
+      instruction.data
     ),
   };
 }

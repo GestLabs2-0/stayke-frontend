@@ -14,7 +14,7 @@ import {
 } from "@solana/kit";
 
 export async function findTreasuryVaultPda(
-  config: { programAddress?: Address | undefined } = {},
+  config: { programAddress?: Address | undefined } = {}
 ): Promise<ProgramDerivedAddress> {
   const {
     programAddress = "59buEPHFBK4h8LyLE2KtnV1kpaQTyjb82NWt5F9jSuHu" as Address<"59buEPHFBK4h8LyLE2KtnV1kpaQTyjb82NWt5F9jSuHu">,
@@ -25,7 +25,7 @@ export async function findTreasuryVaultPda(
       getBytesEncoder().encode(
         new Uint8Array([
           116, 114, 101, 97, 115, 117, 114, 121, 95, 118, 97, 117, 108, 116,
-        ]),
+        ])
       ),
     ],
   });

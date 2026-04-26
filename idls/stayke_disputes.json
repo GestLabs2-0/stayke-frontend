@@ -9,16 +9,7 @@
   "instructions": [
     {
       "name": "close_dispute",
-      "discriminator": [
-        60,
-        18,
-        92,
-        170,
-        100,
-        195,
-        146,
-        196
-      ],
+      "discriminator": [60, 18, 92, 170, 100, 195, 146, 196],
       "accounts": [
         {
           "name": "admin",
@@ -32,19 +23,7 @@
               {
                 "kind": "const",
                 "value": [
-                  100,
-                  105,
-                  115,
-                  112,
-                  117,
-                  116,
-                  101,
-                  95,
-                  99,
-                  111,
-                  110,
-                  102,
-                  105,
+                  100, 105, 115, 112, 117, 116, 101, 95, 99, 111, 110, 102, 105,
                   103
                 ]
               }
@@ -58,15 +37,7 @@
             "seeds": [
               {
                 "kind": "const",
-                "value": [
-                  100,
-                  105,
-                  115,
-                  112,
-                  117,
-                  116,
-                  101
-                ]
+                "value": [100, 105, 115, 112, 117, 116, 101]
               },
               {
                 "kind": "account",
@@ -99,16 +70,7 @@
     },
     {
       "name": "initialize_config",
-      "discriminator": [
-        208,
-        127,
-        21,
-        1,
-        194,
-        190,
-        196,
-        70
-      ],
+      "discriminator": [208, 127, 21, 1, 194, 190, 196, 70],
       "accounts": [
         {
           "name": "authority",
@@ -123,19 +85,7 @@
               {
                 "kind": "const",
                 "value": [
-                  100,
-                  105,
-                  115,
-                  112,
-                  117,
-                  116,
-                  101,
-                  95,
-                  99,
-                  111,
-                  110,
-                  102,
-                  105,
+                  100, 105, 115, 112, 117, 116, 101, 95, 99, 111, 110, 102, 105,
                   103
                 ]
               }
@@ -151,16 +101,7 @@
     },
     {
       "name": "open_dispute",
-      "discriminator": [
-        137,
-        25,
-        99,
-        119,
-        23,
-        223,
-        161,
-        42
-      ],
+      "discriminator": [137, 25, 99, 119, 23, 223, 161, 42],
       "accounts": [
         {
           "name": "initiator",
@@ -174,18 +115,7 @@
               {
                 "kind": "const",
                 "value": [
-                  117,
-                  115,
-                  101,
-                  114,
-                  95,
-                  112,
-                  114,
-                  111,
-                  102,
-                  105,
-                  108,
-                  101
+                  117, 115, 101, 114, 95, 112, 114, 111, 102, 105, 108, 101
                 ]
               },
               {
@@ -196,47 +126,16 @@
             "program": {
               "kind": "const",
               "value": [
-                118,
-                109,
-                66,
-                74,
-                177,
-                144,
-                211,
-                97,
-                159,
-                13,
-                99,
-                204,
-                121,
-                183,
-                217,
-                255,
-                57,
-                226,
-                31,
-                209,
-                61,
-                90,
-                8,
-                214,
-                12,
-                120,
-                222,
-                7,
-                128,
-                152,
-                5,
-                84
+                118, 109, 66, 74, 177, 144, 211, 97, 159, 13, 99, 204, 121, 183,
+                217, 255, 57, 226, 31, 209, 61, 90, 8, 214, 12, 120, 222, 7,
+                128, 152, 5, 84
               ]
             }
           }
         },
         {
           "name": "booking",
-          "docs": [
-            "We must mutate the booking state via CPI"
-          ],
+          "docs": ["We must mutate the booking state via CPI"],
           "writable": true
         },
         {
@@ -246,15 +145,7 @@
             "seeds": [
               {
                 "kind": "const",
-                "value": [
-                  100,
-                  105,
-                  115,
-                  112,
-                  117,
-                  116,
-                  101
-                ]
+                "value": [100, 105, 115, 112, 117, 116, 101]
               },
               {
                 "kind": "account",
@@ -285,16 +176,7 @@
     },
     {
       "name": "penalize_user",
-      "discriminator": [
-        4,
-        118,
-        74,
-        208,
-        212,
-        28,
-        119,
-        50
-      ],
+      "discriminator": [4, 118, 74, 208, 212, 28, 119, 50],
       "accounts": [
         {
           "name": "admin",
@@ -308,19 +190,7 @@
               {
                 "kind": "const",
                 "value": [
-                  100,
-                  105,
-                  115,
-                  112,
-                  117,
-                  116,
-                  101,
-                  95,
-                  99,
-                  111,
-                  110,
-                  102,
-                  105,
+                  100, 105, 115, 112, 117, 116, 101, 95, 99, 111, 110, 102, 105,
                   103
                 ]
               }
@@ -353,18 +223,14 @@
         },
         {
           "name": "treasury_config",
-          "docs": [
-            "The treasury program config."
-          ]
+          "docs": ["The treasury program config."]
         },
         {
           "name": "global_config"
         },
         {
           "name": "treasury_vault",
-          "docs": [
-            "The global treasury vault from stayke-treasury."
-          ],
+          "docs": ["The global treasury vault from stayke-treasury."],
           "writable": true
         },
         {
@@ -399,16 +265,7 @@
     },
     {
       "name": "resolve_dispute",
-      "discriminator": [
-        231,
-        6,
-        202,
-        6,
-        96,
-        103,
-        12,
-        230
-      ],
+      "discriminator": [231, 6, 202, 6, 96, 103, 12, 230],
       "accounts": [
         {
           "name": "admin",
@@ -422,19 +279,7 @@
               {
                 "kind": "const",
                 "value": [
-                  100,
-                  105,
-                  115,
-                  112,
-                  117,
-                  116,
-                  101,
-                  95,
-                  99,
-                  111,
-                  110,
-                  102,
-                  105,
+                  100, 105, 115, 112, 117, 116, 101, 95, 99, 111, 110, 102, 105,
                   103
                 ]
               }
@@ -448,15 +293,7 @@
             "seeds": [
               {
                 "kind": "const",
-                "value": [
-                  100,
-                  105,
-                  115,
-                  112,
-                  117,
-                  116,
-                  101
-                ]
+                "value": [100, 105, 115, 112, 117, 116, 101]
               },
               {
                 "kind": "account",
@@ -518,70 +355,25 @@
   "accounts": [
     {
       "name": "Dispute",
-      "discriminator": [
-        36,
-        49,
-        241,
-        67,
-        40,
-        36,
-        241,
-        74
-      ]
+      "discriminator": [36, 49, 241, 67, 40, 36, 241, 74]
     },
     {
       "name": "DisputeConfig",
-      "discriminator": [
-        230,
-        88,
-        200,
-        99,
-        12,
-        93,
-        56,
-        156
-      ]
+      "discriminator": [230, 88, 200, 99, 12, 93, 56, 156]
     }
   ],
   "events": [
     {
       "name": "DisputeOpened",
-      "discriminator": [
-        239,
-        222,
-        102,
-        235,
-        193,
-        85,
-        1,
-        214
-      ]
+      "discriminator": [239, 222, 102, 235, 193, 85, 1, 214]
     },
     {
       "name": "DisputeResolved",
-      "discriminator": [
-        121,
-        64,
-        249,
-        153,
-        139,
-        128,
-        236,
-        187
-      ]
+      "discriminator": [121, 64, 249, 153, 139, 128, 236, 187]
     },
     {
       "name": "UserPenalized",
-      "discriminator": [
-        179,
-        74,
-        233,
-        57,
-        101,
-        147,
-        98,
-        252
-      ]
+      "discriminator": [179, 74, 233, 57, 101, 147, 98, 252]
     }
   ],
   "errors": [
@@ -697,9 +489,7 @@
           },
           {
             "name": "review",
-            "docs": [
-              "0 = no review yet; 1–5 = star rating"
-            ],
+            "docs": ["0 = no review yet; 1–5 = star rating"],
             "type": "u8"
           },
           {
@@ -1009,10 +799,7 @@
           {
             "name": "state_hash",
             "type": {
-              "array": [
-                "u8",
-                32
-              ]
+              "array": ["u8", 32]
             }
           },
           {

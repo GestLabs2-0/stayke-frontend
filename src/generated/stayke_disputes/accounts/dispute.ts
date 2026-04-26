@@ -101,7 +101,7 @@ export function getDisputeEncoder(): Encoder<DisputeArgs> {
       ["resolvedAt", getOptionEncoder(getI64Encoder())],
       ["bump", getU8Encoder()],
     ]),
-    (value) => ({ ...value, discriminator: DISPUTE_DISCRIMINATOR }),
+    (value) => ({ ...value, discriminator: DISPUTE_DISCRIMINATOR })
   );
 }
 
@@ -127,24 +127,24 @@ export function getDisputeCodec(): Codec<DisputeArgs, Dispute> {
 }
 
 export function decodeDispute<TAddress extends string = string>(
-  encodedAccount: EncodedAccount<TAddress>,
+  encodedAccount: EncodedAccount<TAddress>
 ): Account<Dispute, TAddress>;
 export function decodeDispute<TAddress extends string = string>(
-  encodedAccount: MaybeEncodedAccount<TAddress>,
+  encodedAccount: MaybeEncodedAccount<TAddress>
 ): MaybeAccount<Dispute, TAddress>;
 export function decodeDispute<TAddress extends string = string>(
-  encodedAccount: EncodedAccount<TAddress> | MaybeEncodedAccount<TAddress>,
+  encodedAccount: EncodedAccount<TAddress> | MaybeEncodedAccount<TAddress>
 ): Account<Dispute, TAddress> | MaybeAccount<Dispute, TAddress> {
   return decodeAccount(
     encodedAccount as MaybeEncodedAccount<TAddress>,
-    getDisputeDecoder(),
+    getDisputeDecoder()
   );
 }
 
 export async function fetchDispute<TAddress extends string = string>(
   rpc: Parameters<typeof fetchEncodedAccount>[0],
   address: Address<TAddress>,
-  config?: FetchAccountConfig,
+  config?: FetchAccountConfig
 ): Promise<Account<Dispute, TAddress>> {
   const maybeAccount = await fetchMaybeDispute(rpc, address, config);
   assertAccountExists(maybeAccount);
@@ -154,7 +154,7 @@ export async function fetchDispute<TAddress extends string = string>(
 export async function fetchMaybeDispute<TAddress extends string = string>(
   rpc: Parameters<typeof fetchEncodedAccount>[0],
   address: Address<TAddress>,
-  config?: FetchAccountConfig,
+  config?: FetchAccountConfig
 ): Promise<MaybeAccount<Dispute, TAddress>> {
   const maybeAccount = await fetchEncodedAccount(rpc, address, config);
   return decodeDispute(maybeAccount);
@@ -163,7 +163,7 @@ export async function fetchMaybeDispute<TAddress extends string = string>(
 export async function fetchAllDispute(
   rpc: Parameters<typeof fetchEncodedAccounts>[0],
   addresses: Array<Address>,
-  config?: FetchAccountsConfig,
+  config?: FetchAccountsConfig
 ): Promise<Account<Dispute>[]> {
   const maybeAccounts = await fetchAllMaybeDispute(rpc, addresses, config);
   assertAccountsExist(maybeAccounts);
@@ -173,7 +173,7 @@ export async function fetchAllDispute(
 export async function fetchAllMaybeDispute(
   rpc: Parameters<typeof fetchEncodedAccounts>[0],
   addresses: Array<Address>,
-  config?: FetchAccountsConfig,
+  config?: FetchAccountsConfig
 ): Promise<MaybeAccount<Dispute>[]> {
   const maybeAccounts = await fetchEncodedAccounts(rpc, addresses, config);
   return maybeAccounts.map((maybeAccount) => decodeDispute(maybeAccount));

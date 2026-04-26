@@ -49,16 +49,16 @@ export enum StaykeEscrowAccount {
 }
 
 export function identifyStaykeEscrowAccount(
-  account: { data: ReadonlyUint8Array } | ReadonlyUint8Array,
+  account: { data: ReadonlyUint8Array } | ReadonlyUint8Array
 ): StaykeEscrowAccount {
   const data = "data" in account ? account.data : account;
   if (
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([147, 50, 61, 138, 208, 21, 254, 156]),
+        new Uint8Array([147, 50, 61, 138, 208, 21, 254, 156])
       ),
-      0,
+      0
     )
   ) {
     return StaykeEscrowAccount.Booking;
@@ -67,9 +67,9 @@ export function identifyStaykeEscrowAccount(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([134, 102, 203, 81, 137, 194, 64, 222]),
+        new Uint8Array([134, 102, 203, 81, 137, 194, 64, 222])
       ),
-      0,
+      0
     )
   ) {
     return StaykeEscrowAccount.BookingDays;
@@ -78,15 +78,15 @@ export function identifyStaykeEscrowAccount(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([138, 174, 227, 187, 239, 148, 1, 44]),
+        new Uint8Array([138, 174, 227, 187, 239, 148, 1, 44])
       ),
-      0,
+      0
     )
   ) {
     return StaykeEscrowAccount.EscrowConfig;
   }
   throw new Error(
-    "The provided account could not be identified as a staykeEscrow account.",
+    "The provided account could not be identified as a staykeEscrow account."
   );
 }
 
@@ -104,16 +104,16 @@ export enum StaykeEscrowInstruction {
 }
 
 export function identifyStaykeEscrowInstruction(
-  instruction: { data: ReadonlyUint8Array } | ReadonlyUint8Array,
+  instruction: { data: ReadonlyUint8Array } | ReadonlyUint8Array
 ): StaykeEscrowInstruction {
   const data = "data" in instruction ? instruction.data : instruction;
   if (
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([3, 26, 163, 71, 217, 7, 186, 94]),
+        new Uint8Array([3, 26, 163, 71, 217, 7, 186, 94])
       ),
-      0,
+      0
     )
   ) {
     return StaykeEscrowInstruction.ClientAcceptReserve;
@@ -122,9 +122,9 @@ export function identifyStaykeEscrowInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([255, 7, 9, 197, 47, 46, 133, 198]),
+        new Uint8Array([255, 7, 9, 197, 47, 46, 133, 198])
       ),
-      0,
+      0
     )
   ) {
     return StaykeEscrowInstruction.ClientRejectReserve;
@@ -133,9 +133,9 @@ export function identifyStaykeEscrowInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([112, 64, 94, 245, 123, 205, 57, 182]),
+        new Uint8Array([112, 64, 94, 245, 123, 205, 57, 182])
       ),
-      0,
+      0
     )
   ) {
     return StaykeEscrowInstruction.CompleteStay;
@@ -144,9 +144,9 @@ export function identifyStaykeEscrowInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([222, 17, 226, 59, 156, 240, 159, 82]),
+        new Uint8Array([222, 17, 226, 59, 156, 240, 159, 82])
       ),
-      0,
+      0
     )
   ) {
     return StaykeEscrowInstruction.CpiResolveDisputeTransfer;
@@ -155,9 +155,9 @@ export function identifyStaykeEscrowInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([225, 169, 181, 166, 175, 12, 138, 50]),
+        new Uint8Array([225, 169, 181, 166, 175, 12, 138, 50])
       ),
-      0,
+      0
     )
   ) {
     return StaykeEscrowInstruction.CpiUpdateBookingStatus;
@@ -166,9 +166,9 @@ export function identifyStaykeEscrowInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([19, 223, 181, 90, 124, 206, 73, 169]),
+        new Uint8Array([19, 223, 181, 90, 124, 206, 73, 169])
       ),
-      0,
+      0
     )
   ) {
     return StaykeEscrowInstruction.CreateBooking;
@@ -177,9 +177,9 @@ export function identifyStaykeEscrowInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([7, 61, 21, 168, 166, 46, 200, 76]),
+        new Uint8Array([7, 61, 21, 168, 166, 46, 200, 76])
       ),
-      0,
+      0
     )
   ) {
     return StaykeEscrowInstruction.HostAcceptBooking;
@@ -188,9 +188,9 @@ export function identifyStaykeEscrowInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([126, 31, 200, 145, 63, 158, 188, 85]),
+        new Uint8Array([126, 31, 200, 145, 63, 158, 188, 85])
       ),
-      0,
+      0
     )
   ) {
     return StaykeEscrowInstruction.HostRejectBooking;
@@ -199,9 +199,9 @@ export function identifyStaykeEscrowInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([243, 160, 77, 153, 11, 92, 48, 209]),
+        new Uint8Array([243, 160, 77, 153, 11, 92, 48, 209])
       ),
-      0,
+      0
     )
   ) {
     return StaykeEscrowInstruction.InitializeEscrow;
@@ -210,15 +210,15 @@ export function identifyStaykeEscrowInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([196, 242, 133, 147, 126, 125, 244, 151]),
+        new Uint8Array([196, 242, 133, 147, 126, 125, 244, 151])
       ),
-      0,
+      0
     )
   ) {
     return StaykeEscrowInstruction.ReviewCompleted;
   }
   throw new Error(
-    "The provided instruction could not be identified as a staykeEscrow instruction.",
+    "The provided instruction could not be identified as a staykeEscrow instruction."
   );
 }
 
@@ -257,7 +257,7 @@ export type ParsedStaykeEscrowInstruction<
     } & ParsedReviewCompletedInstruction<TProgram>);
 
 export function parseStaykeEscrowInstruction<TProgram extends string>(
-  instruction: Instruction<TProgram> & InstructionWithData<ReadonlyUint8Array>,
+  instruction: Instruction<TProgram> & InstructionWithData<ReadonlyUint8Array>
 ): ParsedStaykeEscrowInstruction<TProgram> {
   const instructionType = identifyStaykeEscrowInstruction(instruction);
   switch (instructionType) {
@@ -333,7 +333,7 @@ export function parseStaykeEscrowInstruction<TProgram extends string>(
     }
     default:
       throw new Error(
-        `Unrecognized instruction type: ${instructionType as string}`,
+        `Unrecognized instruction type: ${instructionType as string}`
       );
   }
 }

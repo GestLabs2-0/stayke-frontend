@@ -38,7 +38,7 @@ export const CLEAR_ACTIVE_BOOKING_DISCRIMINATOR = new Uint8Array([
 
 export function getClearActiveBookingDiscriminatorBytes() {
   return fixEncoderSize(getBytesEncoder(), 8).encode(
-    CLEAR_ACTIVE_BOOKING_DISCRIMINATOR,
+    CLEAR_ACTIVE_BOOKING_DISCRIMINATOR
   );
 }
 
@@ -74,7 +74,7 @@ export function getClearActiveBookingInstructionDataEncoder(): FixedSizeEncoder<
     (value) => ({
       ...value,
       discriminator: CLEAR_ACTIVE_BOOKING_DISCRIMINATOR,
-    }),
+    })
   );
 }
 
@@ -90,7 +90,7 @@ export function getClearActiveBookingInstructionDataCodec(): FixedSizeCodec<
 > {
   return combineCodec(
     getClearActiveBookingInstructionDataEncoder(),
-    getClearActiveBookingInstructionDataDecoder(),
+    getClearActiveBookingInstructionDataDecoder()
   );
 }
 
@@ -108,7 +108,7 @@ export function getClearActiveBookingInstruction<
   TProgramAddress extends Address = typeof STAYKE_CORE_PROGRAM_ADDRESS,
 >(
   input: ClearActiveBookingInput<TAccountUserProfile, TAccountAuthority>,
-  config?: { programAddress?: TProgramAddress },
+  config?: { programAddress?: TProgramAddress }
 ): ClearActiveBookingInstruction<
   TProgramAddress,
   TAccountUserProfile,
@@ -160,7 +160,7 @@ export function parseClearActiveBookingInstruction<
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>,
+    InstructionWithData<ReadonlyUint8Array>
 ): ParsedClearActiveBookingInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 2) {
     // TODO: Coded error.
@@ -176,7 +176,7 @@ export function parseClearActiveBookingInstruction<
     programAddress: instruction.programAddress,
     accounts: { userProfile: getNextAccount(), authority: getNextAccount() },
     data: getClearActiveBookingInstructionDataDecoder().decode(
-      instruction.data,
+      instruction.data
     ),
   };
 }

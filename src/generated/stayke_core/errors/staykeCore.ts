@@ -52,13 +52,13 @@ export function isStaykeCoreError<TProgramErrorCode extends StaykeCoreError>(
   transactionMessage: {
     instructions: Record<number, { programAddress: Address }>;
   },
-  code?: TProgramErrorCode,
+  code?: TProgramErrorCode
 ): error is SolanaError<typeof SOLANA_ERROR__INSTRUCTION_ERROR__CUSTOM> &
   Readonly<{ context: Readonly<{ code: TProgramErrorCode }> }> {
   return isProgramError<TProgramErrorCode>(
     error,
     transactionMessage,
     STAYKE_CORE_PROGRAM_ADDRESS,
-    code,
+    code
   );
 }

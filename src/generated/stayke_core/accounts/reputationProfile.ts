@@ -47,7 +47,7 @@ export const REPUTATION_PROFILE_DISCRIMINATOR = new Uint8Array([
 
 export function getReputationProfileDiscriminatorBytes() {
   return fixEncoderSize(getBytesEncoder(), 8).encode(
-    REPUTATION_PROFILE_DISCRIMINATOR,
+    REPUTATION_PROFILE_DISCRIMINATOR
   );
 }
 
@@ -97,7 +97,7 @@ export function getReputationProfileEncoder(): FixedSizeEncoder<ReputationProfil
       ["highInfractions", getU8Encoder()],
       ["bump", getU8Encoder()],
     ]),
-    (value) => ({ ...value, discriminator: REPUTATION_PROFILE_DISCRIMINATOR }),
+    (value) => ({ ...value, discriminator: REPUTATION_PROFILE_DISCRIMINATOR })
   );
 }
 
@@ -126,31 +126,31 @@ export function getReputationProfileCodec(): FixedSizeCodec<
 > {
   return combineCodec(
     getReputationProfileEncoder(),
-    getReputationProfileDecoder(),
+    getReputationProfileDecoder()
   );
 }
 
 export function decodeReputationProfile<TAddress extends string = string>(
-  encodedAccount: EncodedAccount<TAddress>,
+  encodedAccount: EncodedAccount<TAddress>
 ): Account<ReputationProfile, TAddress>;
 export function decodeReputationProfile<TAddress extends string = string>(
-  encodedAccount: MaybeEncodedAccount<TAddress>,
+  encodedAccount: MaybeEncodedAccount<TAddress>
 ): MaybeAccount<ReputationProfile, TAddress>;
 export function decodeReputationProfile<TAddress extends string = string>(
-  encodedAccount: EncodedAccount<TAddress> | MaybeEncodedAccount<TAddress>,
+  encodedAccount: EncodedAccount<TAddress> | MaybeEncodedAccount<TAddress>
 ):
   | Account<ReputationProfile, TAddress>
   | MaybeAccount<ReputationProfile, TAddress> {
   return decodeAccount(
     encodedAccount as MaybeEncodedAccount<TAddress>,
-    getReputationProfileDecoder(),
+    getReputationProfileDecoder()
   );
 }
 
 export async function fetchReputationProfile<TAddress extends string = string>(
   rpc: Parameters<typeof fetchEncodedAccount>[0],
   address: Address<TAddress>,
-  config?: FetchAccountConfig,
+  config?: FetchAccountConfig
 ): Promise<Account<ReputationProfile, TAddress>> {
   const maybeAccount = await fetchMaybeReputationProfile(rpc, address, config);
   assertAccountExists(maybeAccount);
@@ -162,7 +162,7 @@ export async function fetchMaybeReputationProfile<
 >(
   rpc: Parameters<typeof fetchEncodedAccount>[0],
   address: Address<TAddress>,
-  config?: FetchAccountConfig,
+  config?: FetchAccountConfig
 ): Promise<MaybeAccount<ReputationProfile, TAddress>> {
   const maybeAccount = await fetchEncodedAccount(rpc, address, config);
   return decodeReputationProfile(maybeAccount);
@@ -171,12 +171,12 @@ export async function fetchMaybeReputationProfile<
 export async function fetchAllReputationProfile(
   rpc: Parameters<typeof fetchEncodedAccounts>[0],
   addresses: Array<Address>,
-  config?: FetchAccountsConfig,
+  config?: FetchAccountsConfig
 ): Promise<Account<ReputationProfile>[]> {
   const maybeAccounts = await fetchAllMaybeReputationProfile(
     rpc,
     addresses,
-    config,
+    config
   );
   assertAccountsExist(maybeAccounts);
   return maybeAccounts;
@@ -185,11 +185,11 @@ export async function fetchAllReputationProfile(
 export async function fetchAllMaybeReputationProfile(
   rpc: Parameters<typeof fetchEncodedAccounts>[0],
   addresses: Array<Address>,
-  config?: FetchAccountsConfig,
+  config?: FetchAccountsConfig
 ): Promise<MaybeAccount<ReputationProfile>[]> {
   const maybeAccounts = await fetchEncodedAccounts(rpc, addresses, config);
   return maybeAccounts.map((maybeAccount) =>
-    decodeReputationProfile(maybeAccount),
+    decodeReputationProfile(maybeAccount)
   );
 }
 

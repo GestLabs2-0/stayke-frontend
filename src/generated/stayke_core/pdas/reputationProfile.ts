@@ -20,7 +20,7 @@ export type ReputationProfileSeeds = {
 
 export async function findReputationProfilePda(
   seeds: ReputationProfileSeeds,
-  config: { programAddress?: Address | undefined } = {},
+  config: { programAddress?: Address | undefined } = {}
 ): Promise<ProgramDerivedAddress> {
   const {
     programAddress = "8yHjmyUgA9x4pzftX1cwJt8SnG8iV1zxLjEP77HKc9YP" as Address<"8yHjmyUgA9x4pzftX1cwJt8SnG8iV1zxLjEP77HKc9YP">,
@@ -32,7 +32,7 @@ export async function findReputationProfilePda(
         new Uint8Array([
           114, 101, 112, 117, 116, 97, 116, 105, 111, 110, 95, 112, 114, 111,
           102, 105, 108, 101,
-        ]),
+        ])
       ),
       getAddressEncoder().encode(seeds.authority),
     ],

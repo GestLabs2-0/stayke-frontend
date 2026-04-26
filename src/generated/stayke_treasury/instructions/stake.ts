@@ -70,7 +70,7 @@ export function getStakeInstructionDataEncoder(): FixedSizeEncoder<StakeInstruct
       ["discriminator", fixEncoderSize(getBytesEncoder(), 8)],
       ["amount", getU64Encoder()],
     ]),
-    (value) => ({ ...value, discriminator: STAKE_DISCRIMINATOR }),
+    (value) => ({ ...value, discriminator: STAKE_DISCRIMINATOR })
   );
 }
 
@@ -87,7 +87,7 @@ export function getStakeInstructionDataCodec(): FixedSizeCodec<
 > {
   return combineCodec(
     getStakeInstructionDataEncoder(),
-    getStakeInstructionDataDecoder(),
+    getStakeInstructionDataDecoder()
   );
 }
 
@@ -101,7 +101,7 @@ export function getStakeInstruction<
   TProgramAddress extends Address = typeof STAYKE_TREASURY_PROGRAM_ADDRESS,
 >(
   input: StakeInput<TAccountSigner>,
-  config?: { programAddress?: TProgramAddress },
+  config?: { programAddress?: TProgramAddress }
 ): StakeInstruction<TProgramAddress, TAccountSigner> {
   // Program address.
   const programAddress =
@@ -123,7 +123,7 @@ export function getStakeInstruction<
   return Object.freeze({
     accounts: [getAccountMeta(accounts.signer)],
     data: getStakeInstructionDataEncoder().encode(
-      args as StakeInstructionDataArgs,
+      args as StakeInstructionDataArgs
     ),
     programAddress,
   } as StakeInstruction<TProgramAddress, TAccountSigner>);
@@ -146,7 +146,7 @@ export function parseStakeInstruction<
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>,
+    InstructionWithData<ReadonlyUint8Array>
 ): ParsedStakeInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 1) {
     // TODO: Coded error.

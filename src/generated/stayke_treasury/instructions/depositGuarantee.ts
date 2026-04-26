@@ -47,7 +47,7 @@ export const DEPOSIT_GUARANTEE_DISCRIMINATOR = new Uint8Array([
 
 export function getDepositGuaranteeDiscriminatorBytes() {
   return fixEncoderSize(getBytesEncoder(), 8).encode(
-    DEPOSIT_GUARANTEE_DISCRIMINATOR,
+    DEPOSIT_GUARANTEE_DISCRIMINATOR
   );
 }
 
@@ -114,7 +114,7 @@ export function getDepositGuaranteeInstructionDataEncoder(): FixedSizeEncoder<De
       ["discriminator", fixEncoderSize(getBytesEncoder(), 8)],
       ["amount", getU64Encoder()],
     ]),
-    (value) => ({ ...value, discriminator: DEPOSIT_GUARANTEE_DISCRIMINATOR }),
+    (value) => ({ ...value, discriminator: DEPOSIT_GUARANTEE_DISCRIMINATOR })
   );
 }
 
@@ -131,7 +131,7 @@ export function getDepositGuaranteeInstructionDataCodec(): FixedSizeCodec<
 > {
   return combineCodec(
     getDepositGuaranteeInstructionDataEncoder(),
-    getDepositGuaranteeInstructionDataDecoder(),
+    getDepositGuaranteeInstructionDataDecoder()
   );
 }
 
@@ -184,7 +184,7 @@ export async function getDepositGuaranteeInstructionAsync<
     TAccountUserProfile,
     TAccountStaykeCoreProgram
   >,
-  config?: { programAddress?: TProgramAddress },
+  config?: { programAddress?: TProgramAddress }
 ): Promise<
   DepositGuaranteeInstruction<
     TProgramAddress,
@@ -241,7 +241,7 @@ export async function getDepositGuaranteeInstructionAsync<
         getBytesEncoder().encode(
           new Uint8Array([
             103, 108, 111, 98, 97, 108, 95, 99, 111, 110, 102, 105, 103,
-          ]),
+          ])
         ),
       ],
     });
@@ -274,7 +274,7 @@ export async function getDepositGuaranteeInstructionAsync<
       getAccountMeta(accounts.staykeCoreProgram),
     ],
     data: getDepositGuaranteeInstructionDataEncoder().encode(
-      args as DepositGuaranteeInstructionDataArgs,
+      args as DepositGuaranteeInstructionDataArgs
     ),
     programAddress,
   } as DepositGuaranteeInstruction<
@@ -340,7 +340,7 @@ export function getDepositGuaranteeInstruction<
     TAccountUserProfile,
     TAccountStaykeCoreProgram
   >,
-  config?: { programAddress?: TProgramAddress },
+  config?: { programAddress?: TProgramAddress }
 ): DepositGuaranteeInstruction<
   TProgramAddress,
   TAccountSigner,
@@ -407,7 +407,7 @@ export function getDepositGuaranteeInstruction<
       getAccountMeta(accounts.staykeCoreProgram),
     ],
     data: getDepositGuaranteeInstructionDataEncoder().encode(
-      args as DepositGuaranteeInstructionDataArgs,
+      args as DepositGuaranteeInstructionDataArgs
     ),
     programAddress,
   } as DepositGuaranteeInstruction<
@@ -452,7 +452,7 @@ export function parseDepositGuaranteeInstruction<
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>,
+    InstructionWithData<ReadonlyUint8Array>
 ): ParsedDepositGuaranteeInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 9) {
     // TODO: Coded error.

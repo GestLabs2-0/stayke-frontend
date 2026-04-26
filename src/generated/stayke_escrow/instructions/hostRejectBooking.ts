@@ -45,7 +45,7 @@ export const HOST_REJECT_BOOKING_DISCRIMINATOR = new Uint8Array([
 
 export function getHostRejectBookingDiscriminatorBytes() {
   return fixEncoderSize(getBytesEncoder(), 8).encode(
-    HOST_REJECT_BOOKING_DISCRIMINATOR,
+    HOST_REJECT_BOOKING_DISCRIMINATOR
   );
 }
 
@@ -89,7 +89,7 @@ export type HostRejectBookingInstructionDataArgs = {};
 export function getHostRejectBookingInstructionDataEncoder(): FixedSizeEncoder<HostRejectBookingInstructionDataArgs> {
   return transformEncoder(
     getStructEncoder([["discriminator", fixEncoderSize(getBytesEncoder(), 8)]]),
-    (value) => ({ ...value, discriminator: HOST_REJECT_BOOKING_DISCRIMINATOR }),
+    (value) => ({ ...value, discriminator: HOST_REJECT_BOOKING_DISCRIMINATOR })
   );
 }
 
@@ -105,7 +105,7 @@ export function getHostRejectBookingInstructionDataCodec(): FixedSizeCodec<
 > {
   return combineCodec(
     getHostRejectBookingInstructionDataEncoder(),
-    getHostRejectBookingInstructionDataDecoder(),
+    getHostRejectBookingInstructionDataDecoder()
   );
 }
 
@@ -138,7 +138,7 @@ export async function getHostRejectBookingInstructionAsync<
     TAccountBooking,
     TAccountBookingDays
   >,
-  config?: { programAddress?: TProgramAddress },
+  config?: { programAddress?: TProgramAddress }
 ): Promise<
   HostRejectBookingInstruction<
     TProgramAddress,
@@ -175,7 +175,7 @@ export async function getHostRejectBookingInstructionAsync<
         getBytesEncoder().encode(
           new Uint8Array([
             117, 115, 101, 114, 95, 112, 114, 111, 102, 105, 108, 101,
-          ]),
+          ])
         ),
         getAddressEncoder().encode(expectAddress(accounts.host.value)),
       ],
@@ -232,7 +232,7 @@ export function getHostRejectBookingInstruction<
     TAccountBooking,
     TAccountBookingDays
   >,
-  config?: { programAddress?: TProgramAddress },
+  config?: { programAddress?: TProgramAddress }
 ): HostRejectBookingInstruction<
   TProgramAddress,
   TAccountHost,
@@ -300,7 +300,7 @@ export function parseHostRejectBookingInstruction<
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>,
+    InstructionWithData<ReadonlyUint8Array>
 ): ParsedHostRejectBookingInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 5) {
     // TODO: Coded error.

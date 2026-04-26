@@ -47,7 +47,7 @@ export const WITHDRAW_GUARANTEE_DISCRIMINATOR = new Uint8Array([
 
 export function getWithdrawGuaranteeDiscriminatorBytes() {
   return fixEncoderSize(getBytesEncoder(), 8).encode(
-    WITHDRAW_GUARANTEE_DISCRIMINATOR,
+    WITHDRAW_GUARANTEE_DISCRIMINATOR
   );
 }
 
@@ -118,7 +118,7 @@ export function getWithdrawGuaranteeInstructionDataEncoder(): FixedSizeEncoder<W
       ["discriminator", fixEncoderSize(getBytesEncoder(), 8)],
       ["amount", getU64Encoder()],
     ]),
-    (value) => ({ ...value, discriminator: WITHDRAW_GUARANTEE_DISCRIMINATOR }),
+    (value) => ({ ...value, discriminator: WITHDRAW_GUARANTEE_DISCRIMINATOR })
   );
 }
 
@@ -135,7 +135,7 @@ export function getWithdrawGuaranteeInstructionDataCodec(): FixedSizeCodec<
 > {
   return combineCodec(
     getWithdrawGuaranteeInstructionDataEncoder(),
-    getWithdrawGuaranteeInstructionDataDecoder(),
+    getWithdrawGuaranteeInstructionDataDecoder()
   );
 }
 
@@ -191,7 +191,7 @@ export async function getWithdrawGuaranteeInstructionAsync<
     TAccountUserProfile,
     TAccountStaykeCoreProgram
   >,
-  config?: { programAddress?: TProgramAddress },
+  config?: { programAddress?: TProgramAddress }
 ): Promise<
   WithdrawGuaranteeInstruction<
     TProgramAddress,
@@ -250,7 +250,7 @@ export async function getWithdrawGuaranteeInstructionAsync<
         getBytesEncoder().encode(
           new Uint8Array([
             103, 108, 111, 98, 97, 108, 95, 99, 111, 110, 102, 105, 103,
-          ]),
+          ])
         ),
       ],
     });
@@ -287,7 +287,7 @@ export async function getWithdrawGuaranteeInstructionAsync<
       getAccountMeta(accounts.staykeCoreProgram),
     ],
     data: getWithdrawGuaranteeInstructionDataEncoder().encode(
-      args as WithdrawGuaranteeInstructionDataArgs,
+      args as WithdrawGuaranteeInstructionDataArgs
     ),
     programAddress,
   } as WithdrawGuaranteeInstruction<
@@ -357,7 +357,7 @@ export function getWithdrawGuaranteeInstruction<
     TAccountUserProfile,
     TAccountStaykeCoreProgram
   >,
-  config?: { programAddress?: TProgramAddress },
+  config?: { programAddress?: TProgramAddress }
 ): WithdrawGuaranteeInstruction<
   TProgramAddress,
   TAccountSigner,
@@ -427,7 +427,7 @@ export function getWithdrawGuaranteeInstruction<
       getAccountMeta(accounts.staykeCoreProgram),
     ],
     data: getWithdrawGuaranteeInstructionDataEncoder().encode(
-      args as WithdrawGuaranteeInstructionDataArgs,
+      args as WithdrawGuaranteeInstructionDataArgs
     ),
     programAddress,
   } as WithdrawGuaranteeInstruction<
@@ -473,7 +473,7 @@ export function parseWithdrawGuaranteeInstruction<
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>,
+    InstructionWithData<ReadonlyUint8Array>
 ): ParsedWithdrawGuaranteeInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 10) {
     // TODO: Coded error.

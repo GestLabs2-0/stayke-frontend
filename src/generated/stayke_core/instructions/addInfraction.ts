@@ -44,7 +44,7 @@ export const ADD_INFRACTION_DISCRIMINATOR = new Uint8Array([
 
 export function getAddInfractionDiscriminatorBytes() {
   return fixEncoderSize(getBytesEncoder(), 8).encode(
-    ADD_INFRACTION_DISCRIMINATOR,
+    ADD_INFRACTION_DISCRIMINATOR
   );
 }
 
@@ -83,7 +83,7 @@ export function getAddInfractionInstructionDataEncoder(): FixedSizeEncoder<AddIn
       ["discriminator", fixEncoderSize(getBytesEncoder(), 8)],
       ["severity", getPenaltySeverityEncoder()],
     ]),
-    (value) => ({ ...value, discriminator: ADD_INFRACTION_DISCRIMINATOR }),
+    (value) => ({ ...value, discriminator: ADD_INFRACTION_DISCRIMINATOR })
   );
 }
 
@@ -100,7 +100,7 @@ export function getAddInfractionInstructionDataCodec(): FixedSizeCodec<
 > {
   return combineCodec(
     getAddInfractionInstructionDataEncoder(),
-    getAddInfractionInstructionDataDecoder(),
+    getAddInfractionInstructionDataDecoder()
   );
 }
 
@@ -119,7 +119,7 @@ export function getAddInfractionInstruction<
   TProgramAddress extends Address = typeof STAYKE_CORE_PROGRAM_ADDRESS,
 >(
   input: AddInfractionInput<TAccountReputationProfile, TAccountAuthority>,
-  config?: { programAddress?: TProgramAddress },
+  config?: { programAddress?: TProgramAddress }
 ): AddInfractionInstruction<
   TProgramAddress,
   TAccountReputationProfile,
@@ -151,7 +151,7 @@ export function getAddInfractionInstruction<
       getAccountMeta(accounts.authority),
     ],
     data: getAddInfractionInstructionDataEncoder().encode(
-      args as AddInfractionInstructionDataArgs,
+      args as AddInfractionInstructionDataArgs
     ),
     programAddress,
   } as AddInfractionInstruction<
@@ -179,7 +179,7 @@ export function parseAddInfractionInstruction<
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>,
+    InstructionWithData<ReadonlyUint8Array>
 ): ParsedAddInfractionInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 2) {
     // TODO: Coded error.

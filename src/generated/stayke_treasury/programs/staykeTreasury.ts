@@ -41,22 +41,22 @@ export enum StaykeTreasuryAccount {
 }
 
 export function identifyStaykeTreasuryAccount(
-  account: { data: ReadonlyUint8Array } | ReadonlyUint8Array,
+  account: { data: ReadonlyUint8Array } | ReadonlyUint8Array
 ): StaykeTreasuryAccount {
   const data = "data" in account ? account.data : account;
   if (
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([124, 54, 212, 227, 213, 189, 168, 41]),
+        new Uint8Array([124, 54, 212, 227, 213, 189, 168, 41])
       ),
-      0,
+      0
     )
   ) {
     return StaykeTreasuryAccount.TreasuryConfig;
   }
   throw new Error(
-    "The provided account could not be identified as a staykeTreasury account.",
+    "The provided account could not be identified as a staykeTreasury account."
   );
 }
 
@@ -71,16 +71,16 @@ export enum StaykeTreasuryInstruction {
 }
 
 export function identifyStaykeTreasuryInstruction(
-  instruction: { data: ReadonlyUint8Array } | ReadonlyUint8Array,
+  instruction: { data: ReadonlyUint8Array } | ReadonlyUint8Array
 ): StaykeTreasuryInstruction {
   const data = "data" in instruction ? instruction.data : instruction;
   if (
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([214, 174, 171, 229, 151, 45, 138, 94]),
+        new Uint8Array([214, 174, 171, 229, 151, 45, 138, 94])
       ),
-      0,
+      0
     )
   ) {
     return StaykeTreasuryInstruction.CpiPenalizeTransfer;
@@ -89,9 +89,9 @@ export function identifyStaykeTreasuryInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([174, 44, 254, 65, 0, 155, 77, 55]),
+        new Uint8Array([174, 44, 254, 65, 0, 155, 77, 55])
       ),
-      0,
+      0
     )
   ) {
     return StaykeTreasuryInstruction.DepositGuarantee;
@@ -100,9 +100,9 @@ export function identifyStaykeTreasuryInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([124, 186, 211, 195, 85, 165, 129, 166]),
+        new Uint8Array([124, 186, 211, 195, 85, 165, 129, 166])
       ),
-      0,
+      0
     )
   ) {
     return StaykeTreasuryInstruction.InitializeTreasury;
@@ -111,9 +111,9 @@ export function identifyStaykeTreasuryInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([89, 34, 75, 168, 122, 47, 185, 45]),
+        new Uint8Array([89, 34, 75, 168, 122, 47, 185, 45])
       ),
-      0,
+      0
     )
   ) {
     return StaykeTreasuryInstruction.Lend;
@@ -122,9 +122,9 @@ export function identifyStaykeTreasuryInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([206, 176, 202, 18, 200, 209, 179, 108]),
+        new Uint8Array([206, 176, 202, 18, 200, 209, 179, 108])
       ),
-      0,
+      0
     )
   ) {
     return StaykeTreasuryInstruction.Stake;
@@ -133,9 +133,9 @@ export function identifyStaykeTreasuryInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([11, 191, 231, 168, 105, 209, 8, 166]),
+        new Uint8Array([11, 191, 231, 168, 105, 209, 8, 166])
       ),
-      0,
+      0
     )
   ) {
     return StaykeTreasuryInstruction.WithdrawFromLending;
@@ -144,15 +144,15 @@ export function identifyStaykeTreasuryInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([90, 175, 173, 229, 183, 148, 41, 242]),
+        new Uint8Array([90, 175, 173, 229, 183, 148, 41, 242])
       ),
-      0,
+      0
     )
   ) {
     return StaykeTreasuryInstruction.WithdrawGuarantee;
   }
   throw new Error(
-    "The provided instruction could not be identified as a staykeTreasury instruction.",
+    "The provided instruction could not be identified as a staykeTreasury instruction."
   );
 }
 
@@ -182,7 +182,7 @@ export type ParsedStaykeTreasuryInstruction<
     } & ParsedWithdrawGuaranteeInstruction<TProgram>);
 
 export function parseStaykeTreasuryInstruction<TProgram extends string>(
-  instruction: Instruction<TProgram> & InstructionWithData<ReadonlyUint8Array>,
+  instruction: Instruction<TProgram> & InstructionWithData<ReadonlyUint8Array>
 ): ParsedStaykeTreasuryInstruction<TProgram> {
   const instructionType = identifyStaykeTreasuryInstruction(instruction);
   switch (instructionType) {
@@ -237,7 +237,7 @@ export function parseStaykeTreasuryInstruction<TProgram extends string>(
     }
     default:
       throw new Error(
-        `Unrecognized instruction type: ${instructionType as string}`,
+        `Unrecognized instruction type: ${instructionType as string}`
       );
   }
 }

@@ -42,7 +42,7 @@ export const UPDATE_DEPOSIT_DISCRIMINATOR = new Uint8Array([
 
 export function getUpdateDepositDiscriminatorBytes() {
   return fixEncoderSize(getBytesEncoder(), 8).encode(
-    UPDATE_DEPOSIT_DISCRIMINATOR,
+    UPDATE_DEPOSIT_DISCRIMINATOR
   );
 }
 
@@ -84,7 +84,7 @@ export function getUpdateDepositInstructionDataEncoder(): FixedSizeEncoder<Updat
       ["amount", getU64Encoder()],
       ["isDeposit", getBooleanEncoder()],
     ]),
-    (value) => ({ ...value, discriminator: UPDATE_DEPOSIT_DISCRIMINATOR }),
+    (value) => ({ ...value, discriminator: UPDATE_DEPOSIT_DISCRIMINATOR })
   );
 }
 
@@ -102,7 +102,7 @@ export function getUpdateDepositInstructionDataCodec(): FixedSizeCodec<
 > {
   return combineCodec(
     getUpdateDepositInstructionDataEncoder(),
-    getUpdateDepositInstructionDataDecoder(),
+    getUpdateDepositInstructionDataDecoder()
   );
 }
 
@@ -122,7 +122,7 @@ export function getUpdateDepositInstruction<
   TProgramAddress extends Address = typeof STAYKE_CORE_PROGRAM_ADDRESS,
 >(
   input: UpdateDepositInput<TAccountUserProfile, TAccountAuthority>,
-  config?: { programAddress?: TProgramAddress },
+  config?: { programAddress?: TProgramAddress }
 ): UpdateDepositInstruction<
   TProgramAddress,
   TAccountUserProfile,
@@ -151,7 +151,7 @@ export function getUpdateDepositInstruction<
       getAccountMeta(accounts.authority),
     ],
     data: getUpdateDepositInstructionDataEncoder().encode(
-      args as UpdateDepositInstructionDataArgs,
+      args as UpdateDepositInstructionDataArgs
     ),
     programAddress,
   } as UpdateDepositInstruction<
@@ -179,7 +179,7 @@ export function parseUpdateDepositInstruction<
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>,
+    InstructionWithData<ReadonlyUint8Array>
 ): ParsedUpdateDepositInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 2) {
     // TODO: Coded error.

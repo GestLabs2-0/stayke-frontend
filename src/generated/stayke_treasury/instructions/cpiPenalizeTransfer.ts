@@ -43,7 +43,7 @@ export const CPI_PENALIZE_TRANSFER_DISCRIMINATOR = new Uint8Array([
 
 export function getCpiPenalizeTransferDiscriminatorBytes() {
   return fixEncoderSize(getBytesEncoder(), 8).encode(
-    CPI_PENALIZE_TRANSFER_DISCRIMINATOR,
+    CPI_PENALIZE_TRANSFER_DISCRIMINATOR
   );
 }
 
@@ -110,7 +110,7 @@ export function getCpiPenalizeTransferInstructionDataEncoder(): FixedSizeEncoder
     (value) => ({
       ...value,
       discriminator: CPI_PENALIZE_TRANSFER_DISCRIMINATOR,
-    }),
+    })
   );
 }
 
@@ -127,7 +127,7 @@ export function getCpiPenalizeTransferInstructionDataCodec(): FixedSizeCodec<
 > {
   return combineCodec(
     getCpiPenalizeTransferInstructionDataEncoder(),
-    getCpiPenalizeTransferInstructionDataDecoder(),
+    getCpiPenalizeTransferInstructionDataDecoder()
   );
 }
 
@@ -174,7 +174,7 @@ export async function getCpiPenalizeTransferInstructionAsync<
     TAccountUsdcMint,
     TAccountTokenProgram
   >,
-  config?: { programAddress?: TProgramAddress },
+  config?: { programAddress?: TProgramAddress }
 ): Promise<
   CpiPenalizeTransferInstruction<
     TProgramAddress,
@@ -226,7 +226,7 @@ export async function getCpiPenalizeTransferInstructionAsync<
         getBytesEncoder().encode(
           new Uint8Array([
             103, 108, 111, 98, 97, 108, 95, 99, 111, 110, 102, 105, 103,
-          ]),
+          ])
         ),
       ],
     });
@@ -252,7 +252,7 @@ export async function getCpiPenalizeTransferInstructionAsync<
       getAccountMeta(accounts.tokenProgram),
     ],
     data: getCpiPenalizeTransferInstructionDataEncoder().encode(
-      args as CpiPenalizeTransferInstructionDataArgs,
+      args as CpiPenalizeTransferInstructionDataArgs
     ),
     programAddress,
   } as CpiPenalizeTransferInstruction<
@@ -311,7 +311,7 @@ export function getCpiPenalizeTransferInstruction<
     TAccountUsdcMint,
     TAccountTokenProgram
   >,
-  config?: { programAddress?: TProgramAddress },
+  config?: { programAddress?: TProgramAddress }
 ): CpiPenalizeTransferInstruction<
   TProgramAddress,
   TAccountAuthority,
@@ -368,7 +368,7 @@ export function getCpiPenalizeTransferInstruction<
       getAccountMeta(accounts.tokenProgram),
     ],
     data: getCpiPenalizeTransferInstructionDataEncoder().encode(
-      args as CpiPenalizeTransferInstructionDataArgs,
+      args as CpiPenalizeTransferInstructionDataArgs
     ),
     programAddress,
   } as CpiPenalizeTransferInstruction<
@@ -409,7 +409,7 @@ export function parseCpiPenalizeTransferInstruction<
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>,
+    InstructionWithData<ReadonlyUint8Array>
 ): ParsedCpiPenalizeTransferInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 8) {
     // TODO: Coded error.
@@ -434,7 +434,7 @@ export function parseCpiPenalizeTransferInstruction<
       tokenProgram: getNextAccount(),
     },
     data: getCpiPenalizeTransferInstructionDataDecoder().decode(
-      instruction.data,
+      instruction.data
     ),
   };
 }

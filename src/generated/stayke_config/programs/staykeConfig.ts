@@ -29,22 +29,22 @@ export enum StaykeConfigAccount {
 }
 
 export function identifyStaykeConfigAccount(
-  account: { data: ReadonlyUint8Array } | ReadonlyUint8Array,
+  account: { data: ReadonlyUint8Array } | ReadonlyUint8Array
 ): StaykeConfigAccount {
   const data = "data" in account ? account.data : account;
   if (
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([149, 8, 156, 202, 160, 252, 176, 217]),
+        new Uint8Array([149, 8, 156, 202, 160, 252, 176, 217])
       ),
-      0,
+      0
     )
   ) {
     return StaykeConfigAccount.GlobalConfig;
   }
   throw new Error(
-    "The provided account could not be identified as a staykeConfig account.",
+    "The provided account could not be identified as a staykeConfig account."
   );
 }
 
@@ -53,22 +53,22 @@ export enum StaykeConfigInstruction {
 }
 
 export function identifyStaykeConfigInstruction(
-  instruction: { data: ReadonlyUint8Array } | ReadonlyUint8Array,
+  instruction: { data: ReadonlyUint8Array } | ReadonlyUint8Array
 ): StaykeConfigInstruction {
   const data = "data" in instruction ? instruction.data : instruction;
   if (
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([208, 127, 21, 1, 194, 190, 196, 70]),
+        new Uint8Array([208, 127, 21, 1, 194, 190, 196, 70])
       ),
-      0,
+      0
     )
   ) {
     return StaykeConfigInstruction.InitializeConfig;
   }
   throw new Error(
-    "The provided instruction could not be identified as a staykeConfig instruction.",
+    "The provided instruction could not be identified as a staykeConfig instruction."
   );
 }
 
@@ -79,7 +79,7 @@ export type ParsedStaykeConfigInstruction<
 } & ParsedInitializeConfigInstruction<TProgram>;
 
 export function parseStaykeConfigInstruction<TProgram extends string>(
-  instruction: Instruction<TProgram> & InstructionWithData<ReadonlyUint8Array>,
+  instruction: Instruction<TProgram> & InstructionWithData<ReadonlyUint8Array>
 ): ParsedStaykeConfigInstruction<TProgram> {
   const instructionType = identifyStaykeConfigInstruction(instruction);
   switch (instructionType) {
@@ -92,7 +92,7 @@ export function parseStaykeConfigInstruction<TProgram extends string>(
     }
     default:
       throw new Error(
-        `Unrecognized instruction type: ${instructionType as string}`,
+        `Unrecognized instruction type: ${instructionType as string}`
       );
   }
 }

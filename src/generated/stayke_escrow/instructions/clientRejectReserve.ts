@@ -45,7 +45,7 @@ export const CLIENT_REJECT_RESERVE_DISCRIMINATOR = new Uint8Array([
 
 export function getClientRejectReserveDiscriminatorBytes() {
   return fixEncoderSize(getBytesEncoder(), 8).encode(
-    CLIENT_REJECT_RESERVE_DISCRIMINATOR,
+    CLIENT_REJECT_RESERVE_DISCRIMINATOR
   );
 }
 
@@ -89,7 +89,7 @@ export function getClientRejectReserveInstructionDataEncoder(): FixedSizeEncoder
     (value) => ({
       ...value,
       discriminator: CLIENT_REJECT_RESERVE_DISCRIMINATOR,
-    }),
+    })
   );
 }
 
@@ -105,7 +105,7 @@ export function getClientRejectReserveInstructionDataCodec(): FixedSizeCodec<
 > {
   return combineCodec(
     getClientRejectReserveInstructionDataEncoder(),
-    getClientRejectReserveInstructionDataDecoder(),
+    getClientRejectReserveInstructionDataDecoder()
   );
 }
 
@@ -134,7 +134,7 @@ export async function getClientRejectReserveInstructionAsync<
     TAccountBooking,
     TAccountBookingDays
   >,
-  config?: { programAddress?: TProgramAddress },
+  config?: { programAddress?: TProgramAddress }
 ): Promise<
   ClientRejectReserveInstruction<
     TProgramAddress,
@@ -169,7 +169,7 @@ export async function getClientRejectReserveInstructionAsync<
         getBytesEncoder().encode(
           new Uint8Array([
             117, 115, 101, 114, 95, 112, 114, 111, 102, 105, 108, 101,
-          ]),
+          ])
         ),
         getAddressEncoder().encode(expectAddress(accounts.client.value)),
       ],
@@ -220,7 +220,7 @@ export function getClientRejectReserveInstruction<
     TAccountBooking,
     TAccountBookingDays
   >,
-  config?: { programAddress?: TProgramAddress },
+  config?: { programAddress?: TProgramAddress }
 ): ClientRejectReserveInstruction<
   TProgramAddress,
   TAccountClient,
@@ -283,7 +283,7 @@ export function parseClientRejectReserveInstruction<
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>,
+    InstructionWithData<ReadonlyUint8Array>
 ): ParsedClientRejectReserveInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 4) {
     // TODO: Coded error.
@@ -304,7 +304,7 @@ export function parseClientRejectReserveInstruction<
       bookingDays: getNextAccount(),
     },
     data: getClientRejectReserveInstructionDataDecoder().decode(
-      instruction.data,
+      instruction.data
     ),
   };
 }

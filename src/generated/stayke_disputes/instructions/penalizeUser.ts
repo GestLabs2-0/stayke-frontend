@@ -46,7 +46,7 @@ export const PENALIZE_USER_DISCRIMINATOR = new Uint8Array([
 
 export function getPenalizeUserDiscriminatorBytes() {
   return fixEncoderSize(getBytesEncoder(), 8).encode(
-    PENALIZE_USER_DISCRIMINATOR,
+    PENALIZE_USER_DISCRIMINATOR
   );
 }
 
@@ -135,7 +135,7 @@ export function getPenalizeUserInstructionDataEncoder(): FixedSizeEncoder<Penali
       ["discriminator", fixEncoderSize(getBytesEncoder(), 8)],
       ["severity", getPenaltySeverityEncoder()],
     ]),
-    (value) => ({ ...value, discriminator: PENALIZE_USER_DISCRIMINATOR }),
+    (value) => ({ ...value, discriminator: PENALIZE_USER_DISCRIMINATOR })
   );
 }
 
@@ -152,7 +152,7 @@ export function getPenalizeUserInstructionDataCodec(): FixedSizeCodec<
 > {
   return combineCodec(
     getPenalizeUserInstructionDataEncoder(),
-    getPenalizeUserInstructionDataDecoder(),
+    getPenalizeUserInstructionDataDecoder()
   );
 }
 
@@ -227,7 +227,7 @@ export async function getPenalizeUserInstructionAsync<
     TAccountStaykeTreasuryProgram,
     TAccountTokenProgram
   >,
-  config?: { programAddress?: TProgramAddress },
+  config?: { programAddress?: TProgramAddress }
 ): Promise<
   PenalizeUserInstruction<
     TProgramAddress,
@@ -327,7 +327,7 @@ export async function getPenalizeUserInstructionAsync<
       getAccountMeta(accounts.tokenProgram),
     ],
     data: getPenalizeUserInstructionDataEncoder().encode(
-      args as PenalizeUserInstructionDataArgs,
+      args as PenalizeUserInstructionDataArgs
     ),
     programAddress,
   } as PenalizeUserInstruction<
@@ -420,7 +420,7 @@ export function getPenalizeUserInstruction<
     TAccountStaykeTreasuryProgram,
     TAccountTokenProgram
   >,
-  config?: { programAddress?: TProgramAddress },
+  config?: { programAddress?: TProgramAddress }
 ): PenalizeUserInstruction<
   TProgramAddress,
   TAccountAdmin,
@@ -515,7 +515,7 @@ export function getPenalizeUserInstruction<
       getAccountMeta(accounts.tokenProgram),
     ],
     data: getPenalizeUserInstructionDataEncoder().encode(
-      args as PenalizeUserInstructionDataArgs,
+      args as PenalizeUserInstructionDataArgs
     ),
     programAddress,
   } as PenalizeUserInstruction<
@@ -572,7 +572,7 @@ export function parsePenalizeUserInstruction<
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>,
+    InstructionWithData<ReadonlyUint8Array>
 ): ParsedPenalizeUserInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 14) {
     // TODO: Coded error.

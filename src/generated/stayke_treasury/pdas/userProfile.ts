@@ -20,7 +20,7 @@ export type UserProfileSeeds = {
 
 export async function findUserProfilePda(
   seeds: UserProfileSeeds,
-  config: { programAddress?: Address | undefined } = {},
+  config: { programAddress?: Address | undefined } = {}
 ): Promise<ProgramDerivedAddress> {
   const {
     programAddress = "59buEPHFBK4h8LyLE2KtnV1kpaQTyjb82NWt5F9jSuHu" as Address<"59buEPHFBK4h8LyLE2KtnV1kpaQTyjb82NWt5F9jSuHu">,
@@ -31,7 +31,7 @@ export async function findUserProfilePda(
       getBytesEncoder().encode(
         new Uint8Array([
           117, 115, 101, 114, 95, 112, 114, 111, 102, 105, 108, 101,
-        ]),
+        ])
       ),
       getAddressEncoder().encode(seeds.signer),
     ],

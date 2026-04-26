@@ -55,7 +55,7 @@ export const INITIALIZE_USER_PROFILE_DISCRIMINATOR = new Uint8Array([
 
 export function getInitializeUserProfileDiscriminatorBytes() {
   return fixEncoderSize(getBytesEncoder(), 8).encode(
-    INITIALIZE_USER_PROFILE_DISCRIMINATOR,
+    INITIALIZE_USER_PROFILE_DISCRIMINATOR
   );
 }
 
@@ -116,7 +116,7 @@ export function getInitializeUserProfileInstructionDataEncoder(): FixedSizeEncod
     (value) => ({
       ...value,
       discriminator: INITIALIZE_USER_PROFILE_DISCRIMINATOR,
-    }),
+    })
   );
 }
 
@@ -135,7 +135,7 @@ export function getInitializeUserProfileInstructionDataCodec(): FixedSizeCodec<
 > {
   return combineCodec(
     getInitializeUserProfileInstructionDataEncoder(),
-    getInitializeUserProfileInstructionDataDecoder(),
+    getInitializeUserProfileInstructionDataDecoder()
   );
 }
 
@@ -171,7 +171,7 @@ export async function getInitializeUserProfileInstructionAsync<
     TAccountAuthority,
     TAccountSystemProgram
   >,
-  config?: { programAddress?: TProgramAddress },
+  config?: { programAddress?: TProgramAddress }
 ): Promise<
   InitializeUserProfileInstruction<
     TProgramAddress,
@@ -235,7 +235,7 @@ export async function getInitializeUserProfileInstructionAsync<
       getAccountMeta(accounts.systemProgram),
     ],
     data: getInitializeUserProfileInstructionDataEncoder().encode(
-      args as InitializeUserProfileInstructionDataArgs,
+      args as InitializeUserProfileInstructionDataArgs
     ),
     programAddress,
   } as InitializeUserProfileInstruction<
@@ -280,7 +280,7 @@ export function getInitializeUserProfileInstruction<
     TAccountAuthority,
     TAccountSystemProgram
   >,
-  config?: { programAddress?: TProgramAddress },
+  config?: { programAddress?: TProgramAddress }
 ): InitializeUserProfileInstruction<
   TProgramAddress,
   TAccountUserProfile,
@@ -327,7 +327,7 @@ export function getInitializeUserProfileInstruction<
       getAccountMeta(accounts.systemProgram),
     ],
     data: getInitializeUserProfileInstructionDataEncoder().encode(
-      args as InitializeUserProfileInstructionDataArgs,
+      args as InitializeUserProfileInstructionDataArgs
     ),
     programAddress,
   } as InitializeUserProfileInstruction<
@@ -361,7 +361,7 @@ export function parseInitializeUserProfileInstruction<
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>,
+    InstructionWithData<ReadonlyUint8Array>
 ): ParsedInitializeUserProfileInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 5) {
     // TODO: Coded error.
@@ -383,7 +383,7 @@ export function parseInitializeUserProfileInstruction<
       systemProgram: getNextAccount(),
     },
     data: getInitializeUserProfileInstructionDataDecoder().decode(
-      instruction.data,
+      instruction.data
     ),
   };
 }

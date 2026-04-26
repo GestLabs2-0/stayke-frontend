@@ -46,7 +46,7 @@ export const CLIENT_ACCEPT_RESERVE_DISCRIMINATOR = new Uint8Array([
 
 export function getClientAcceptReserveDiscriminatorBytes() {
   return fixEncoderSize(getBytesEncoder(), 8).encode(
-    CLIENT_ACCEPT_RESERVE_DISCRIMINATOR,
+    CLIENT_ACCEPT_RESERVE_DISCRIMINATOR
   );
 }
 
@@ -125,7 +125,7 @@ export function getClientAcceptReserveInstructionDataEncoder(): FixedSizeEncoder
     (value) => ({
       ...value,
       discriminator: CLIENT_ACCEPT_RESERVE_DISCRIMINATOR,
-    }),
+    })
   );
 }
 
@@ -141,7 +141,7 @@ export function getClientAcceptReserveInstructionDataCodec(): FixedSizeCodec<
 > {
   return combineCodec(
     getClientAcceptReserveInstructionDataEncoder(),
-    getClientAcceptReserveInstructionDataDecoder(),
+    getClientAcceptReserveInstructionDataDecoder()
   );
 }
 
@@ -202,7 +202,7 @@ export async function getClientAcceptReserveInstructionAsync<
     TAccountAssociatedTokenProgram,
     TAccountSystemProgram
   >,
-  config?: { programAddress?: TProgramAddress },
+  config?: { programAddress?: TProgramAddress }
 ): Promise<
   ClientAcceptReserveInstruction<
     TProgramAddress,
@@ -262,7 +262,7 @@ export async function getClientAcceptReserveInstructionAsync<
         getBytesEncoder().encode(
           new Uint8Array([
             117, 115, 101, 114, 95, 112, 114, 111, 102, 105, 108, 101,
-          ]),
+          ])
         ),
         getAddressEncoder().encode(expectAddress(accounts.client.value)),
       ],
@@ -276,7 +276,7 @@ export async function getClientAcceptReserveInstructionAsync<
         getBytesEncoder().encode(
           new Uint8Array([
             103, 108, 111, 98, 97, 108, 95, 99, 111, 110, 102, 105, 103,
-          ]),
+          ])
         ),
       ],
     });
@@ -295,7 +295,7 @@ export async function getClientAcceptReserveInstructionAsync<
             6, 221, 246, 225, 215, 101, 161, 147, 217, 203, 225, 70, 206, 235,
             121, 172, 28, 180, 133, 237, 95, 91, 55, 145, 58, 140, 245, 133,
             126, 255, 0, 169,
-          ]),
+          ])
         ),
         getAddressEncoder().encode(expectAddress(accounts.mint.value)),
       ],
@@ -411,7 +411,7 @@ export function getClientAcceptReserveInstruction<
     TAccountAssociatedTokenProgram,
     TAccountSystemProgram
   >,
-  config?: { programAddress?: TProgramAddress },
+  config?: { programAddress?: TProgramAddress }
 ): ClientAcceptReserveInstruction<
   TProgramAddress,
   TAccountClient,
@@ -537,7 +537,7 @@ export function parseClientAcceptReserveInstruction<
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>,
+    InstructionWithData<ReadonlyUint8Array>
 ): ParsedClientAcceptReserveInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 12) {
     // TODO: Coded error.
@@ -566,7 +566,7 @@ export function parseClientAcceptReserveInstruction<
       systemProgram: getNextAccount(),
     },
     data: getClientAcceptReserveInstructionDataDecoder().decode(
-      instruction.data,
+      instruction.data
     ),
   };
 }

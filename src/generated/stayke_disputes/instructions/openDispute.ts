@@ -52,7 +52,7 @@ export const OPEN_DISPUTE_DISCRIMINATOR = new Uint8Array([
 
 export function getOpenDisputeDiscriminatorBytes() {
   return fixEncoderSize(getBytesEncoder(), 8).encode(
-    OPEN_DISPUTE_DISCRIMINATOR,
+    OPEN_DISPUTE_DISCRIMINATOR
   );
 }
 
@@ -107,7 +107,7 @@ export function getOpenDisputeInstructionDataEncoder(): FixedSizeEncoder<OpenDis
       ["discriminator", fixEncoderSize(getBytesEncoder(), 8)],
       ["reason", getDisputeReasonEncoder()],
     ]),
-    (value) => ({ ...value, discriminator: OPEN_DISPUTE_DISCRIMINATOR }),
+    (value) => ({ ...value, discriminator: OPEN_DISPUTE_DISCRIMINATOR })
   );
 }
 
@@ -124,7 +124,7 @@ export function getOpenDisputeInstructionDataCodec(): FixedSizeCodec<
 > {
   return combineCodec(
     getOpenDisputeInstructionDataEncoder(),
-    getOpenDisputeInstructionDataDecoder(),
+    getOpenDisputeInstructionDataDecoder()
   );
 }
 
@@ -163,7 +163,7 @@ export async function getOpenDisputeInstructionAsync<
     TAccountStaykeEscrowProgram,
     TAccountSystemProgram
   >,
-  config?: { programAddress?: TProgramAddress },
+  config?: { programAddress?: TProgramAddress }
 ): Promise<
   OpenDisputeInstruction<
     TProgramAddress,
@@ -211,7 +211,7 @@ export async function getOpenDisputeInstructionAsync<
         getBytesEncoder().encode(
           new Uint8Array([
             117, 115, 101, 114, 95, 112, 114, 111, 102, 105, 108, 101,
-          ]),
+          ])
         ),
         getAddressEncoder().encode(expectAddress(accounts.initiator.value)),
       ],
@@ -242,7 +242,7 @@ export async function getOpenDisputeInstructionAsync<
       getAccountMeta(accounts.systemProgram),
     ],
     data: getOpenDisputeInstructionDataEncoder().encode(
-      args as OpenDisputeInstructionDataArgs,
+      args as OpenDisputeInstructionDataArgs
     ),
     programAddress,
   } as OpenDisputeInstruction<
@@ -291,7 +291,7 @@ export function getOpenDisputeInstruction<
     TAccountStaykeEscrowProgram,
     TAccountSystemProgram
   >,
-  config?: { programAddress?: TProgramAddress },
+  config?: { programAddress?: TProgramAddress }
 ): OpenDisputeInstruction<
   TProgramAddress,
   TAccountInitiator,
@@ -349,7 +349,7 @@ export function getOpenDisputeInstruction<
       getAccountMeta(accounts.systemProgram),
     ],
     data: getOpenDisputeInstructionDataEncoder().encode(
-      args as OpenDisputeInstructionDataArgs,
+      args as OpenDisputeInstructionDataArgs
     ),
     programAddress,
   } as OpenDisputeInstruction<
@@ -386,7 +386,7 @@ export function parseOpenDisputeInstruction<
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>,
+    InstructionWithData<ReadonlyUint8Array>
 ): ParsedOpenDisputeInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 6) {
     // TODO: Coded error.
