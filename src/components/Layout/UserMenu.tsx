@@ -18,6 +18,7 @@ import { useState } from "react";
 import { usePrivy, useWallets } from "@privy-io/react-auth";
 
 import { useSolBalance } from "../hooks/useSolBalance";
+import { LINKS_APP } from "@/src/constant";
 
 const userThings = {
   firstName: "User",
@@ -173,7 +174,7 @@ export const UserMenu = () => {
 
           <div className="p-1.5">
             <Link
-              href="/profile"
+              href={LINKS_APP.myProfile}
               onClick={() => setOpen(false)}
               className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
             >
@@ -182,7 +183,7 @@ export const UserMenu = () => {
             </Link>
 
             <Link
-              href="/bookings"
+              href={LINKS_APP.bookings}
               onClick={() => setOpen(false)}
               className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
             >
@@ -192,7 +193,7 @@ export const UserMenu = () => {
 
             {userThings?.isHost && (
               <Link
-                href="/list-property"
+                href={LINKS_APP.addPropertys}
                 onClick={() => setOpen(false)}
                 className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
               >

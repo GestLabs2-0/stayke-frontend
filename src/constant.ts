@@ -12,3 +12,10 @@ export const API_CONFIG = {
 export const LOCAL_STORAGE_KEYS = {
   token: "access-token",
 };
+
+export const LINKS_APP = {
+  addPropertys: "/addPropertys",
+  ListPropertys: "/listPropertys",
+  myProfile: "/profile",
+  bookings: "/bookings",
+};
