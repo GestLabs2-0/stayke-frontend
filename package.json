@@ -24,6 +24,7 @@
   "version": "0.0.0",
   "private": true,
   "dependencies": {
+    "@didit-protocol/sdk-web": "^0.1.9",
     "@privy-io/react-auth": "^3.22.1",
     "@solana-program/memo": "^0.11.0",
     "@solana/kit": "^6.8.0",

@@ -1,36 +1,45 @@
 "use client";
 
-//Library
 import { ChevronRight, ChevronLeft, Check, Loader2 } from "lucide-react";
-//Next
 import Link from "next/link";
-
-//React
+import { Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 
-//Own Components
 import { STEPS } from "@/src/constants";
 import { STEP_COMPONENTS } from "@/src/components/register/StepRender";
 import { StepIndicator } from "@/src/components/register/StepIndicator";
 
-//Type
 import type { RegisterFormData } from "@/src/types/RegisterFormData";
 import { useSignStaykeTx } from "@/src/components/hooks/useSignStaykeTx";
 import { useRegisterUser } from "@/src/components/hooks/contract/registerUser";
 import { parseDoctype } from "@/src/constants/DocumentTypes";
+import staykeAPI from "@/src/lib/staykeAPI";
+import { usePrivy } from "@privy-io/react-auth";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { ROUTES } from "@/src/constant";
+import { address } from "@solana/kit";
+import {
+  findUserProfilePda,
+  findReputationProfilePda,
+  findIdentityPda,
+} from "@/src/generated/stayke_core";
+import { useUserContext } from "@/src/components/contexts/UserContext";
 
-export const Register = () => {
+const RegisterInner = () => {
+  const searchParams = useSearchParams();
+  const isOffchain = searchParams.get("offchain") === "true";
+
   const [step, setStep] = useState(1);
   const [submitting, setSubmitting] = useState(false);
+  const { user } = usePrivy();
   const signStayke = useSignStaykeTx();
-  const {
-    loading: loadingOnChain,
-    registerUser,
-    success: successOnChain,
-  } = useRegisterUser();
+  const { registerUser } = useRegisterUser();
+  const { refetch } = useUserContext();
+  const router = useRouter();
   const totalSteps = STEPS.length;
 
-  //Start Data Registration
   const [form, setForm] = useState<RegisterFormData>({
     firstName: "",
     lastName: "",
@@ -47,10 +56,7 @@ export const Register = () => {
     field: K,
     value: RegisterFormData[K]
   ) => {
-    setForm((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
+    setForm((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleNext = () => {
@@ -61,10 +67,16 @@ export const Register = () => {
     if (step > 1) setStep((s) => s - 1);
   };
 
-  const handleSubmit = async () => {
-    try {
-      setSubmitting(true);
+  // ── Full registration: on-chain + off-chain ───────────────────────────────
+  const handleFullSubmit = async () => {
+    if (!user || user.wallet == undefined) {
+      toast.info("Please log in with Privy to continue.");
+      return;
+    }
 
+    setSubmitting(true);
+
+    try {
       const encoder = new TextEncoder();
       const countryBytes = encoder.encode(form.country);
 
@@ -76,27 +88,125 @@ export const Register = () => {
         documentationBytes
       );
 
-      await registerUser({
+      const { identity, reputationProfile, userProfile } = await registerUser({
         props: signStayke,
         id: new Uint8Array(dniHash),
         doctype: parseDoctype(form.documentType),
         countryCode: countryBytes,
       });
 
-      await new Promise((res) => setTimeout(res, 2000));
+      if (!identity || !reputationProfile || !userProfile) {
+        toast.error("On-chain registration failed. Please try again.");
+        return;
+      }
 
-      console.log("Mock submit done");
+      toast.success("On-chain registration successful!");
+
+      const { data, status } = await staykeAPI.registerUser({
+        country: form.country,
+        documentType: form.documentType,
+        dni: documentation,
+        identityAddr: identity,
+        profileAddr: userProfile,
+        reputationAddr: reputationProfile,
+        email: form.email,
+        firstName: form.firstName,
+        image: form.image,
+        lastName: form.lastName,
+        phone: form.phone,
+        privyId: user.id,
+        wallet: user.wallet.address,
+      });
+
+      if (status) {
+        toast.success("Registration successful!");
+        localStorage.setItem("stayke_user", JSON.stringify(data));
+        refetch();
+      }
+
+      router.push(ROUTES.HOME);
     } catch (error) {
       console.error(error);
+      toast.error("Registration failed. Please try again.");
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  // ── Off-chain only: derive PDAs from wallet, skip Solana tx ──────────────
+  const handleOffchainSubmit = async () => {
+    if (!user || !user.wallet) {
+      toast.info("Please log in with Privy to continue.");
+      return;
+    }
+
+    setSubmitting(true);
+
+    try {
+      const walletAddr = address(user.wallet.address);
+
+      // Derive the on-chain PDAs deterministically from the wallet + document
+      const [userProfilePda] = await findUserProfilePda({
+        authority: walletAddr,
+      });
+      const [reputationPda] = await findReputationProfilePda({
+        authority: walletAddr,
+      });
+
+      // Identity PDA needs the document hash (same formula used during on-chain registration)
+      const documentation = `${form.country}:${form.documentType}:${form.documentNumber}`;
+      const encoder = new TextEncoder();
+      const dniHash = await window.crypto.subtle.digest(
+        "SHA-256",
+        encoder.encode(documentation)
+      );
+      const [identityPda] = await findIdentityPda({
+        id: new Uint8Array(dniHash),
+      });
+
+      const { data, status } = await staykeAPI.registerUser({
+        country: form.country,
+        documentType: form.documentType,
+        dni: documentation,
+        identityAddr: identityPda,
+        profileAddr: userProfilePda,
+        reputationAddr: reputationPda,
+        email: form.email,
+        firstName: form.firstName,
+        image: form.image,
+        lastName: form.lastName,
+        phone: form.phone,
+        privyId: user.id,
+        wallet: user.wallet.address,
+      });
+
+      if (status) {
+        toast.success("Registration complete!");
+        localStorage.setItem("stayke_user", JSON.stringify(data));
+        // Update UserContext so AuthGate unlocks immediately
+        refetch();
+      }
+
+      router.push(ROUTES.HOME);
+    } catch (error) {
+      console.error(error);
+      toast.error("Registration failed. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleSubmit = () => {
+    if (isOffchain) {
+      handleOffchainSubmit();
+    } else {
+      handleFullSubmit();
     }
   };
 
   const renderStep = () => {
     const StepComponent = STEP_COMPONENTS[step];
     if (!StepComponent) return null;
-
     return (
       <StepComponent form={form as RegisterFormData} onChange={onChange} />
     );
@@ -113,9 +223,21 @@ export const Register = () => {
             </span>
           </Link>
           <p className="mt-2 text-sm text-muted-foreground">
-            Create your account
+            {isOffchain ? "Complete your profile" : "Create your account"}
           </p>
         </div>
+
+        {isOffchain && (
+          <div className="mb-4 rounded-xl border border-primary/30 bg-primary/10 px-4 py-3 flex items-start gap-3">
+            <span className="mt-0.5 h-5 w-5 shrink-0 rounded-full gradient-solana flex items-center justify-center text-[10px] font-bold text-primary-foreground">
+              ✓
+            </span>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Your on-chain account is ready. Just fill in your profile info to
+              finish registration.
+            </p>
+          </div>
+        )}
 
         {/* Card */}
         <div className="rounded-2xl border border-border bg-card p-6 shadow-card">
@@ -163,12 +285,12 @@ export const Register = () => {
                 {submitting ? (
                   <>
                     <Loader2 className="h-4 w-4 animate-spin" />
-                    Creating...
+                    {isOffchain ? "Completing..." : "Creating..."}
                   </>
                 ) : (
                   <>
                     <Check className="h-4 w-4" />
-                    Create Account
+                    {isOffchain ? "Complete Registration" : "Create Account"}
                   </>
                 )}
               </button>
@@ -179,5 +301,17 @@ export const Register = () => {
     </div>
   );
 };
+
+const Register = () => (
+  <Suspense
+    fallback={
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    }
+  >
+    <RegisterInner />
+  </Suspense>
+);
 
 export default Register;

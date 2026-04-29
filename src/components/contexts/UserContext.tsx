@@ -1,0 +1,133 @@
+"use client";
+
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+import { usePrivy } from "@privy-io/react-auth";
+import { useWallets } from "@privy-io/react-auth/solana";
+import staykeAPI from "@/src/lib/staykeAPI";
+import { RegisterResponse } from "@/src/types/api/user";
+import { useOnChainAccountCheck } from "../hooks/contract/useOnChainAccountCheck";
+
+// ─── Status machine ────────────────────────────────────────────────────────
+//
+//  'loading'        → Privy ready, user authenticated, checks in progress
+//  'unauthenticated'→ Privy ready, user NOT authenticated
+//  'no_onchain'     → authenticated, no UserProfile PDA on-chain
+//                     → redirect to /register (full flow)
+//  'onchain_only'   → authenticated, PDA exists, no backend record
+//                     → show blocking screen → /register?offchain=true
+//  'complete'       → both on-chain and off-chain records exist
+//
+export type UserStatus =
+  | "loading"
+  | "unauthenticated"
+  | "no_onchain"
+  | "onchain_only"
+  | "complete";
+
+interface UserContextValue {
+  status: UserStatus;
+  backendUser: RegisterResponse | null;
+  userProfilePda: string | null;
+  refetch: () => void;
+}
+
+const UserContext = createContext<UserContextValue>({
+  status: "loading",
+  backendUser: null,
+  userProfilePda: null,
+  refetch: () => {},
+});
+
+export function useUserContext() {
+  return useContext(UserContext);
+}
+
+// ─── Provider ──────────────────────────────────────────────────────────────
+
+export function UserContextProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const { ready, authenticated } = usePrivy();
+  const { wallets } = useWallets();
+
+  // First connected Solana wallet (embedded or external)
+  const walletAddress = wallets?.[0]?.address ?? null;
+
+  // On-chain check
+  const {
+    hasAccount,
+    pda: userProfilePda,
+    loading: checkingOnChain,
+  } = useOnChainAccountCheck(authenticated ? walletAddress : null);
+
+  // Off-chain (backend) check
+  const [backendUser, setBackendUser] = useState<RegisterResponse | null>(null);
+  const [checkingOffChain, setCheckingOffChain] = useState(false);
+  const [offChainChecked, setOffChainChecked] = useState(false);
+
+  // A token that increments on refetch() to re-trigger the effect
+  const [tick, setTick] = useState(0);
+  const refetch = useCallback(() => setTick((t) => t + 1), []);
+
+  // When onchain account is confirmed, check the backend
+  useEffect(() => {
+    if (!authenticated || !walletAddress || hasAccount !== true) return;
+
+    let cancelled = false;
+    setCheckingOffChain(true);
+    setOffChainChecked(false);
+
+    staykeAPI.getUserProfile(walletAddress).then((result) => {
+      if (cancelled) return;
+      setBackendUser(result.status ? result.data : null);
+      setCheckingOffChain(false);
+      setOffChainChecked(true);
+    });
+
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [authenticated, walletAddress, hasAccount, tick]);
+
+  // Reset backend state when wallet changes or user logs out
+  useEffect(() => {
+    if (!authenticated) {
+      setBackendUser(null);
+      setOffChainChecked(false);
+    }
+  }, [authenticated, walletAddress]);
+
+  // ── Derive status ─────────────────────────────────────────────────────────
+  let status: UserStatus = "loading";
+
+  if (!ready) {
+    status = "loading";
+  } else if (!authenticated || !walletAddress) {
+    status = "unauthenticated";
+  } else if (checkingOnChain || checkingOffChain) {
+    status = "loading";
+  } else if (hasAccount === false) {
+    status = "no_onchain";
+  } else if (hasAccount === true && offChainChecked && !backendUser) {
+    status = "onchain_only";
+  } else if (hasAccount === true && offChainChecked && backendUser) {
+    status = "complete";
+  }
+
+  return (
+    <UserContext.Provider
+      value={{ status, backendUser, userProfilePda, refetch }}
+    >
+      {children}
+    </UserContext.Provider>
+  );
+}

@@ -4,6 +4,8 @@ import { ThemeProvider } from "next-themes";
 import { Toaster } from "sonner";
 import { ClusterProvider } from "../cluster-context";
 import { SolanaClientProvider } from "../../lib/solanaClientContext";
+import { UserContextProvider } from "./UserContext";
+import { AuthGate } from "../shared/AuthGate";
 
 import { PrivyProvider } from "@privy-io/react-auth";
 import { toSolanaWalletConnectors } from "@privy-io/react-auth/solana";
@@ -67,7 +69,11 @@ export function Providers({ children }: { children: React.ReactNode }) {
         }}
       >
         <ClusterProvider>
-          <SolanaClientProvider>{children}</SolanaClientProvider>
+          <SolanaClientProvider>
+            <UserContextProvider>
+              <AuthGate>{children}</AuthGate>
+            </UserContextProvider>
+          </SolanaClientProvider>
         </ClusterProvider>
       </PrivyProvider>
       <Toaster position="bottom-right" richColors />

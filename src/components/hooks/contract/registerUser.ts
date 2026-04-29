@@ -74,8 +74,6 @@ export const useRegisterUser = () => {
       await sendAndConfirm(signedTx, {
         commitment: "confirmed",
       });
-
-      toast.success("Usuario registrado exitosamente.");
       console.debug(
         `Inspect this transaction at ${getSolanaExplorerTx("/tx")}/${transactionSignature}`
       );

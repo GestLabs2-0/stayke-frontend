@@ -12,3 +12,10 @@ export const API_CONFIG = {
 export const LOCAL_STORAGE_KEYS = {
   token: "access-token",
 };
+
+export const ROUTES = {
+  HOME: "/",
+  DASHBOARD: "/dashboard",
+  LOGIN: "/login",
+  REGISTER: "/register",
+};
