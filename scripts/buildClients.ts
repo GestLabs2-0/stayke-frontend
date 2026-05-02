@@ -44,21 +44,23 @@ async function main() {
     };
   });
 
-  programs.map((program) => {
-    const generatedPath = path.join(
-      dirname,
-      "../src/generated",
-      program.name.toLowerCase()
-    );
-    program.codama
-      .accept(renderVisitor(generatedPath))
-      .then(() => {
-        console.log(generatedPath, ": Done");
-      })
-      .catch((err: unknown) => {
-        console.log(err);
-      });
-  });
+  await Promise.all(
+    programs.map((program) => {
+      const generatedPath = path.join(
+        dirname,
+        "../src/generated",
+        program.name.toLowerCase()
+      );
+      program.codama
+        .accept(renderVisitor(generatedPath))
+        .then(() => {
+          console.log(generatedPath, ": Done");
+        })
+        .catch((err: unknown) => {
+          console.log(err);
+        });
+    })
+  );
 }
 
 await main();

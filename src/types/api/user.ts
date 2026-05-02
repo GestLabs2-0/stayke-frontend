@@ -18,7 +18,7 @@ export interface RegisterUser {
   wallet: string;
 }
 
-export interface RegisterResponse {
+export interface UserType {
   banned: boolean;
 
   country: string;

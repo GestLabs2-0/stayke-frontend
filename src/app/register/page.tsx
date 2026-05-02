@@ -2,7 +2,7 @@
 
 import { ChevronRight, ChevronLeft, Check, Loader2 } from "lucide-react";
 import Link from "next/link";
-import { Suspense } from "react";
+import { Suspense, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 
@@ -26,6 +26,7 @@ import {
   findIdentityPda,
 } from "@/src/generated/stayke_core";
 import { useUserContext } from "@/src/components/contexts/UserContext";
+import { link } from "fs";
 
 const RegisterInner = () => {
   const searchParams = useSearchParams();
@@ -33,7 +34,7 @@ const RegisterInner = () => {
 
   const [step, setStep] = useState(1);
   const [submitting, setSubmitting] = useState(false);
-  const { user } = usePrivy();
+  const { user, linkEmail } = usePrivy();
   const signStayke = useSignStaykeTx();
   const { registerUser } = useRegisterUser();
   const { refetch } = useUserContext();
@@ -73,7 +74,6 @@ const RegisterInner = () => {
       toast.info("Please log in with Privy to continue.");
       return;
     }
-
     setSubmitting(true);
 
     try {
@@ -164,7 +164,7 @@ const RegisterInner = () => {
         id: new Uint8Array(dniHash),
       });
 
-      const { data, status } = await staykeAPI.registerUser({
+      const { data, status, message } = await staykeAPI.registerUser({
         country: form.country,
         documentType: form.documentType,
         dni: documentation,
@@ -185,9 +185,10 @@ const RegisterInner = () => {
         localStorage.setItem("stayke_user", JSON.stringify(data));
         // Update UserContext so AuthGate unlocks immediately
         refetch();
+        router.push(ROUTES.HOME);
+      } else {
+        toast.error(message);
       }
-
-      router.push(ROUTES.HOME);
     } catch (error) {
       console.error(error);
       toast.error("Registration failed. Please try again.");
@@ -211,6 +212,21 @@ const RegisterInner = () => {
       <StepComponent form={form as RegisterFormData} onChange={onChange} />
     );
   };
+
+  useEffect(() => {
+    if (!user) {
+      router.push(ROUTES.HOME);
+      return;
+    }
+
+    if (user.email) {
+      let email = user.email.address;
+      setForm((prev) => ({ ...prev, email }));
+      return;
+    }
+
+    linkEmail();
+  }, [user]);
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center px-4 py-16">
@@ -280,7 +296,7 @@ const RegisterInner = () => {
               <button
                 onClick={handleSubmit}
                 disabled={submitting}
-                className="inline-flex items-center gap-2 gradient-solana rounded-xl px-5 py-2.5 text-sm font-semibold text-primary-foreground disabled:opacity-60"
+                className="inline-flex cursor-pointer items-center gap-2 gradient-solana rounded-xl px-5 py-2.5 text-sm font-semibold text-primary-foreground disabled:opacity-60"
               >
                 {submitting ? (
                   <>

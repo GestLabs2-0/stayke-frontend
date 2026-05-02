@@ -19,3 +19,8 @@ export const ROUTES = {
   LOGIN: "/login",
   REGISTER: "/register",
 };
+
+export const MINT_ADDRESS =
+  process.env.NEXT_PUBLIC_MINT_ADDRESS ||
+  "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
+// Default is mainnet address

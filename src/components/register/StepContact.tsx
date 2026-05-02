@@ -15,7 +15,8 @@ export const StepContact = ({
       label="Email"
       type="email"
       value={form.email}
-      onChange={(v) => onChange("email", v)}
+      onChange={() => {}}
+      disabled={true}
       placeholder="john@example.com"
     />
     <Field

@@ -6,6 +6,8 @@ import { useUserContext } from "@/src/components/contexts/UserContext";
 import staykeAPI from "@/src/lib/staykeAPI";
 import { toast } from "sonner";
 
+import { DiditSdk } from "@didit-protocol/sdk-web";
+
 export default function DidItVerificationSection() {
   const { backendUser } = useUserContext();
   const [loading, setLoading] = useState(false);
@@ -20,7 +22,7 @@ export default function DidItVerificationSection() {
     try {
       const result = await staykeAPI.getDiditUrl();
       if (result.status && result.data?.url) {
-        window.location.href = result.data.url;
+        DiditSdk.shared.startVerification({ url: result.data.url });
       } else {
         toast.error(
           typeof result.message === "string"

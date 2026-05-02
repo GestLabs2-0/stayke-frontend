@@ -1,5 +1,5 @@
 import { HttpClientI, ResponseI } from "../types/api";
-import { RegisterResponse, RegisterUser } from "../types/api/user";
+import { UserType, RegisterUser } from "../types/api/user";
 import httpClient from "./httpClient";
 import { AxiosError, AxiosResponse } from "axios";
 
@@ -20,17 +20,17 @@ export class StaykeAPI {
   }
 
   async getUserProfile(address: string) {
-    const result: ResponseI<RegisterResponse> = {
+    const result: ResponseI<UserType> = {
       data: null,
       status: false,
       message: "",
     };
     try {
-      const response = await this.httpClient.get<
-        AxiosStaykeResponse<RegisterResponse>
-      >({
-        url: `/user/${address}`,
-      });
+      const response = await this.httpClient.get<AxiosStaykeResponse<UserType>>(
+        {
+          url: `/user/${address}`,
+        }
+      );
       const { data, status, message } = response.data;
 
       if (status) {
@@ -46,7 +46,7 @@ export class StaykeAPI {
   }
 
   async registerUser(userData: RegisterUser) {
-    const result: ResponseI<RegisterResponse> = {
+    const result: ResponseI<UserType> = {
       data: null,
       status: false,
       message: "",
@@ -54,7 +54,7 @@ export class StaykeAPI {
 
     try {
       const response = await this.httpClient.post<
-        AxiosStaykeResponse<RegisterResponse>
+        AxiosStaykeResponse<UserType>
       >({
         url: "/user/register",
         body: userData,
@@ -86,10 +86,10 @@ export class StaykeAPI {
     };
 
     try {
-      const response = await this.httpClient.get<
+      const response = await this.httpClient.post<
         AxiosStaykeResponse<{ url: string }>
       >({
-        url: "/user/didit-url",
+        url: "/user/didit-session",
       });
       const { data, status, message } = response.data;
 

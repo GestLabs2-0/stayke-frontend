@@ -44,7 +44,7 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
               </div>
             </div>
             <p className="text-sm text-muted-foreground font-medium tracking-wide">
-              Verifying your account…
+              Loading
             </p>
           </div>
         </div>

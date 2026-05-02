@@ -10,7 +10,7 @@ import {
 import { usePrivy } from "@privy-io/react-auth";
 import { useWallets } from "@privy-io/react-auth/solana";
 import staykeAPI from "@/src/lib/staykeAPI";
-import { RegisterResponse } from "@/src/types/api/user";
+import { UserType } from "@/src/types/api/user";
 import { useOnChainAccountCheck } from "../hooks/contract/useOnChainAccountCheck";
 
 // ─── Status machine ────────────────────────────────────────────────────────
@@ -32,7 +32,7 @@ export type UserStatus =
 
 interface UserContextValue {
   status: UserStatus;
-  backendUser: RegisterResponse | null;
+  backendUser: UserType | null;
   userProfilePda: string | null;
   refetch: () => void;
 }
@@ -47,8 +47,6 @@ const UserContext = createContext<UserContextValue>({
 export function useUserContext() {
   return useContext(UserContext);
 }
-
-// ─── Provider ──────────────────────────────────────────────────────────────
 
 export function UserContextProvider({
   children,
@@ -69,7 +67,7 @@ export function UserContextProvider({
   } = useOnChainAccountCheck(authenticated ? walletAddress : null);
 
   // Off-chain (backend) check
-  const [backendUser, setBackendUser] = useState<RegisterResponse | null>(null);
+  const [backendUser, setBackendUser] = useState<UserType | null>(null);
   const [checkingOffChain, setCheckingOffChain] = useState(false);
   const [offChainChecked, setOffChainChecked] = useState(false);
 

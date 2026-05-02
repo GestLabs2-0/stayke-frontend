@@ -11,15 +11,17 @@ import { PrivyProvider } from "@privy-io/react-auth";
 import { toSolanaWalletConnectors } from "@privy-io/react-auth/solana";
 import { createSolanaRpc, createSolanaRpcSubscriptions } from "@solana/kit";
 import { PRIVY_APP_ID } from "../../constant";
+import React from "react";
 
 const solanaConnectors = toSolanaWalletConnectors({
   // By default, shouldAutoConnect is enabled
-  shouldAutoConnect: true,
+  shouldAutoConnect: false,
 });
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
-    <ThemeProvider attribute="class">
+    // <ThemeProvider attribute="class">
+    <React.Fragment>
       <PrivyProvider
         appId={PRIVY_APP_ID!}
         config={{
@@ -77,6 +79,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
         </ClusterProvider>
       </PrivyProvider>
       <Toaster position="bottom-right" richColors />
-    </ThemeProvider>
+      {/* </ThemeProvider> */}
+    </React.Fragment>
   );
 }
