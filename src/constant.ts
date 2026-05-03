@@ -18,6 +18,10 @@ export const ROUTES = {
   DASHBOARD: "/dashboard",
   LOGIN: "/login",
   REGISTER: "/register",
+  ADD_PROPERTIES: "/add-properties",
+  LIST_PROPERTIES: "/list-properties",
+  PROFILE: "/profile",
+  BOOKINGS: "/bookings",
 };
 
 export const MINT_ADDRESS =

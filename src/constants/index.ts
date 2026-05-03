@@ -1,5 +1,5 @@
 //Library
-import { MapPin, Shield, User } from "lucide-react";
+import { MapPin, User } from "lucide-react";
 
 /*Stats Value*/
 
