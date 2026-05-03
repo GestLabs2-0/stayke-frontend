@@ -4,7 +4,7 @@ export const ENVIRONMENT = process.env.NEXT_PUBLIC_ENVIRONMENT || "development";
 //API
 
 export const API_CONFIG = {
-  BASE_URL: process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3030",
+  BASE_URL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:3030",
   URI_API: "/api/v1.0",
 };
 
