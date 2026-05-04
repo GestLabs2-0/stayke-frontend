@@ -7,8 +7,8 @@ import {
   useCallback,
   type ReactNode,
 } from "react";
-import type { ClusterMoniker } from "../lib/solana-client";
-import { CLUSTERS } from "../lib/solana-client";
+import type { ClusterMoniker } from "../lib/solanaClient";
+import { CLUSTERS } from "../lib/solanaClient";
 import { getExplorerUrl } from "../lib/explorer";
 
 type ClusterContextValue = {
