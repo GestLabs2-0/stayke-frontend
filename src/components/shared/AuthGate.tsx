@@ -19,6 +19,7 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
   const isExempt = EXEMPT_PATHS.some((p) => pathname.startsWith(p));
 
   useEffect(() => {
+    console.log(status);
     if (status === "no_onchain" && !isExempt) {
       router.push(ROUTES.REGISTER);
     }

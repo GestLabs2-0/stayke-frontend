@@ -59,21 +59,20 @@ export function UserContextProvider({
   // First connected Solana wallet (embedded or external)
   const walletAddress = wallets?.[0]?.address ?? null;
 
+  // A token that increments on refetch() to re-trigger the effect
+  const [tick, setTick] = useState(0);
+  const refetch = useCallback(() => setTick((t) => t + 1), []);
   // On-chain check
   const {
     hasAccount,
     pda: userProfilePda,
     loading: checkingOnChain,
-  } = useOnChainAccountCheck(authenticated ? walletAddress : null);
+  } = useOnChainAccountCheck(authenticated ? walletAddress : null, tick);
 
   // Off-chain (backend) check
   const [backendUser, setBackendUser] = useState<UserType | null>(null);
   const [checkingOffChain, setCheckingOffChain] = useState(false);
   const [offChainChecked, setOffChainChecked] = useState(false);
-
-  // A token that increments on refetch() to re-trigger the effect
-  const [tick, setTick] = useState(0);
-  const refetch = useCallback(() => setTick((t) => t + 1), []);
 
   // When onchain account is confirmed, check the backend
   useEffect(() => {

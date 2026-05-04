@@ -23,7 +23,8 @@ interface OnChainAccountState {
  * walletAddress is provided.
  */
 export function useOnChainAccountCheck(
-  walletAddress: string | null | undefined
+  walletAddress: string | null | undefined,
+  tick: number
 ): OnChainAccountState {
   const solanaClient = useSolanaClient();
   const [state, setState] = useState<OnChainAccountState>({
@@ -70,7 +71,7 @@ export function useOnChainAccountCheck(
     return () => {
       cancelled = true;
     };
-  }, [walletAddress, solanaClient.rpc]);
+  }, [walletAddress, solanaClient.rpc, tick]);
 
   return state;
 }

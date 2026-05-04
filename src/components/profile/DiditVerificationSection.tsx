@@ -1,12 +1,19 @@
 "use client";
 
 import { useState } from "react";
-import { Loader2, BadgeCheck, ShieldCheck, ExternalLink } from "lucide-react";
+import {
+  Loader2,
+  BadgeCheck,
+  ShieldCheck,
+  ExternalLink,
+  Search,
+} from "lucide-react";
 import { useUserContext } from "@/src/components/contexts/UserContext";
 import staykeAPI from "@/src/lib/staykeAPI";
 import { toast } from "sonner";
 
 import { DiditSdk } from "@didit-protocol/sdk-web";
+import { VerificationProgress } from "@/src/types/api/user";
 
 export default function DidItVerificationSection() {
   const { backendUser } = useUserContext();
@@ -14,8 +21,7 @@ export default function DidItVerificationSection() {
 
   // Only show the section when the user has an off-chain profile
   if (!backendUser) return null;
-
-  const isVerified = backendUser.verified;
+  const { verified } = backendUser;
 
   const handleVerify = async () => {
     setLoading(true);
@@ -46,7 +52,7 @@ export default function DidItVerificationSection() {
         </h2>
       </div>
 
-      {isVerified ? (
+      {verified == VerificationProgress.Verified ? (
         <div className="flex items-center gap-3 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3">
           <BadgeCheck className="h-5 w-5 text-emerald-400 shrink-0" />
           <div>
@@ -57,6 +63,14 @@ export default function DidItVerificationSection() {
               Your identity has been successfully verified.
             </p>
           </div>
+        </div>
+      ) : verified == VerificationProgress.InProgress ? (
+        <div className="flex items-center">
+          <Search className="h-5 w-5 text-emerald-400 shrink-0" />
+          <p className="text-sm text-muted-foreground leading-relaxed">
+            We are currently verifying your identity. This process may take a
+            few minutes. Thank you for your patience.
+          </p>
         </div>
       ) : (
         <div className="flex flex-col gap-3">

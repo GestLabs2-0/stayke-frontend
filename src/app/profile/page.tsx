@@ -91,7 +91,6 @@ export interface MockReviews {
 
 export default function ProfilePage() {
   const { backendUser: user } = useUserContext();
-  const router = useRouter();
 
   const [loadingProps] = useState(false);
 

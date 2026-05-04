@@ -1,11 +1,11 @@
 "use client";
 
-import { PROPERTY_STEPS } from "@/src/components/addPropertys/StepConfig";
-import { StepIndicator } from "@/src/components/addPropertys/Steps/StepIndicator";
+import { PROPERTY_STEPS } from "@/src/components/addProperties/StepConfig";
+import { StepIndicator } from "@/src/components/addProperties/Steps/StepIndicator";
 import {
   renderStep,
   STEP_LABELS,
-} from "@/src/components/addPropertys/Steps/StepRender";
+} from "@/src/components/addProperties/Steps/StepRender";
 import { AddPropertyFormData } from "@/src/types/AddPropertyFormData";
 // Library
 import { ChevronLeft, ChevronRight, Check, Loader2, Home } from "lucide-react";

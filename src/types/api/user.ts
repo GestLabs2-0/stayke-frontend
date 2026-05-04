@@ -18,6 +18,13 @@ export interface RegisterUser {
   wallet: string;
 }
 
+export enum VerificationProgress {
+  Failed = "VerificationFailed",
+  InProgress = "InProgress",
+  NotVerified = "NotVerified",
+  Verified = "Verified",
+}
+
 export interface UserType {
   banned: boolean;
 
@@ -49,7 +56,7 @@ export interface UserType {
 
   userProfileAddr: string;
 
-  verified: boolean;
+  verified: VerificationProgress;
 
   // Pubkey
 

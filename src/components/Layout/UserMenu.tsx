@@ -11,7 +11,7 @@ import {
   Copy,
   Check,
 } from "lucide-react";
-import { usePrivy, useWallets } from "@privy-io/react-auth";
+import { usePrivy } from "@privy-io/react-auth";
 //Next
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -24,17 +24,13 @@ import { useSolBalance } from "../hooks/useSolBalance";
 
 //Constants
 import { ROUTES } from "@/src/constant";
-
-const userThings = {
-  firstName: "User",
-  image: null,
-  reputation: 4.8,
-  isHost: true,
-};
+import { useUserContext } from "../contexts/UserContext";
+import Image from "next/image";
 
 export const UserMenu = () => {
   const { user, logout } = usePrivy();
-  const { wallets } = useWallets();
+  const { backendUser } = useUserContext();
+
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const router = useRouter();
@@ -66,10 +62,10 @@ export const UserMenu = () => {
         className="inline-flex items-center gap-2.5 rounded-xl border border-border bg-card px-3 py-2 text-sm font-medium text-foreground hover:border-primary hover:shadow-glow transition-all duration-200 w-full md:w-auto"
       >
         <div className="relative flex h-7 w-7 items-center justify-center rounded-full gradient-solana shrink-0">
-          {userThings?.image ? (
-            <img
-              src={userThings.image}
-              alt={userThings.firstName}
+          {backendUser?.image ? (
+            <Image
+              src={backendUser?.image}
+              alt={backendUser?.firstName}
               className="h-full w-full object-cover"
             />
           ) : (
@@ -77,7 +73,9 @@ export const UserMenu = () => {
           )}
           <span className="absolute top-5 -right-[.9px] h-2.5 w-2.5 rounded-full bg-emerald-400 border-2 border-card" />
         </div>
-        <span className="max-w-20 truncate">{userThings?.firstName}</span>
+        <span className="max-w-20 truncate">
+          {backendUser?.firstName} {backendUser?.lastName}
+        </span>
         <ChevronDown
           className={`h-3.5 w-3.5 text-muted-foreground transition-transform duration-200 ml-auto ${open ? "rotate-180" : ""}`}
         />
@@ -152,21 +150,9 @@ export const UserMenu = () => {
                 <p className="text-xs text-muted-foreground mb-1">Reputation</p>
                 <div className="flex items-center gap-1">
                   <Star className="h-3.5 w-3.5 fill-primary text-primary" />
-                  <span className="text-sm font-bold text-foreground">
-                    {userThings?.reputation ?? "—"}
-                  </span>
+                  <span className="text-sm font-bold text-foreground">4.8</span>
                   <span className="text-xs text-muted-foreground">/ 5.0</span>
                 </div>
-              </div>
-              <div className="px-4 py-3">
-                <p className="text-xs text-muted-foreground mb-1">Role</p>
-                <span
-                  className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold
-                    ${userThings?.isHost ? "bg-primary/10 text-primary" : "bg-primary/20 text-white"}`}
-                >
-                  <div className="h-2 w-2 rounded-full bg-emerald-400 mr-2" />
-                  {userThings?.isHost ? "Host" : "Client"}
-                </span>
               </div>
             </div>
 
@@ -188,16 +174,15 @@ export const UserMenu = () => {
                 <CalendarCheck className="h-4 w-4 shrink-0" />
                 My Bookings
               </Link>
-              {userThings?.isHost && (
-                <Link
-                  href={ROUTES.ADD_PROPERTIES}
-                  onClick={() => setOpen(false)}
-                  className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
-                >
-                  <PlusSquare className="h-4 w-4 shrink-0" />
-                  Add Property
-                </Link>
-              )}
+
+              <Link
+                href={ROUTES.ADD_PROPERTIES}
+                onClick={() => setOpen(false)}
+                className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+              >
+                <PlusSquare className="h-4 w-4 shrink-0" />
+                Add Property
+              </Link>
               <div className="my-1 border-t border-border" />
               <button
                 onClick={handleLogout}
