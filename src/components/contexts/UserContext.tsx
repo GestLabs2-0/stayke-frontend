@@ -12,6 +12,7 @@ import { useWallets } from "@privy-io/react-auth/solana";
 import staykeAPI from "@/src/lib/staykeAPI";
 import { UserType } from "@/src/types/api/user";
 import { useOnChainAccountCheck } from "../hooks/contract/useOnChainAccountCheck";
+import { UserProfile } from "@/src/generated/stayke_core";
 
 // ─── Status machine ────────────────────────────────────────────────────────
 //
@@ -35,6 +36,7 @@ interface UserContextValue {
   backendUser: UserType | null;
   userProfilePda: string | null;
   refetch: () => void;
+  userProfile: UserProfile | null;
 }
 
 const UserContext = createContext<UserContextValue>({
@@ -42,6 +44,7 @@ const UserContext = createContext<UserContextValue>({
   backendUser: null,
   userProfilePda: null,
   refetch: () => {},
+  userProfile: null,
 });
 
 export function useUserContext() {
@@ -67,6 +70,7 @@ export function UserContextProvider({
     hasAccount,
     pda: userProfilePda,
     loading: checkingOnChain,
+    dataAccount: userProfile,
   } = useOnChainAccountCheck(authenticated ? walletAddress : null, tick);
 
   // Off-chain (backend) check
@@ -122,7 +126,7 @@ export function UserContextProvider({
 
   return (
     <UserContext.Provider
-      value={{ status, backendUser, userProfilePda, refetch }}
+      value={{ status, backendUser, userProfilePda, refetch, userProfile }}
     >
       {children}
     </UserContext.Provider>

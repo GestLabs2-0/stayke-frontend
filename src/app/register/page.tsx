@@ -26,19 +26,18 @@ import {
   findIdentityPda,
 } from "@/src/generated/stayke_core";
 import { useUserContext } from "@/src/components/contexts/UserContext";
-import { link } from "fs";
 
 const RegisterInner = () => {
   const searchParams = useSearchParams();
   const isOffchain = searchParams.get("offchain") === "true";
-
-  const [step, setStep] = useState(1);
-  const [submitting, setSubmitting] = useState(false);
-  const { user, linkEmail } = usePrivy();
   const signStayke = useSignStaykeTx();
   const { registerUser } = useRegisterUser();
   const { refetch } = useUserContext();
   const router = useRouter();
+
+  const [step, setStep] = useState(1);
+  const [submitting, setSubmitting] = useState(false);
+  const { user, linkEmail } = usePrivy();
   const totalSteps = STEPS.length;
 
   const [form, setForm] = useState<RegisterFormData>({

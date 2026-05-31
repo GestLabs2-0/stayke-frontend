@@ -6,19 +6,29 @@ import {
   renderStep,
   STEP_LABELS,
 } from "@/src/components/addProperties/Steps/StepRender";
+import { useUserContext } from "@/src/components/contexts/UserContext";
+import { useRegisterProperty } from "@/src/components/hooks/contract/registerProperty";
+import { useSignStaykeTx } from "@/src/components/hooks/useSignStaykeTx";
 import { AddPropertyFormData } from "@/src/types/AddPropertyFormData";
 // Library
 import { ChevronLeft, ChevronRight, Check, Loader2, Home } from "lucide-react";
 
 // Next
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 // React
 import { useState } from "react";
+import { toast } from "sonner";
 
 // ── Main page ─────────────────────────────────────────────────────────────────
 const AddProperty = () => {
   const [step, setStep] = useState(1);
+  const signStayke = useSignStaykeTx();
+  const { registerProperty } = useRegisterProperty();
+  const { refetch, userProfilePda, userProfile } = useUserContext();
+  const router = useRouter();
+
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const totalSteps = PROPERTY_STEPS.length;
@@ -50,10 +60,23 @@ const AddProperty = () => {
   };
 
   const handleSubmit = async () => {
+    if (!userProfilePda || !userProfile) {
+      toast.info("Please log in with Privy to continue.");
+      return;
+    }
+
     try {
       setSubmitting(true);
       // TODO: integrate on-chain createListing instruction
-      await new Promise((res) => setTimeout(res, 2000));
+      const { propertyAddr } = await registerProperty({
+        props: signStayke,
+        listingCount: userProfile.listings,
+        price: Number(form.pricePerNight),
+        userProfilePda,
+      });
+
+      toast.success("Property registered on-chain! Finalizing listing...");
+
       setSubmitted(true);
     } catch (err) {
       console.error("Failed to create property:", err);

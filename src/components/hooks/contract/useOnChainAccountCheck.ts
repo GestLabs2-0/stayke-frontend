@@ -5,7 +5,8 @@ import { address } from "@solana/kit";
 import {
   findUserProfilePda,
   fetchMaybeUserProfile,
-} from "@/src/generated/stayke_core";
+  type UserProfile,
+} from "@GestLabs2-0/stayke-core";
 import { useSolanaClient } from "@/src/lib/solanaClientContext";
 
 interface OnChainAccountState {
@@ -13,6 +14,7 @@ interface OnChainAccountState {
   /** The stringified address of the UserProfile PDA, if it exists. */
   pda: string | null;
   loading: boolean;
+  dataAccount: UserProfile | null;
 }
 
 /**
@@ -31,11 +33,17 @@ export function useOnChainAccountCheck(
     hasAccount: null,
     pda: null,
     loading: false,
+    dataAccount: null,
   });
 
   useEffect(() => {
     if (!walletAddress) {
-      setState({ hasAccount: null, pda: null, loading: false });
+      setState({
+        hasAccount: null,
+        pda: null,
+        loading: false,
+        dataAccount: null,
+      });
       return;
     }
 
@@ -55,14 +63,29 @@ export function useOnChainAccountCheck(
 
         if (!cancelled) {
           if (maybeAccount.exists) {
-            setState({ hasAccount: true, pda: userProfilePda, loading: false });
+            setState({
+              hasAccount: true,
+              pda: userProfilePda,
+              loading: false,
+              dataAccount: maybeAccount.data,
+            });
           } else {
-            setState({ hasAccount: false, pda: null, loading: false });
+            setState({
+              hasAccount: false,
+              pda: null,
+              loading: false,
+              dataAccount: null,
+            });
           }
         }
       } catch {
         if (!cancelled) {
-          setState({ hasAccount: false, pda: null, loading: false });
+          setState({
+            hasAccount: false,
+            pda: null,
+            loading: false,
+            dataAccount: null,
+          });
         }
       }
     };

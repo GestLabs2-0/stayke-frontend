@@ -5,3 +5,7 @@ export interface RegisterUserRes {
   userProfile: Address;
   reputationProfile: Address;
 }
+
+export interface CreatePropertyOnChainRes {
+  propertyAddr: Address;
+}

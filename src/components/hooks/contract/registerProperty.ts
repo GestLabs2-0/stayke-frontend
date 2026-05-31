@@ -1,6 +1,6 @@
 "use client";
-import { getInitializeUserProfileInstructionAsync } from "@GestLabs2-0/stayke-core";
-import type { registerUserOnChain } from "@/src/types/staykeWeb3";
+import { getInitializeListingInstructionAsync } from "@GestLabs2-0/stayke-core";
+import type { registerPropertyOnChain } from "@/src/types/staykeWeb3";
 import {
   address,
   appendTransactionMessageInstructions,
@@ -16,19 +16,19 @@ import {
 } from "@solana/kit";
 import { useState } from "react";
 import { useCluster } from "../../cluster-context";
-import { RegisterUserRes } from "@/src/types/hooks/contractCalls";
+import { CreatePropertyOnChainRes } from "@/src/types/hooks/contractCalls";
 
-export const useRegisterUser = () => {
+export const useRegisterProperty = () => {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const getSolanaExplorerTx = useCluster().getExplorerUrl;
 
-  const registerUser = async ({
+  const registerProperty = async ({
     props,
-    id,
-    doctype,
-    countryCode,
-  }: registerUserOnChain): Promise<RegisterUserRes> => {
+    listingCount,
+    price,
+    userProfilePda,
+  }: registerPropertyOnChain): Promise<CreatePropertyOnChainRes> => {
     const { connected, ready, rpc, signer, wallet, sendAndConfirm } = props;
 
     if (!connected || !ready || !signer || !wallet) {
@@ -41,11 +41,11 @@ export const useRegisterUser = () => {
 
       let authority = createNoopSigner(authorityAddr);
 
-      let registerInstruction = await getInitializeUserProfileInstructionAsync({
+      let createPropertyInst = await getInitializeListingInstructionAsync({
         authority,
-        countryCode,
-        doctype,
-        id,
+        userProfile: address(userProfilePda),
+        listingId: listingCount,
+        price,
       });
       const { value: latestBlockhash } = await rpc.getLatestBlockhash().send();
       const tx = pipe(
@@ -53,7 +53,7 @@ export const useRegisterUser = () => {
         (tx) => setTransactionMessageFeePayerSigner(authority, tx),
         (tx) =>
           setTransactionMessageLifetimeUsingBlockhash(latestBlockhash, tx),
-        (tx) => appendTransactionMessageInstructions([registerInstruction], tx),
+        (tx) => appendTransactionMessageInstructions([createPropertyInst], tx),
         (tx) => compileTransaction(tx)
       );
 
@@ -72,9 +72,7 @@ export const useRegisterUser = () => {
       );
       setSuccess(true);
       return {
-        userProfile: registerInstruction.accounts[0].address,
-        reputationProfile: registerInstruction.accounts[1].address,
-        identity: registerInstruction.accounts[2].address,
+        propertyAddr: createPropertyInst.accounts[0].address,
       };
     } catch (error) {
       console.log("Failed to register user:", error);
@@ -85,7 +83,7 @@ export const useRegisterUser = () => {
   };
 
   return {
-    registerUser,
+    registerProperty,
     loading,
     success,
   };

@@ -61,4 +61,6 @@ export interface UserType {
   // Pubkey
 
   wallet: string;
+
+  properties: IProperties[];
 }
