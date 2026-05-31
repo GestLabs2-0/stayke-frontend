@@ -30,3 +30,10 @@ export interface registerUserOnChain {
   doctype: DocType;
   countryCode: Uint8Array;
 }
+
+export interface registerPropertyOnChain {
+  props: SignStaykeTx;
+  price: number;
+  userProfilePda: string;
+  listingCount: number;
+}

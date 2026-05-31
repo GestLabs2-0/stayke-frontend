@@ -24,6 +24,11 @@
   "version": "0.0.0",
   "private": true,
   "dependencies": {
+    "@GestLabs2-0/stayke-config": "1.0.2",
+    "@GestLabs2-0/stayke-core": "1.0.2",
+    "@GestLabs2-0/stayke-disputes": "1.0.2",
+    "@GestLabs2-0/stayke-escrow": "1.0.2",
+    "@GestLabs2-0/stayke-treasury": "1.0.2",
     "@didit-protocol/sdk-web": "^0.1.9",
     "@privy-io/react-auth": "^3.22.1",
     "@solana-program/memo": "^0.11.0",
