@@ -47,9 +47,7 @@ export const CountrySelector = ({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [open, onToggle]);
 
-  useEffect(() => {
-    if (!open) setQuery("");
-  }, [open]);
+  if (!open && query) setQuery("");
 
   return (
     <div ref={ref} className="relative w-full">

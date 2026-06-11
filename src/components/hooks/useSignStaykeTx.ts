@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { useWallets } from "@privy-io/react-auth/solana";
+import { useWallets } from "@/src/lib/wallet";
 import {
   type Address,
   FullySignedTransaction,
@@ -44,11 +44,13 @@ export const useSignStaykeTx = (): SignStaykeTx => {
           throw new Error("La wallet no admite firma de transacciones");
         }
 
+        const signTx = wallet.signTransaction;
+
         return Promise.all(
           transactions.map(async (tx) => {
             const wireBytes = new Uint8Array(encoder.encode(tx));
 
-            const { signedTransaction } = await wallet.signTransaction({
+            const { signedTransaction } = await signTx({
               transaction: wireBytes,
             });
 

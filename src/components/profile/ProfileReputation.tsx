@@ -1,8 +1,8 @@
 "use client";
-import { UserType } from "@/src/types/api/user";
+// import { UserType } from "@/src/types/api/user";
 import { CalendarCheck, Star, Wallet } from "lucide-react";
 import { useTokenBalance } from "../hooks/useTokenBalance";
-import { useWallets } from "@privy-io/react-auth/solana";
+import { useWallets } from "@/src/lib/wallet";
 import { MockReviews } from "@/src/app/profile/page";
 import { DotBar } from "../loaders/DotBar";
 

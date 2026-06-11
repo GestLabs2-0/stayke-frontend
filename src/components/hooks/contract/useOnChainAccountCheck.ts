@@ -36,21 +36,23 @@ export function useOnChainAccountCheck(
     dataAccount: null,
   });
 
+  if (!walletAddress && state.hasAccount !== null) {
+    setState({
+      hasAccount: null,
+      pda: null,
+      loading: false,
+      dataAccount: null,
+    });
+  }
+
+
   useEffect(() => {
-    if (!walletAddress) {
-      setState({
-        hasAccount: null,
-        pda: null,
-        loading: false,
-        dataAccount: null,
-      });
-      return;
-    }
-
     let cancelled = false;
-    setState((prev) => ({ ...prev, loading: true }));
-
+    
     const check = async () => {
+      if (!walletAddress) return;
+      
+      setState((prev) => ({ ...prev, loading: true }));
       try {
         const [userProfilePda] = await findUserProfilePda({
           authority: address(walletAddress),

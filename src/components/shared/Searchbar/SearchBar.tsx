@@ -1,11 +1,9 @@
 "use client";
 
 //Library
-import { Search, MapPin, CalendarDays, Users } from "lucide-react";
+import { MapPin, CalendarDays, Users } from "lucide-react";
 //React
 import { useState } from "react";
-//Next
-import Link from "next/link";
 
 export const SearchBar = () => {
   const [destination, setDestination] = useState("");

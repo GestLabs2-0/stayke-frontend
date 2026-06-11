@@ -1,4 +1,4 @@
-name: 'Frontend CI'
+name: "Frontend CI"
 
 on:
   push:
@@ -6,42 +6,42 @@ on:
   pull_request:
     branches: [main, dev, staging]
 
-jobs: 
+jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v6
-    
-    - name: Install pnpm
-      uses: pnpm/action-setup@v4
+      - uses: actions/checkout@v6
 
-    - name: Use Node.js 24
-      uses: actions/setup-node@v4
-      with:
-        node-version: 24
-        cache: "pnpm"
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
 
-    - name: Configure GitHub Packages Authentication
-      # This writes the token directly into the runner's global .npmrc, bypassing the env restriction
-      run: |
-        pnpm config set //npm.pkg.github.com/:_authToken=${{ secrets.GTH_TOKEN }}
-        pnpm config set @GestLabs2-0:registry=https://npm.pkg.github.com        
+      - name: Use Node.js 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: "pnpm"
 
-    - name: Cache pnpm and Next.js build cache
-      uses: actions/cache@v4
-      with:
-        # See here for caching with `yarn`, `bun` or other package managers https://github.com/actions/cache/blob/main/examples.md or you can leverage caching with actions/setup-node https://github.com/actions/setup-node
-        path: |
-          ~/.pnpm
-          ${{ github.workspace }}/.next/cache
-        # Generate a new cache whenever packages or source files change.
-        key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
-        # If source files changed but packages didn't, rebuild from a prior cache.
-        restore-keys: |
-          ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
+      - name: Configure GitHub Packages Authentication
+        # This writes the token directly into the runner's global .npmrc, bypassing the env restriction
+        run: |
+          pnpm config set //npm.pkg.github.com/:_authToken=${{ secrets.GTH_TOKEN }}
+          pnpm config set @GestLabs2-0:registry=https://npm.pkg.github.com
 
-    - run: pnpm install --frozen-lockfile
+      - name: Cache pnpm and Next.js build cache
+        uses: actions/cache@v4
+        with:
+          # See here for caching with `yarn`, `bun` or other package managers https://github.com/actions/cache/blob/main/examples.md or you can leverage caching with actions/setup-node https://github.com/actions/setup-node
+          path: |
+            ~/.pnpm
+            ${{ github.workspace }}/.next/cache
+          # Generate a new cache whenever packages or source files change.
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
+          # If source files changed but packages didn't, rebuild from a prior cache.
+          restore-keys: |
+            ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
 
-    - name: Run verifications
-      run: pnpm run ci
+      - run: pnpm install --frozen-lockfile
+
+      - name: Run verifications
+        run: pnpm run ci

@@ -1,6 +1,6 @@
 import { HttpClientI, ResponseI } from "../types/api";
 import { UserType, RegisterUser } from "../types/api/user";
-import httpClient from "./httpClient";
+import {httpClient} from "./httpClient";
 import { AxiosError, AxiosResponse } from "axios";
 
 function handleError<T>(error: unknown, result: ResponseI<T>): ResponseI<T> {
@@ -12,7 +12,7 @@ function handleError<T>(error: unknown, result: ResponseI<T>): ResponseI<T> {
 
 type AxiosStaykeResponse<T> = AxiosResponse<ResponseI<T>>;
 
-export class StaykeAPI {
+export default class StaykeAPI {
   private httpClient: HttpClientI;
 
   constructor(httpClient: HttpClientI) {
@@ -106,4 +106,4 @@ export class StaykeAPI {
   }
 }
 
-export default new StaykeAPI(httpClient);
+export const staykeApi = new StaykeAPI(httpClient);

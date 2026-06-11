@@ -1,4 +1,4 @@
-import { ConnectedStandardSolanaWallet } from "@privy-io/react-auth/solana";
+import type { SolanaWallet } from "@/src/lib/wallet";
 import {
   Address,
   FullySignedTransaction,
@@ -7,7 +7,7 @@ import {
   TransactionWithBlockhashLifetime,
 } from "@solana/kit";
 import { RpcType } from "../lib/solanaClient";
-import { DocType } from "../generated/stayke_core";
+import { DocType } from "@GestLabs2-0/stayke-core";
 
 export interface SignStaykeTx extends RpcType {
   signer: {
@@ -18,7 +18,7 @@ export interface SignStaykeTx extends RpcType {
       readonly (T & TransactionWithBlockhashLifetime & FullySignedTransaction)[]
     >;
   } | null;
-  wallet: ConnectedStandardSolanaWallet;
+  wallet: SolanaWallet;
   sendAndConfirm: ReturnType<typeof sendAndConfirmTransactionFactory>;
   connected: boolean;
   ready: boolean;

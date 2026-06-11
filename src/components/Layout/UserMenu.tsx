@@ -11,7 +11,7 @@ import {
   Copy,
   Check,
 } from "lucide-react";
-import { usePrivy } from "@privy-io/react-auth";
+import { usePrivy } from "@/src/lib/wallet";
 //Next
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -38,8 +38,7 @@ export const UserMenu = () => {
   const solanaWallet = user?.linkedAccounts?.find(
     (acc) => acc.type === "wallet" && acc.chainType === "solana"
   );
-  // @ts-ignore
-  const address = solanaWallet?.address;
+  const address = solanaWallet?.address ?? "";
   const { balance, isLoading: loadingBalance } = useSolBalance(address);
 
   const handleCopy = () => {

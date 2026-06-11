@@ -1,7 +1,7 @@
 "use client";
 import { LogOut, User } from "lucide-react";
 import Image from "next/image";
-import { usePrivy } from "@privy-io/react-auth";
+import { usePrivy } from "@/src/lib/wallet";
 
 import { UserType } from "@/src/types/api/user";
 

@@ -1,6 +1,6 @@
 allowBuilds:
-  '@parcel/watcher': false
-  '@reown/appkit': false
+  "@parcel/watcher": false
+  "@reown/appkit": false
   bigint-buffer: false
   bufferutil: false
   keccak: false

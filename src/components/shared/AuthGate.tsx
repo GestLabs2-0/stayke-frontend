@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { usePrivy } from "@privy-io/react-auth";
+import { usePrivy } from "@/src/lib/wallet";
 import { Loader2, ShieldAlert, ArrowRight, LogOut } from "lucide-react";
 import { useUserContext } from "../contexts/UserContext";
 import { ROUTES } from "@/src/constant";

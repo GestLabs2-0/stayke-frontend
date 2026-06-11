@@ -1,5 +1,5 @@
 import { DocumentTypeOption } from "@/src/types/DocumentMenuOption";
-import { DocType } from "../generated/stayke_core";
+import { DocType } from "@GestLabs2-0/stayke-core";
 
 export const DOCUMENT_TYPES: DocumentTypeOption[] = [
   { value: "Passport", label: "Passport", icon: "📘" },

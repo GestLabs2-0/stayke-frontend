@@ -1,6 +1,6 @@
 import axios from "axios";
 import { API_CONFIG } from "../constant";
-import { getAccessToken } from "@privy-io/react-auth";
+import { getAccessToken } from "@/src/lib/wallet";
 import {
   DeleteParams,
   GetParams,
@@ -24,7 +24,7 @@ const HEADERS_DEFAULT = {
  * de path por lo que se concatena con la constante URL_BASE
  **/
 
-export class HttpClient implements HttpClientI {
+export default class HttpClient implements HttpClientI {
   private URL_BASE: string;
   private HEADERS_DEFAULT: object;
 
@@ -111,4 +111,4 @@ export class HttpClient implements HttpClientI {
   }
 }
 
-export default new HttpClient();
+export const httpClient = new HttpClient();

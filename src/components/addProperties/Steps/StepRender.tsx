@@ -7,7 +7,7 @@ import { StepPhotos } from "./StepsPhoto";
 type StepRenderer = (props: {
   step: number;
   form: AddPropertyFormData;
-  onChange: (field: keyof AddPropertyFormData, value: any) => void;
+  onChange: (field: keyof AddPropertyFormData, value: unknown) => void;
 }) => React.ReactNode;
 
 export const renderStep: StepRenderer = ({ step, form, onChange }) => {

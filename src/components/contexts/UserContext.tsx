@@ -7,12 +7,11 @@ import {
   useEffect,
   useState,
 } from "react";
-import { usePrivy } from "@privy-io/react-auth";
-import { useWallets } from "@privy-io/react-auth/solana";
-import staykeAPI from "@/src/lib/staykeAPI";
+import { usePrivy, useWallets } from "@/src/lib/wallet";
+import { staykeApi } from "@/src/lib/staykeAPI";
 import { UserType } from "@/src/types/api/user";
 import { useOnChainAccountCheck } from "../hooks/contract/useOnChainAccountCheck";
-import { UserProfile } from "@/src/generated/stayke_core";
+import { UserProfile } from "@GestLabs2-0/stayke-core";
 
 // ─── Status machine ────────────────────────────────────────────────────────
 //
@@ -81,31 +80,31 @@ export function UserContextProvider({
   // When onchain account is confirmed, check the backend
   useEffect(() => {
     if (!authenticated || !walletAddress || hasAccount !== true) return;
-
     let cancelled = false;
-    setCheckingOffChain(true);
-    setOffChainChecked(false);
-
-    staykeAPI.getUserProfile(walletAddress).then((result) => {
-      if (cancelled) return;
-      setBackendUser(result.status ? result.data : null);
-      setCheckingOffChain(false);
-      setOffChainChecked(true);
-    });
-
+    function getData() {
+      setCheckingOffChain(true);
+      setOffChainChecked(false);
+  
+      staykeApi.getUserProfile(walletAddress).then((result) => {
+        if (cancelled) return;
+        setBackendUser(result.status ? result.data : null);
+        setCheckingOffChain(false);
+        setOffChainChecked(true);
+      });
+   }
+    getData();
+    
     return () => {
       cancelled = true;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, [authenticated, walletAddress, hasAccount, tick]);
 
   // Reset backend state when wallet changes or user logs out
-  useEffect(() => {
-    if (!authenticated) {
-      setBackendUser(null);
-      setOffChainChecked(false);
-    }
-  }, [authenticated, walletAddress]);
+  if (!authenticated && backendUser !== null) {
+    setBackendUser(null);
+    setOffChainChecked(false);
+  }
 
   // ── Derive status ─────────────────────────────────────────────────────────
   let status: UserStatus = "loading";

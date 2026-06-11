@@ -1,4 +1,5 @@
-import { DocType } from "@/src/generated/stayke_core";
+import { DocType } from "@GestLabs2-0/stayke-core";
+import type { IProperties } from "./properties";
 
 export interface RegisterUser {
   country: string;

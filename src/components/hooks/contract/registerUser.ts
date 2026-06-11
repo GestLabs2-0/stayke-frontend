@@ -39,14 +39,15 @@ export const useRegisterUser = () => {
     try {
       setLoading(true);
 
-      let authority = createNoopSigner(authorityAddr);
+      const authority = createNoopSigner(authorityAddr);
 
-      let registerInstruction = await getInitializeUserProfileInstructionAsync({
-        authority,
-        countryCode,
-        doctype,
-        id,
-      });
+      const registerInstruction =
+        await getInitializeUserProfileInstructionAsync({
+          authority,
+          countryCode,
+          doctype,
+          id,
+        });
       const { value: latestBlockhash } = await rpc.getLatestBlockhash().send();
       const tx = pipe(
         createTransactionMessage({ version: 0 }),

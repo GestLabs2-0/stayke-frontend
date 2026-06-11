@@ -1,5 +1,5 @@
 import { ListingCard } from "@/src/components/LocaleSection/ListingCard";
-import type { ListingCardProps } from "@/src/types/ListingCards";
+// import type { ListingCardProps } from "@/src/types/ListingCards";
 import { Loader2 } from "lucide-react";
 import { listings } from "@/src/constants";
 

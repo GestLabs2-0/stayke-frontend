@@ -2,8 +2,7 @@
 
 import { useState } from "react";
 import {
-  User,
-  Star,
+ 
   Wallet,
   Mail,
   Phone,
@@ -14,38 +13,9 @@ import {
 import Link from "next/link";
 import DidItVerificationSection from "@/src/components/profile/DiditVerificationSection";
 import { useUserContext } from "@/src/components/contexts/UserContext";
-import { useRouter } from "next/navigation";
 import { ProfileHeader } from "@/src/components/profile/ProfileHeader";
 import { ProfileReputation } from "@/src/components/profile/ProfileReputation";
 import { ProfileReviews } from "@/src/components/profile/ProfileReviews";
-
-const mockUser = {
-  firstName: "Jose",
-  lastName: "Dev",
-  email: "jose@email.com",
-  phone: "+57 300 123 4567",
-  wallet: "9xQeWvG816bUx9EPjH...",
-  image: "",
-  isHost: true,
-  reputation: 4.7,
-  pdaKey: "MockPDA123456789",
-  reviews: [
-    {
-      id: "1",
-      author: "Carlos",
-      rating: 5,
-      comment: "Excelente host, todo perfecto.",
-      date: "Apr 2026",
-    },
-    {
-      id: "2",
-      author: "Ana",
-      rating: 4,
-      comment: "Muy buena experiencia.",
-      date: "Mar 2026",
-    },
-  ],
-};
 
 const mockProperties = [
   {

@@ -1,7 +1,7 @@
 "use client";
 //Library
 import { Menu, X, Shield } from "lucide-react";
-import { usePrivy } from "@privy-io/react-auth";
+import { usePrivy } from "@/src/lib/wallet";
 //React
 import { useState } from "react";
 //Next

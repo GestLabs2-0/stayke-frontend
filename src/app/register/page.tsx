@@ -14,8 +14,8 @@ import type { RegisterFormData } from "@/src/types/RegisterFormData";
 import { useSignStaykeTx } from "@/src/components/hooks/useSignStaykeTx";
 import { useRegisterUser } from "@/src/components/hooks/contract/registerUser";
 import { parseDoctype } from "@/src/constants/DocumentTypes";
-import staykeAPI from "@/src/lib/staykeAPI";
-import { usePrivy } from "@privy-io/react-auth";
+import {staykeApi} from "@/src/lib/staykeAPI";
+import { usePrivy } from "@/src/lib/wallet";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { ROUTES } from "@/src/constant";
@@ -24,7 +24,7 @@ import {
   findUserProfilePda,
   findReputationProfilePda,
   findIdentityPda,
-} from "@/src/generated/stayke_core";
+} from "@GestLabs2-0/stayke-core";
 import { useUserContext } from "@/src/components/contexts/UserContext";
 
 const RegisterInner = () => {
@@ -101,7 +101,7 @@ const RegisterInner = () => {
 
       toast.success("On-chain registration successful!");
 
-      const { data, status } = await staykeAPI.registerUser({
+      const { data, status } = await staykeApi.registerUser({
         country: form.country,
         documentType: form.documentType,
         dni: documentation,
@@ -163,7 +163,7 @@ const RegisterInner = () => {
         id: new Uint8Array(dniHash),
       });
 
-      const { data, status, message } = await staykeAPI.registerUser({
+      const { data, status, message } = await staykeApi.registerUser({
         country: form.country,
         documentType: form.documentType,
         dni: documentation,
@@ -218,14 +218,14 @@ const RegisterInner = () => {
       return;
     }
 
-    if (user.email) {
-      let email = user.email.address;
-      setForm((prev) => ({ ...prev, email }));
-      return;
-    }
+    // if (user.email) {
+    //   const email = user.email.address;
+    //   setForm((prev) => ({ ...prev, email }));
+    //   return;
+    // }
 
     linkEmail();
-  }, [user]);
+  }, [user, linkEmail, router]);
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center px-4 py-16">

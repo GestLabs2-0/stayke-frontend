@@ -39,9 +39,9 @@ export const useRegisterProperty = () => {
     try {
       setLoading(true);
 
-      let authority = createNoopSigner(authorityAddr);
+      const authority = createNoopSigner(authorityAddr);
 
-      let createPropertyInst = await getInitializeListingInstructionAsync({
+      const createPropertyInst = await getInitializeListingInstructionAsync({
         authority,
         userProfile: address(userProfilePda),
         listingId: listingCount,
