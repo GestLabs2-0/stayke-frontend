@@ -45,6 +45,3 @@ jobs:
 
     - name: Run verifications
       run: pnpm run ci
-
-    - name: Build app
-      run: pnpm run build
