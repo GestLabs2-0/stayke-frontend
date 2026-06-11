@@ -12,7 +12,5 @@ type StepRenderer = (props: {
 //Step Components
 export const STEP_COMPONENTS: Record<number, StepRenderer> = {
   1: ({ form, onChange }) => <StepPersonal form={form} onChange={onChange} />,
-  2: ({ form, onChange }) => (
-    <StepContact form={form} onChange={onChange } />
-  ),
+  2: ({ form, onChange }) => <StepContact form={form} onChange={onChange} />,
 };

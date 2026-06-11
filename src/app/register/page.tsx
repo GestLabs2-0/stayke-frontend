@@ -14,7 +14,7 @@ import type { RegisterFormData } from "@/src/types/RegisterFormData";
 import { useSignStaykeTx } from "@/src/components/hooks/useSignStaykeTx";
 import { useRegisterUser } from "@/src/components/hooks/contract/registerUser";
 import { parseDoctype } from "@/src/constants/DocumentTypes";
-import {staykeApi} from "@/src/lib/staykeAPI";
+import { staykeApi } from "@/src/lib/staykeAPI";
 import { usePrivy } from "@/src/lib/wallet";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";

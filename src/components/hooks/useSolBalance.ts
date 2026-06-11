@@ -14,27 +14,30 @@ export const useSolBalance = (addressString: string) => {
   const [isLoading, setLoading] = useState(false);
   const client = useSolanaClient().rpc;
 
-  const fetchBalance = useCallback(async (isBackground: boolean = false) => {
-    if (!addressString) return;
-    if (isBackground) setLoading(true);
-    try {
-      const res = await client.getBalance(address(addressString)).send();
-      // Balance is in lamports → divide by 1_000_000_000 for SOL
-      const sol = Number(res.value) / 1_000_000_000;
-      setBalance(sol);
-    } catch (error) {
-      console.error("useSolBalance error:", error);
-      setBalance(null);
-    } finally {
-      setLoading(false);
-    }
-  }, [addressString, client]);
+  const fetchBalance = useCallback(
+    async (isBackground: boolean = false) => {
+      if (!addressString) return;
+      if (isBackground) setLoading(true);
+      try {
+        const res = await client.getBalance(address(addressString)).send();
+        // Balance is in lamports → divide by 1_000_000_000 for SOL
+        const sol = Number(res.value) / 1_000_000_000;
+        setBalance(sol);
+      } catch (error) {
+        console.error("useSolBalance error:", error);
+        setBalance(null);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [addressString, client]
+  );
 
   useEffect(() => {
     function runOnStart() {
       fetchBalance(true);
     }
-    runOnStart()
+    runOnStart();
 
     // Refresh every 30 seconds
     const interval = setInterval(fetchBalance, 30_000);

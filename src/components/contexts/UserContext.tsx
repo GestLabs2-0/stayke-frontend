@@ -84,20 +84,19 @@ export function UserContextProvider({
     function getData() {
       setCheckingOffChain(true);
       setOffChainChecked(false);
-  
+
       staykeApi.getUserProfile(walletAddress).then((result) => {
         if (cancelled) return;
         setBackendUser(result.status ? result.data : null);
         setCheckingOffChain(false);
         setOffChainChecked(true);
       });
-   }
+    }
     getData();
-    
+
     return () => {
       cancelled = true;
     };
-     
   }, [authenticated, walletAddress, hasAccount, tick]);
 
   // Reset backend state when wallet changes or user logs out

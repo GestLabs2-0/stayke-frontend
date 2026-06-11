@@ -9,7 +9,7 @@ import {
   Search,
 } from "lucide-react";
 import { useUserContext } from "@/src/components/contexts/UserContext";
-import {staykeApi} from "@/src/lib/staykeAPI";
+import { staykeApi } from "@/src/lib/staykeAPI";
 import { toast } from "sonner";
 
 import { DiditSdk } from "@didit-protocol/sdk-web";

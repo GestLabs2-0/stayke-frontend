@@ -45,13 +45,12 @@ export function useOnChainAccountCheck(
     });
   }
 
-
   useEffect(() => {
     let cancelled = false;
-    
+
     const check = async () => {
       if (!walletAddress) return;
-      
+
       setState((prev) => ({ ...prev, loading: true }));
       try {
         const [userProfilePda] = await findUserProfilePda({

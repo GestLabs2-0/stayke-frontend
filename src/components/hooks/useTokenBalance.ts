@@ -19,37 +19,40 @@ export const useTokenBalance = (addressString: string | null) => {
 
   const client = useSolanaClient().rpc;
 
-  const fetchBalance = useCallback(async (isBackground: boolean= false) => {
-    if (!addressString) return;
-    if (isBackground)  setLoading(true);
+  const fetchBalance = useCallback(
+    async (isBackground: boolean = false) => {
+      if (!addressString) return;
+      if (isBackground) setLoading(true);
 
-    try {
-      const pk = new PublicKey(addressString);
+      try {
+        const pk = new PublicKey(addressString);
 
-      const pdaTokenAcc = await getAssociatedTokenAddress(mintAddress, pk);
+        const pdaTokenAcc = await getAssociatedTokenAddress(mintAddress, pk);
 
-      const balanceMint = await client
-        .getTokenAccountBalance(address(pdaTokenAcc.toString()))
-        .send();
+        const balanceMint = await client
+          .getTokenAccountBalance(address(pdaTokenAcc.toString()))
+          .send();
 
-      const tokenBalance =
-        Number(balanceMint.value.amount) / 10 ** balanceMint.value.decimals;
+        const tokenBalance =
+          Number(balanceMint.value.amount) / 10 ** balanceMint.value.decimals;
 
-      setBalance(tokenBalance);
-    } catch (error) {
-      console.error("useSolBalance error:", error);
-      setBalance(null);
-    } finally {
-      setLoading(false);
-    }
-  }, [addressString, client]);
+        setBalance(tokenBalance);
+      } catch (error) {
+        console.error("useSolBalance error:", error);
+        setBalance(null);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [addressString, client]
+  );
 
   useEffect(() => {
     // Refresh every 30 seconds
     function runOnStart() {
       fetchBalance(true);
     }
-    runOnStart()
+    runOnStart();
     const interval = setInterval(fetchBalance, 30_000);
     return () => clearInterval(interval);
   }, [fetchBalance]);
