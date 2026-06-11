@@ -22,6 +22,12 @@ jobs:
         node-version: 24
         cache: "pnpm"
 
+    - name: Configure GitHub Packages Authentication
+      # This writes the token directly into the runner's global .npmrc, bypassing the env restriction
+      run: |
+        pnpm config set //npm.pkg.github.com/:_authToken=${{ secrets.GTH_TOKEN }}
+        pnpm config set @GestLabs2-0:registry=https://npm.pkg.github.com        
+
     - name: Cache pnpm and Next.js build cache
       uses: actions/cache@v4
       with:
