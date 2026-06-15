@@ -1,9 +1,9 @@
 "use client";
 
+import { useCallback, useEffect, useRef, useState } from "react";
 import useNetwork from "@/hooks/useNetwork";
 import { CLUSTERS } from "@/shared/constants";
-import { ClusterNames } from "@/types";
-import { useCallback, useEffect, useRef, useState } from "react";
+import type { ClusterNames } from "@/types";
 
 const CLUSTER_LABELS: Record<ClusterNames, string> = {
   mainnet: "Mainnet",

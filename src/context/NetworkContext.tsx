@@ -1,17 +1,17 @@
 "use client";
-import { CLUSTERS, DEFAULT_NETWORK, RPC_URL, WS_URL } from "@/shared/constants";
+import { createClient } from "@solana/kit";
+import { rpc, rpcAirdrop } from "@solana/kit-plugin-rpc";
 import {
   createContext,
-  ReactNode,
+  type ReactNode,
   useCallback,
   useEffect,
   useMemo,
   useState,
 } from "react";
-import { rpc, rpcAirdrop } from "@solana/kit-plugin-rpc";
-import { createClient } from "@solana/kit";
 import { getExplorerUrl } from "@/lib/getExplorerUrl";
-import { ClusterNames } from "@/types";
+import { CLUSTERS, DEFAULT_NETWORK, RPC_URL, WS_URL } from "@/shared/constants";
+import type { ClusterNames } from "@/types";
 
 const NETWORKS: Record<
   ClusterNames,

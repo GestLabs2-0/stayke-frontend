@@ -1,4 +1,4 @@
-import { ClusterNames } from "@/types";
+import type { ClusterNames } from "@/types";
 
 export const CLUSTERS: ClusterNames[] = [
   "mainnet",
@@ -15,7 +15,7 @@ export const COMMITMENT = "confirmed";
 export const DEFAULT_NETWORK =
   process.env.NEXT_PUBLIC_DEFAULT_NETWORK || "devnet";
 
-if (CLUSTERS.indexOf(DEFAULT_NETWORK as any) === -1) {
+if (CLUSTERS.indexOf(DEFAULT_NETWORK as ClusterNames) === -1) {
   throw new Error(
     `Invalid default network: ${DEFAULT_NETWORK}. Must be one of: ${CLUSTERS.join(
       ", ",
