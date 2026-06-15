@@ -6,6 +6,10 @@ export const Navbar = () => {
       <div className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
         Stayke
       </div>
+
+      {/*
+       TODO: DEINAS USA ESTE NETWORK SELECTOR EN TU NAVBAR CUANDO ESTEMOS EN DESARROLLO
+      */}
       <div className="flex items-center gap-3">
         <NetworkSelector />
       </div>

@@ -1,4 +1,4 @@
-import type { ClusterNames } from "@/context/NetworkContext";
+import type { ClusterNames } from "@/types";
 
 export function getExplorerUrl(path: string, cluster: ClusterNames): string {
   const base = "https://explorer.solana.com";

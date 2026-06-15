@@ -1,5 +1,5 @@
 "use client";
-import { DEFAULT_NETWORK, RPC_URL, WS_URL } from "@/shared/constants";
+import { CLUSTERS, DEFAULT_NETWORK, RPC_URL, WS_URL } from "@/shared/constants";
 import {
   createContext,
   ReactNode,
@@ -11,21 +11,7 @@ import {
 import { rpc, rpcAirdrop } from "@solana/kit-plugin-rpc";
 import { createClient } from "@solana/kit";
 import { getExplorerUrl } from "@/lib/getExplorerUrl";
-
-export type ClusterNames =
-  | "mainnet"
-  | "devnet"
-  | "testnet"
-  | "localnet"
-  | "custom";
-
-export const CLUSTERS: ClusterNames[] = [
-  "mainnet",
-  "devnet",
-  "testnet",
-  "localnet",
-  "custom",
-];
+import { ClusterNames } from "@/types";
 
 const NETWORKS: Record<
   ClusterNames,
@@ -34,22 +20,22 @@ const NETWORKS: Record<
   mainnet: {
     name: "Solana Mainnet",
     rpcUrl: "https://api.mainnet-beta.solana.com",
-    wsUrl: "",
+    wsUrl: "wss://api.mainnet-beta.solana.com",
   },
   devnet: {
     name: "Solana Devnet",
     rpcUrl: "https://api.devnet.solana.com",
-    wsUrl: "",
+    wsUrl: "wss://api.devnet.solana.com",
   },
   testnet: {
     name: "Solana Testnet",
     rpcUrl: "https://api.testnet.solana.com",
-    wsUrl: "",
+    wsUrl: "wss://api.testnet.solana.com",
   },
   localnet: {
     name: "Solana Localnet",
     rpcUrl: "http://localhost:8899",
-    wsUrl: "",
+    wsUrl: "ws://localhost:8900",
   },
   custom: {
     name: "Custom Network",

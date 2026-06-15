@@ -1,4 +1,12 @@
-import { CLUSTERS } from "@/context/NetworkContext";
+import { ClusterNames } from "@/types";
+
+export const CLUSTERS: ClusterNames[] = [
+  "mainnet",
+  "devnet",
+  "testnet",
+  "localnet",
+  "custom",
+];
 
 export const RPC_URL =
   process.env.NEXT_PUBLIC_RPC_URL || "http://localhost:8899";

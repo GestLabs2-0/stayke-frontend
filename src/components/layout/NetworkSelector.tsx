@@ -1,7 +1,8 @@
 "use client";
 
-import { CLUSTERS, type ClusterNames } from "@/context/NetworkContext";
 import useNetwork from "@/hooks/useNetwork";
+import { CLUSTERS } from "@/shared/constants";
+import { ClusterNames } from "@/types";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 const CLUSTER_LABELS: Record<ClusterNames, string> = {
@@ -61,7 +62,9 @@ export const NetworkSelector = () => {
         />
         {CLUSTER_LABELS[selectedCluster]}
         <svg
-          className={`h-4 w-4 transition-transform ${isOpen ? "rotate-180" : ""}`}
+          className={`h-4 w-4 transition-transform ${
+            isOpen ? "rotate-180" : ""
+          }`}
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 20 20"
           fill="currentColor"
