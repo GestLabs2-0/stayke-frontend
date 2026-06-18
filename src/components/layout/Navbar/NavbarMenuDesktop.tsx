@@ -1,6 +1,7 @@
 "use client";
 
-import { type RefObject, useEffect, useRef } from "react";
+import type { RefObject } from "react";
+import { useEffect, useRef } from "react";
 
 interface NavbarMenuDesktopProps {
   isOpen: boolean;
@@ -21,7 +22,7 @@ export const NavbarMenuDesktop = ({
     const handleClickOutside = (e: MouseEvent) => {
       const target = e.target as Node;
 
-      if (triggerRef.current && triggerRef.current.contains(target)) return;
+      if (triggerRef.current?.contains(target)) return;
 
       if (menuRef.current && !menuRef.current.contains(target)) {
         onClose();
@@ -43,7 +44,7 @@ export const NavbarMenuDesktop = ({
   return (
     <div
       ref={menuRef}
-      className="absolute right-0 top-full z-50 mt-1 w-56 origin-top-right rounded-lg bg-fuchsia-300 py-1 shadow-lg"
+      className="absolute right-0 top-full z-50 mt-0.5 w-56 origin-top-right rounded-lg bg-fuchsia-300 py-1 shadow-lg"
     >
       <div className="px-4 py-2 text-sm font-semibold text-(--letter-navbar)">
         Hola

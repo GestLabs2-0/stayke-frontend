@@ -3,26 +3,22 @@
 import { Globe, Menu, UserRound } from "lucide-react";
 import Link from "next/link";
 import { useRef, useState } from "react";
-
-import { LogoStayke } from "../../components/Icons/LogoStayke.tsx";
-import { linkNavegation } from "../../constants/constants.ts";
-import { routes } from "../../constants/routes.ts";
-import { NavbarMenuDesktop } from "./NavbarMenuDesktop.tsx";
-import { NavbarMobile, NavbarMobileDropdown } from "./NavbarMobile.tsx";
-// import { NetworkSelector } from "./NetworkSelector.tsx";
+import { linkNavegation } from "../../../constants/constants";
+import { routes } from "../../../constants/routes";
+import { LogoStayke } from "../../Icons/LogoStayke";
+import { NavbarMenuDesktop } from "./NavbarMenuDesktop";
+import { NavbarMobile, NavbarMobileDropdown } from "./NavbarMobile";
+// import { NetworkSelector } from "./NetworkSelector";
 
 export const Navbar = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isDesktopMenuOpen, setIsDesktopMenuOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+  const [isDesktopMenuOpen, setIsDesktopMenuOpen] = useState<boolean>(false);
   const menuTriggerRef = useRef<HTMLButtonElement>(null);
-
-  console.log(isDesktopMenuOpen, "desktop Menu");
-  console.log(isMenuOpen, "Is Menu Open");
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-(--background-navbar) font-montserrat relative">
       <section className="container mx-auto flex items-center justify-between px-4 py-4">
-        {/* Logo */}
+        {/* Navegation Section */}
         <div className="flex items-center gap-6">
           <Link href={routes.Home} className="flex items-center gap-2">
             <LogoStayke className="h-5 w-auto md:h-8 lg:h-10" />
@@ -41,7 +37,7 @@ export const Navbar = () => {
           </Link>
         </div>
 
-        {/* Navegación Desktop */}
+        {/* Navegation Desktop */}
         <div className="hidden md:flex items-center gap-2 lg:gap-4 xl:gap-8">
           {linkNavegation.map((nav) => (
             <Link
@@ -90,13 +86,13 @@ export const Navbar = () => {
                 <Menu className="size-4 text-[#3B007f]" />
               </button>
               <UserRound className="size-4 text-[#3B007f]" />
-              {/* TODO: Tenerlo en cuenta para uso desktop/mobile (Aún no se sabe si netamente para pruebas o para usarlo normal también)
+              {/* Solo para pruebas
               <div className="flex items-center gap-3">
                 <NetworkSelector />
               </div>
                */}
             </div>
-
+            {/* NavegationMenuDesktop */}
             <NavbarMenuDesktop
               isOpen={isDesktopMenuOpen}
               onClose={() => setIsDesktopMenuOpen(false)}
@@ -105,7 +101,7 @@ export const Navbar = () => {
           </div>
         </div>
 
-        {/* Mobile Trigger — Menu + UserRound pill */}
+        {/* Navbar Mobile */}
         <NavbarMobile onToggle={() => setIsMenuOpen((prev) => !prev)} />
       </section>
 

@@ -3,11 +3,11 @@
 import { Globe, Menu, UserRound } from "lucide-react";
 import Link from "next/link";
 
-import { linkNavegation } from "../../constants/constants.ts";
+import { linkNavegation } from "../../../constants/constants";
 import type {
   NavbarMobileDropdownProps,
   NavbarMobileTriggerProps,
-} from "../../types/Navbar.types.ts";
+} from "../../../types/Navbar";
 
 export const NavbarMobile = ({ onToggle }: NavbarMobileTriggerProps) => {
   return (

@@ -1,4 +1,4 @@
-import { routes } from "./routes.ts";
+import { routes } from "./routes";
 
 export const linkNavegation = [
   { link: routes.Home, name: "Inicio" },
