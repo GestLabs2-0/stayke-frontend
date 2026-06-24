@@ -1,29 +1,10 @@
 "use client";
 
-import { Globe, Menu, UserRound } from "lucide-react";
+import { Globe } from "lucide-react";
 import Link from "next/link";
 
 import { linkNavegation } from "../../../constants/constants";
-import type {
-  NavbarMobileDropdownProps,
-  NavbarMobileTriggerProps,
-} from "../../../types/Navbar";
-
-export const NavbarMobile = ({ onToggle }: NavbarMobileTriggerProps) => {
-  return (
-    <div className="md:hidden flex items-center gap-2">
-      <button
-        type="button"
-        aria-label="Abrir menú"
-        onClick={onToggle}
-        className="flex items-center gap-2 rounded-2xl border border-white/80 bg-white px-4 py-2"
-      >
-        <Menu className="size-4 text-[#3B007f]" />
-        <UserRound className="size-4 text-[#3B007f]" />
-      </button>
-    </div>
-  );
-};
+import type { NavbarMobileDropdownProps } from "../../../types/Navbar";
 
 export const NavbarMobileDropdown = ({
   onClose,

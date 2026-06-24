@@ -7,7 +7,7 @@ import { linkNavegation } from "../../../constants/constants";
 import { routes } from "../../../constants/routes";
 import { LogoStayke } from "../../Icons/LogoStayke";
 import { NavbarMenuDesktop } from "./NavbarMenuDesktop";
-import { NavbarMobile, NavbarMobileDropdown } from "./NavbarMobile";
+import { NavbarMobileDropdown } from "./NavbarMobile";
 // import { NetworkSelector } from "./NetworkSelector";
 
 export const Navbar = () => {
@@ -16,24 +16,12 @@ export const Navbar = () => {
   const menuTriggerRef = useRef<HTMLButtonElement>(null);
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-(--background-navbar) font-montserrat relative">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-(--background-navbar) font-montserrat">
       <section className="container mx-auto flex items-center justify-between px-4 py-4">
-        {/* Navegation Section */}
-        <div className="flex items-center gap-6">
+        {/* Desktop Logo */}
+        <div className="hidden md:flex items-center gap-6">
           <Link href={routes.Home} className="flex items-center gap-2">
-            <LogoStayke className="h-5 w-auto md:h-8 lg:h-10" />
-            <span
-              className="
-                text-lg
-                md:text-xl
-                lg:text-2xl
-                font-bold
-                tracking-wide
-                text-(--letter-navbar)
-              "
-            >
-              STAYKE
-            </span>
+            <LogoStayke className="w-32 h-8 lg:w-36 lg:h-9" />
           </Link>
         </div>
 
@@ -75,7 +63,7 @@ export const Navbar = () => {
 
           <Globe className="size-4 lg:size-5 shrink-0 text-(--letter-navbar)" />
 
-          <div className="relative">
+          <div className=" relative">
             <div className="flex items-center gap-2 rounded-2xl border border-white/80 bg-white px-4 py-2">
               <button
                 type="button"
@@ -92,6 +80,7 @@ export const Navbar = () => {
               </div>
                */}
             </div>
+
             {/* NavegationMenuDesktop */}
             <NavbarMenuDesktop
               isOpen={isDesktopMenuOpen}
@@ -101,8 +90,29 @@ export const Navbar = () => {
           </div>
         </div>
 
-        {/* Navbar Mobile */}
-        <NavbarMobile onToggle={() => setIsMenuOpen((prev) => !prev)} />
+        {/* Mobile Interface */}
+        <div className="flex md:hidden items-center justify-between w-full">
+          <button
+            type="button"
+            aria-label="Iniciar sesión"
+            className="p-2 text-(--letter-navbar) hover:opacity-80 transition-opacity rounded-full border border-white "
+          >
+            <UserRound className="size-5" />
+          </button>
+
+          <Link href={routes.Home}>
+            <LogoStayke className="w-40 h-8" />
+          </Link>
+
+          <button
+            type="button"
+            aria-label="Abrir menú"
+            onClick={() => setIsMenuOpen((prev) => !prev)}
+            className="p-2 text-(--letter-navbar) hover:opacity-80 transition-opacity"
+          >
+            <Menu className="size-5" />
+          </button>
+        </div>
       </section>
 
       {/* Mobile Dropdown */}
