@@ -17,7 +17,7 @@ export const EscapadasCerca = ({
   const secondary = properties.slice(1);
 
   return (
-    <section className="w-full max-w-[1600px] mx-auto px-6 py-12 md:px-10 lg:px-12">
+    <section className="w-full max-w-[1200px] mx-auto px-6 py-12 md:px-10 lg:px-12">
       {/* Encabezado */}
       <div className="mb-6 ml-13 flex flex-col gap-1">
         <h2 className="text-3xl font-semibold text-zinc-900 tracking-tight">
