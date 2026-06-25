@@ -14,3 +14,4 @@ export * from "./PersonIcon";
 export * from "./PlaneIcon";
 export * from "./WaveIcon";
 export * from "./HeartIcon";
+export * from "./StarIcon";
