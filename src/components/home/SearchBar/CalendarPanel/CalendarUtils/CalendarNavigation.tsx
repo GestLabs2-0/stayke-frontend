@@ -1,5 +1,5 @@
-import type { CalendarNavigationProps } from "@/types/header";
 import { ChevronLeftIcon, ChevronRightIcon } from "@/icons";
+import type { CalendarNavigationProps } from "@/types/header";
 import { monthNames } from "../../mocks";
 
 export const CalendarNavigation = ({
