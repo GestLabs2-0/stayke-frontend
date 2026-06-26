@@ -48,7 +48,9 @@ export const Navbar = () => {
         </div>
 
         <div className="hidden md:flex items-center gap-4">
-          <span
+          <Link
+            href="#"
+            target="_blank"
             className="
               whitespace-nowrap
               text-xs
@@ -59,7 +61,7 @@ export const Navbar = () => {
             "
           >
             Aloja tu Casa
-          </span>
+          </Link>
 
           <Globe className="size-4 lg:size-5 shrink-0 text-(--letter-navbar)" />
 
