@@ -42,7 +42,7 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col">
         <NetworkContextProvider>
           <Navbar />
-          <main className="pt-20">{children}</main>
+          <main className="pt-10">{children}</main>
         </NetworkContextProvider>
       </body>
     </html>
