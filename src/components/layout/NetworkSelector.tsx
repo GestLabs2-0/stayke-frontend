@@ -2,9 +2,9 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import useNetwork from "@/hooks/useNetwork";
+import { CheckIcon, ChevronDownIcon } from "@/icons";
 import { CLUSTERS } from "@/shared/constants";
 import type { ClusterNames } from "@/types";
-import { CheckIcon, ChevronDownIcon } from "@/icons";
 
 const CLUSTER_LABELS: Record<ClusterNames, string> = {
   mainnet: "Mainnet",
