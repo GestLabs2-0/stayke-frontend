@@ -1,13 +1,12 @@
 import type { Metadata } from "next";
-import { Geist_Mono, Inter } from "next/font/google";
+import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { Providers } from "../components/contexts/Providers";
-import { Navbar } from "../components/Layout/Navbar";
+import { Navbar } from "@/components/layout/Navbar";
+import { NetworkContextProvider } from "@/context/NetworkContext";
 
-const inter = Inter({
-  variable: "--font-inter",
+const geistSans = Geist({
+  variable: "--font-geist-sans",
   subsets: ["latin"],
-  display: "swap",
 });
 
 const geistMono = Geist_Mono({
@@ -16,13 +15,10 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Stayke - Stay Anywhere. Stake Your Trust.",
-  description: "Decentralized stays secured by staking on Solana.",
-  icons: {
-    icon: "/icon.svg",
-    shortcut: "/icon.svg",
-    apple: "/icon.svg",
-  },
+  title:
+    "Stayke - Your preferred hosting platform for decentralized applications",
+  description:
+    "A decentralized, open-source, and secure platform for managing and sharing your digital assets.",
 };
 
 export default function RootLayout({
@@ -31,12 +27,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.variable} ${geistMono.variable} antialiased`}>
-        <Providers>
+    <html
+      lang="en"
+      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+    >
+      <body className="min-h-full flex flex-col">
+        <NetworkContextProvider>
           <Navbar />
-          <main className="pt-16">{children}</main>
-        </Providers>
+          {children}
+        </NetworkContextProvider>
       </body>
     </html>
   );
