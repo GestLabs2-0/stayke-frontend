@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Montserrat } from "next/font/google";
+
+
+import { Navbar } from "../components/layout/Navbar/Navbar";
+
 import "./globals.css";
-import { Navbar } from "@/components/layout/Navbar";
 import { NetworkContextProvider } from "@/context/NetworkContext";
 
 const geistSans = Geist({
@@ -17,7 +20,7 @@ const geistMono = Geist_Mono({
 const montserrat = Montserrat({
   variable: "--font-montserrat",
   subsets: ["latin"],
-  weight: ["600", "700", "900"],
+  weight: ["400", "500", "600", "700", "900"],
 });
 
 export const metadata: Metadata = {
@@ -40,7 +43,7 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col">
         <NetworkContextProvider>
           <Navbar />
-          {children}
+          <main className="pt-20">{children}</main>
         </NetworkContextProvider>
       </body>
     </html>
