@@ -3,6 +3,7 @@ import { Geist, Geist_Mono, Montserrat } from "next/font/google";
 
 import { Navbar } from "../components/layout/Navbar/Navbar";
 
+import "@blossom-carousel/react/style.css";
 import "./globals.css";
 import { NetworkContextProvider } from "@/context/NetworkContext";
 
