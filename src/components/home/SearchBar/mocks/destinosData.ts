@@ -1,4 +1,3 @@
-import type { Destination } from "@/types/header";
 import {
   DiamondIcon,
   LandmarkIcon,
@@ -6,6 +5,7 @@ import {
   PlaneIcon,
   WaveIcon,
 } from "@/icons";
+import type { Destination } from "@/types/header";
 
 export const destinosData: Destination[] = [
   { ciudad: "Caracas", descripcion: "Una joya escondida", icon: DiamondIcon },
