@@ -9,7 +9,7 @@ export default function Home() {
       <Header />
       <EscapadasCerca
         properties={propertiesData}
-        periodLabel="Se muestran ofertas para este periodo: 12 jun-14 jun"
+        periodLabel="12 - 14 de junio"
       />
       <SobreStayke />
     </div>
