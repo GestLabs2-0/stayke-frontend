@@ -2,12 +2,9 @@
 
 import { BlossomCarousel } from "@blossom-carousel/react";
 import { Children } from "react";
+import type { SliderStaysProps } from "@/types/SliderStaysProps";
 
 export const SLIDER_ID = "popular-stays-slider";
-
-type SliderStaysProps = {
-  children: React.ReactNode;
-};
 
 export const SliderStays = ({ children }: SliderStaysProps) => {
   return (
