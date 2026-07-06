@@ -37,7 +37,7 @@ export const PropertyCard = ({
         >
           <HeartIcon
             filled={isLiked}
-            className={`size-5 transition-colors ${
+            className={`size-5 transition-colors cursor-pointer ${
               isLiked ? "text-red-500" : "text-zinc-800"
             }`}
           />
