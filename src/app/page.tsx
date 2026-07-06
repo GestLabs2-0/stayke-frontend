@@ -2,18 +2,14 @@ import { EscapadasCerca } from "@/components/home/EscapadasCerca";
 import { propertiesData } from "@/components/home/EscapadasCerca/mocks";
 import { FilterBar } from "@/components/home/FilterBar/FilterBar";
 import { Header } from "@/components/home/Header";
-import { SobreStayke } from "@/components/home/SobreStayke";
 import { PopularStays } from "@/components/home/PopularStays";
 import { popularStaysData } from "@/components/home/PopularStays/mocks";
+import { SobreStayke } from "@/components/home/SobreStayke";
 
 export default function Home() {
   return (
     <div className="bg-white">
       <Header />
-      <EscapadasCerca
-        properties={propertiesData}
-        periodLabel="12 - 14 de junio"
-      />
       <section className="pb-6 pt-10">
         <FilterBar />
         <EscapadasCerca
@@ -32,8 +28,8 @@ export default function Home() {
           title="Alojamientos populares en Trujillo"
           properties={popularStaysData}
         />
+        <SobreStayke />
       </section>
-       <SobreStayke />
     </div>
   );
 }
