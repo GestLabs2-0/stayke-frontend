@@ -12,7 +12,7 @@ const CONTENT = (
     </p>
     <button
       type="button"
-      className="mt-6 inline-flex items-center rounded-full bg-[#3B007F] w-full justify-center lg:w-auto md:justify-start px-6 py-3 text-sm lg:px-8 lg:py-4 lg:text-base font-semibold text-white transition-colors hover:bg-[#5307AD] cursor-pointer"
+      className="mt-6 inline-flex items-center rounded-full bg-[#3B007F] w-full justify-center lg:w-auto lg:justify-start px-6 py-3 text-sm lg:px-8 lg:py-4 lg:text-base font-semibold text-white transition-colors hover:bg-[#5307AD] cursor-pointer"
     >
       Anunciar alojamiento
     </button>
