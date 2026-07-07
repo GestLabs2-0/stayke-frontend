@@ -43,7 +43,9 @@ export const StaysPropertys = ({ property }: StaysPropertysProps) => {
                 setIsLiked((prev) => !prev);
               }}
               className="pointer-events-auto ml-auto flex size-8 shrink-0 items-center justify-center rounded-full cursor-pointer"
-              aria-label={isLiked ? "Quitar de favoritos" : "Agregar a favoritos"}
+              aria-label={
+                isLiked ? "Quitar de favoritos" : "Agregar a favoritos"
+              }
             >
               <HeartIcon
                 filled={isLiked}
