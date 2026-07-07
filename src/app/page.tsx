@@ -4,6 +4,7 @@ import { FilterBar } from "@/components/home/FilterBar/FilterBar";
 import { Header } from "@/components/home/Header";
 import { PopularStays } from "@/components/home/PopularStays";
 import { popularStaysData } from "@/components/home/PopularStays/mocks";
+import { BannerStays } from "@/components/home/BannerStays";
 import { SobreStayke } from "@/components/home/SobreStayke";
 
 export default function Home() {
@@ -29,6 +30,7 @@ export default function Home() {
           properties={popularStaysData}
         />
         <SobreStayke />
+        <BannerStays />
       </section>
     </div>
   );
