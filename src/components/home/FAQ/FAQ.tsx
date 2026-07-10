@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { MailIcon } from "@/icons";
-import { faqData } from "./mocks";
+import { faqData } from "./mock";
 
 export const FAQ = () => {
   const [openId, setOpenId] = useState<string | null>(null);
