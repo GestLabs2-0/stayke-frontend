@@ -8,6 +8,7 @@ export * from "./HeartIcon";
 export * from "./HeartIcon";
 export * from "./LandmarkIcon";
 export * from "./LocationIcon";
+export * from "./MailIcon";
 export * from "./MinusIcon";
 export * from "./MusicNoteIcon";
 export * from "./PersonIcon";
