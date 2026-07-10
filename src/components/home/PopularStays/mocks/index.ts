@@ -1,0 +1,1 @@
+export { popularStaysData } from "./popularStaysData";
