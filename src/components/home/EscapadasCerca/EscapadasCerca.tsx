@@ -1,3 +1,4 @@
+import { SectionWrapper } from "@/components/shared/SectionWrapper";
 import type { PropertyCard as PropertyCardType } from "@/types/property-cards";
 import { PropertyCard } from "./PropertyCard";
 
@@ -17,7 +18,7 @@ export const EscapadasCerca = ({
   const secondary = properties.slice(1);
 
   return (
-    <section className="w-full max-w-400 mx-auto px-6 py-12 md:px-10 lg:px-12">
+    <SectionWrapper maxWidth="max-w-[1600px]">
       {/* Encabezado */}
       <div className="mb-6 ml-13 flex flex-col gap-1">
         <h2 className="text-3xl font-semibold text-zinc-900 tracking-tight">
@@ -46,6 +47,6 @@ export const EscapadasCerca = ({
           </div>
         )}
       </div>
-    </section>
+    </SectionWrapper>
   );
 };
