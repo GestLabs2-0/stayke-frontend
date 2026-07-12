@@ -16,7 +16,9 @@ export const Header = () => {
         <h1 className="text-white lg:text-3xl xl:text-5xl font-montserrat font-bold leading-tight text-center">
           Hospedajes únicos, elegidos para viajeros extraordinarios.
         </h1>
-        <SearchBar />
+        <div className="max-[980px]:hidden">
+          <SearchBar />
+        </div>
       </div>
     </section>
   );

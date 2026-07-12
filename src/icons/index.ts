@@ -4,6 +4,7 @@ export * from "./ChevronDownIcon";
 export * from "./ChevronLeftIcon";
 export * from "./ChevronRightIcon";
 export * from "./DiamondIcon";
+export * from "./HeartIcon";
 export * from "./LandmarkIcon";
 export * from "./LocationIcon";
 export * from "./MinusIcon";
