@@ -11,7 +11,11 @@ export const FilterBar = () => {
   const [selected, setSelected] = useState<FilterKey | null>(null);
 
   return (
+<<<<<<< HEAD
     <div className="container mx-auto px-4">
+=======
+    <section className="pb-6 pt-10 container mx-auto px-4">
+>>>>>>> STK-86-Crear-componente-de-filtros-de-busqueda
       <div className="flex items-center justify-between border-b border-[#C3C6D6] pb-4 gap-4">
         {/* Desktop */}
         <div className="hidden md:flex items-center gap-6">
@@ -52,6 +56,10 @@ export const FilterBar = () => {
           </span>
         </button>
       </div>
+<<<<<<< HEAD
     </div>
+=======
+    </section>
+>>>>>>> STK-86-Crear-componente-de-filtros-de-busqueda
   );
 };

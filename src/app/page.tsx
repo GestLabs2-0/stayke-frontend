@@ -7,7 +7,7 @@ export default function Home() {
   return (
     <>
       <Header />
-      <section className="pb-6 pt-10 px-35 max-[1210px]:px-[42px]">
+      <section className="pb-6 pt-10 px-35 max-[1210px]:px-10.5">
         <FilterBar />
         <EscapadasCerca
           properties={propertiesData}
