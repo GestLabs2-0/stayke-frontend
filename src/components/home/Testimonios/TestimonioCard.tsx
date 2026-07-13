@@ -4,7 +4,7 @@ import { Stars } from "./Stars";
 
 export const TestimonioCard = ({ testimonio }: TestimonioCardProps) => {
   return (
-    <div className="flex flex-col bg-purple-deep rounded-2xl p-6 shadow-lg text-white max-[700px]:h-[320px]">
+    <div className="lg:flex flex-col bg-purple-deep rounded-2xl p-6 shadow-lg text-white max-[700px]:h-80 inline-flex first:ml-0 mr-5 max-[700px]:max-w-70 max-lg:max-w-80">
       {/* Estrellas */}
       <Stars count={testimonio.stars} />
 
