@@ -16,7 +16,7 @@ export const SectionWrapper = ({
   return (
     <section
       aria-label={ariaLabel}
-      className={`w-full mx-auto px-40 max-[1210px]:px-16.5 py-12 ${maxWidth} ${className}`}
+      className={`w-full mx-auto min-[1210px]:px-40 px-12 pb-4 sm:pb-6 pt-3 ${maxWidth} ${className}`}
     >
       {children}
     </section>
