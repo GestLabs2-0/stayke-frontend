@@ -18,8 +18,8 @@ export const Footer = () => {
             </Link>
 
             <span className="font-sans text-sm  leading-relaxed text-[#717171] md:text-center lg:text-left">
-              StayExplorer ofrece una experiencia de reserva sencilla y segura
-              para tus próximas vacaciones.
+              Stayke ofrece una experiencia de reserva sencilla y segura para
+              tus próximas vacaciones.
             </span>
           </div>
 
