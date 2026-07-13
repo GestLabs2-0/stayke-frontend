@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Montserrat } from "next/font/google";
-
-import { Navbar } from "../components/layout/Navbar/Navbar";
 import { Footer } from "../components/layout/Footer/Footer";
+import { Navbar } from "../components/layout/Navbar/Navbar";
 
 import "@blossom-carousel/react/style.css";
 import "./globals.css";
