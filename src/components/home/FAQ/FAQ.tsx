@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { routes } from "@/constants/routes";
 import { MailIcon } from "@/icons";
 import { faqData } from "./mock";
 
@@ -30,7 +31,7 @@ export const FAQ = () => {
           </p>
 
           <Link
-            href="/contacto"
+            href={routes.Contact}
             className="inline-flex w-fit items-center gap-2 rounded-lg bg-[#3B007F] px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#5307AD]"
           >
             Contáctenos
