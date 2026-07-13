@@ -14,7 +14,7 @@ export const PopularStays = ({ title, properties }: PopularStaysProps) => {
   return (
     <section
       aria-label={title}
-      className="w-full max-w-400 mx-auto px-6 py-2 md:px-10 lg:px-12"
+      className="w-full max-w-400 mx-auto px-40 max-[1210px]:px-16.5 py-2"
     >
       <PopularStaysSlider title={title} properties={properties} />
     </section>
