@@ -1,0 +1,1 @@
+export { testimoniosData } from "./testimoniosData";

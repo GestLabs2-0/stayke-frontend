@@ -1,9 +1,11 @@
+import { BannerStays } from "@/components/home/BannerStays";
 import { EscapadasCerca } from "@/components/home/EscapadasCerca";
 import { propertiesData } from "@/components/home/EscapadasCerca/mocks";
 import { Header } from "@/components/home/Header";
 import { PopularStays } from "@/components/home/PopularStays";
 import { popularStaysData } from "@/components/home/PopularStays/mocks";
 import { SobreStayke } from "@/components/home/SobreStayke";
+import { Testimonios } from "@/components/home/Testimonios";
 
 export default function Home() {
   return (
@@ -26,6 +28,8 @@ export default function Home() {
         properties={popularStaysData}
       />
       <SobreStayke />
+      <BannerStays />
+      <Testimonios />
     </>
   );
 }
