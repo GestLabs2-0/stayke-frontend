@@ -23,7 +23,7 @@ export const Navbar = () => {
         {/* Desktop Logo */}
         <div className="hidden md:flex items-center gap-6">
           <Link href={routes.Home} className="flex items-center gap-2">
-            <LogoStayke className="w-32 h-8 lg:w-36 lg:h-9" />
+            <LogoStayke className="text-white w-32 h-8 lg:w-36 lg:h-9" />
           </Link>
         </div>
 
@@ -104,7 +104,7 @@ export const Navbar = () => {
           </button>
 
           <Link href={routes.Home}>
-            <LogoStayke className="w-40 h-8" />
+            <LogoStayke className="text-white w-40 h-8" />
           </Link>
 
           <button
