@@ -6,6 +6,7 @@ import { testimoniosData } from "./mocks";
 import { TestimonioCard } from "./TestimonioCard";
 
 export const Testimonios = () => {
+  // TODO: refactorizar a que use un solo div para gestionar los grids. Se usan las grid areas para eso
   return (
     <SectionWrapper className="max-[700px]:pr-0">
       {/* Desktop: grid */}

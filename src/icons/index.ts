@@ -14,6 +14,7 @@ export * from "./MusicNoteIcon";
 export * from "./PersonIcon";
 export * from "./PlaneIcon";
 export * from "./PlusIcon";
+export * from "./PlusMinusIcon";
 export * from "./SearchIcon";
 export * from "./StarIcon";
 export * from "./WaveIcon";
