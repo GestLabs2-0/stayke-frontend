@@ -6,7 +6,7 @@ export const StaykeStats = () => {
       {statsData.map((stat) => (
         <div
           key={stat.value}
-          className="flex flex-col pl-6 border-l border-zinc-400"
+          className="flex flex-col pl-6 border-l border-zinc-400 max-[800px]:border-l-0 max-[800px]:pl-0"
         >
           <span className="font-montserrat text-[48px] font-bold text-zinc-900 leading-none tracking-tight">
             {stat.value}

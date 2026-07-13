@@ -1,10 +1,13 @@
 import Image from "next/image";
+import { SectionWrapper } from "@/components/shared/SectionWrapper";
 
+
+// TODO: esto se refactorizara cuando se implemente una accion en el boton de Anunciar alojamiento
 const CONTENT = (
   <>
-    <h2 className="text-xl sm:text-4xl lg:text-3xl font-bold text-zinc-900 leading-tight">
+    <h3 className="text-xl sm:text-4xl lg:text-3xl font-bold text-zinc-900 leading-tight">
       Alquila tu alojamiento con seguridad en Stayke
-    </h2>
+    </h3>
     <p className="mt-4 text-xs sm:text-sm text-zinc-600 leading-relaxed">
       Anúnciate en Stayke y no tendrás que preocuparte de nada, ya que podrás
       registrarte rápidamente, contar con asistencia en tiempo real y recibir
@@ -21,13 +24,13 @@ const CONTENT = (
 
 export const BannerStays = () => {
   return (
-    <section className="w-full max-w-400 mx-auto px-6 py-12 md:px-10 lg:px-12">
+    <SectionWrapper className="mt-6">
       {/* Mobile */}
       <div className="flex flex-col lg:hidden">
         <div className="bg-[#EBE7E7] rounded-t-2xl p-6">{CONTENT}</div>
         <div className="relative h-70 w-full overflow-hidden rounded-b-2xl">
           <Image
-            src="/image-security-location.webp"
+            src="/bannerResponsive.webp"
             alt="Alquila tu alojamiento con seguridad en Stayke"
             fill
             className="object-cover pointer-events-none"
@@ -48,10 +51,10 @@ export const BannerStays = () => {
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 1200px"
         />
 
-        <div className="absolute left-6 md:left-10 top-1/2 -translate-y-1/2 w-[90%] sm:w-[400px] lg:w-[460px] rounded-2xl bg-white/95 backdrop-blur-sm p-6 sm:p-8 shadow-lg">
+        <div className="absolute left-6 md:left-10 top-1/2 -translate-y-1/2 w-[90%] sm:w-100 lg:w-115 rounded-2xl bg-white/95 backdrop-blur-sm p-6 sm:p-8 shadow-lg">
           {CONTENT}
         </div>
       </div>
-    </section>
+    </SectionWrapper>
   );
 };

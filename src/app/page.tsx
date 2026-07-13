@@ -11,7 +11,7 @@ import { Testimonios } from "@/components/home/Testimonios";
 
 export default function Home() {
   return (
-    <div className="bg-white">
+    <>
       <Header />
       <section className="pb-6 pt-10">
         <FilterBar />
@@ -36,6 +36,6 @@ export default function Home() {
         <Testimonios />
         <FAQ />
       </section>
-    </div>
+    </>
   );
 }
