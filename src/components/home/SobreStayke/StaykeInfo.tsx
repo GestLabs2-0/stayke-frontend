@@ -6,7 +6,7 @@ export const StaykeInfo = () => {
       <h2 className="font-montserrat text-[32px] font-semibold text-zinc-900 leading-tight">
         Sobre Stayke
       </h2>
-      <p className="font-sans text-base text-zinc-600 leading-relaxed max-w-[512px]">
+      <p className="font-sans text-base text-zinc-600 leading-relaxed max-w-lg">
         En Stayke, creemos que viajar es mucho m&aacute;s que visitar un
         destino; se trata de vivirlo. Conectamos a viajeros con espacios
         extraordinarios para crear experiencias aut&eacute;nticas,
