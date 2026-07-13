@@ -9,7 +9,7 @@ const PopularStaysSlider = dynamic(
 );
 
 export const PopularStays = ({ title, properties }: PopularStaysProps) => {
-  if (properties.length === 0) return <div/>;
+  if (properties.length === 0) return <div />;
 
   return (
     <section
