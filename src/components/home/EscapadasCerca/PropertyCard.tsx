@@ -17,8 +17,11 @@ export const PropertyCard = ({
       {/* Imagen de la card */}
       <div
         className={`relative w-full overflow-hidden rounded-2xl bg-zinc-100 ${
-          expandImage ? "flex-1 min-h-0" : "aspect-[737/398]"
+          expandImage ? "flex-1 min-h-0" : ""
         }`}
+        style={
+          expandImage ? {} : { aspectRatio: "var(--card-aspect, 737/398)" }
+        }
       >
         <Image
           src={property.imageUrl}
@@ -58,9 +61,9 @@ export const PropertyCard = ({
 
       {/* Info de la propiedad */}
       <div className="flex flex-col gap-1">
-        <h3 className="text-xl font-semibold text-zinc-900 leading-tight">
+        <h4 className="text-xl font-semibold text-zinc-900 leading-tight">
           {property.title}
-        </h3>
+        </h4>
         <p className="text-base text-zinc-500">{property.location}</p>
         <p className="mt-1">
           <span className="text-2xl font-bold text-zinc-900">

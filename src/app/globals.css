@@ -6,14 +6,14 @@
   --letter-navbar: #ffffff;
   --background-navbar: #3b007f;
 
-  --color-primary: #3B007F;
-  --color-primary-hover: #5307AD;
-  --color-purple-deep: #3B027D;
+  --color-primary: #3b007f;
+  --color-primary-hover: #5307ad;
+  --color-purple-deep: #3b027d;
   --color-secondary: #434654;
-  --color-muted: #A0A5B5;
-  --color-border: #C3C6D6;
-  --color-surface: #EBE7E7;
-  --color-icon-selected: #191C1E;
+  --color-muted: #a0a5b5;
+  --color-border: #c3c6d6;
+  --color-surface: #ebe7e7;
+  --color-icon-selected: #191c1e;
 }
 
 @theme inline {

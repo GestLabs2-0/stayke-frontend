@@ -4,16 +4,19 @@ type SectionWrapperProps = {
   children: ReactNode;
   className?: string;
   maxWidth?: string;
+  ariaLabel?: string;
 };
 
 export const SectionWrapper = ({
   children,
+  ariaLabel = "",
   className = "",
-  maxWidth = "max-w-[1200px]",
+  maxWidth = "max-w-400",
 }: SectionWrapperProps) => {
   return (
     <section
-      className={`w-full mx-auto px-[clamp(1.5rem,3.5vw,3rem)] py-12 ${maxWidth} ${className}`}
+      aria-label={ariaLabel}
+      className={`w-full mx-auto min-[1210px]:px-40 px-12 pb-4 sm:pb-6 pt-3 ${maxWidth} ${className}`}
     >
       {children}
     </section>
