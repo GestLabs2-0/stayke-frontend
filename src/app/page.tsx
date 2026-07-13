@@ -1,6 +1,7 @@
 import { BannerStays } from "@/components/home/BannerStays";
 import { EscapadasCerca } from "@/components/home/EscapadasCerca";
 import { propertiesData } from "@/components/home/EscapadasCerca/mocks";
+import { FAQ } from "@/components/home/FAQ";
 import { Header } from "@/components/home/Header";
 import { PopularStays } from "@/components/home/PopularStays";
 import { popularStaysData } from "@/components/home/PopularStays/mocks";
@@ -30,6 +31,7 @@ export default function Home() {
       <SobreStayke />
       <BannerStays />
       <Testimonios />
+      <FAQ />
     </>
   );
 }

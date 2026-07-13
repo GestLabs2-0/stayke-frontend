@@ -6,6 +6,7 @@ import { testimoniosData } from "./mocks";
 import { TestimonioCard } from "./TestimonioCard";
 
 export const Testimonios = () => {
+  // TODO: refactorizar a que use un solo div para gestionar los grids. Se usan las grid areas para eso
   return (
     <SectionWrapper className="max-[700px]:pr-0">
       {/* Desktop: grid */}
@@ -20,7 +21,7 @@ export const Testimonios = () => {
         <BlossomCarousel load="conditional">
           {testimoniosData.map((testimonio) => (
             // <span key={testimonio.id} className="inline-block mx-2 first:ml-0">
-              <TestimonioCard key={testimonio.id} testimonio={testimonio} />
+            <TestimonioCard key={testimonio.id} testimonio={testimonio} />
             // </span>
           ))}
         </BlossomCarousel>
