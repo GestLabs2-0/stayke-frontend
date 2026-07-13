@@ -14,7 +14,6 @@ export default function Home() {
     <>
       <Header />
       <section className="pb-6 pt-10">
-        <FilterBar />
         <EscapadasCerca
           properties={propertiesData}
           periodLabel="12 - 14 de junio"
