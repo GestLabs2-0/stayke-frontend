@@ -15,9 +15,7 @@ export const GridCards = ({ properties }: GridCardsProps) => {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 lg:gap-6 gap-10">
       {/* Card destacada */}
-      {featured && (
-          <PropertyCard property={featured} />
-      )}
+      {featured && <PropertyCard property={featured} />}
 
       {/* Cards secundarias lado a lado */}
       {secondary.length > 0 && (
