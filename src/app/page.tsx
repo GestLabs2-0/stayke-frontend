@@ -2,7 +2,6 @@ import { BannerStays } from "@/components/home/BannerStays";
 import { EscapadasCerca } from "@/components/home/EscapadasCerca";
 import { propertiesData } from "@/components/home/EscapadasCerca/mocks";
 import { FAQ } from "@/components/home/FAQ";
-import { FilterBar } from "@/components/home/FilterBar/FilterBar";
 import { Header } from "@/components/home/Header";
 import { PopularStays } from "@/components/home/PopularStays";
 import { popularStaysData } from "@/components/home/PopularStays/mocks";
@@ -14,7 +13,6 @@ export default function Home() {
     <>
       <Header />
       <section className="pb-6 pt-10">
-        <FilterBar />
         <EscapadasCerca
           properties={propertiesData}
           periodLabel="12 - 14 de junio"
