@@ -3,3 +3,9 @@ export interface FaqItem {
   question: string;
   answer: string;
 }
+
+export interface FaqAccordionItemProps {
+  item: FaqItem;
+  isOpen: boolean;
+  onToggle: () => void;
+}
