@@ -1,0 +1,1 @@
+export { SobreStayke } from "./SobreStayke";

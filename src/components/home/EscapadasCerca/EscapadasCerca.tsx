@@ -1,4 +1,5 @@
 import React from "react";
+import { SectionWrapper } from "@/components/shared/SectionWrapper";
 import type { EscapadasCercaProps } from "@/types/escapadas-cerca";
 import { FilterBar } from "../FilterBar/FilterBar";
 import { GridCards } from "./GridCards";
@@ -10,7 +11,7 @@ export const EscapadasCerca = ({
   if (properties.length === 0) return <React.Fragment />;
 
   return (
-    <section className="w-full max-w-400 mx-auto py-12 px-40 max-[1210px]:px-16.5">
+    <SectionWrapper>
       <FilterBar />
 
       {/* Encabezado */}
@@ -22,6 +23,6 @@ export const EscapadasCerca = ({
       </div>
 
       <GridCards properties={properties} />
-    </section>
+    </SectionWrapper>
   );
 };

@@ -3,6 +3,7 @@ import { propertiesData } from "@/components/home/EscapadasCerca/mocks";
 import { Header } from "@/components/home/Header";
 import { PopularStays } from "@/components/home/PopularStays";
 import { popularStaysData } from "@/components/home/PopularStays/mocks";
+import { SobreStayke } from "@/components/home/SobreStayke";
 
 export default function Home() {
   return (
@@ -24,6 +25,7 @@ export default function Home() {
         title="Alojamientos populares en Trujillo"
         properties={popularStaysData}
       />
+      <SobreStayke />
     </>
   );
 }
