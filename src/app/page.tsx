@@ -7,9 +7,9 @@ import { popularStaysData } from "@/components/home/PopularStays/mocks";
 
 export default function Home() {
   return (
-    <div className="bg-white">
+    <>
       <Header />
-      <section className="pb-6 pt-10">
+      <section className="pb-6 pt-10 px-35 max-[1210px]:px-10.5">
         <FilterBar />
         <EscapadasCerca
           properties={propertiesData}
@@ -28,6 +28,6 @@ export default function Home() {
           properties={popularStaysData}
         />
       </section>
-    </div>
+    </>
   );
 }
