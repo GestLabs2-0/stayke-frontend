@@ -9,4 +9,6 @@ export type PropertyCard = {
   priceLabel: string;
   isFeatured?: boolean;
   isLiked?: boolean;
+  excepcional?: boolean;
+  href?: string;
 };
