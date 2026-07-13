@@ -20,7 +20,7 @@ export const Testimonios = () => {
         <BlossomCarousel load="conditional">
           {testimoniosData.map((testimonio) => (
             // <span key={testimonio.id} className="inline-block mx-2 first:ml-0">
-              <TestimonioCard key={testimonio.id} testimonio={testimonio} />
+            <TestimonioCard key={testimonio.id} testimonio={testimonio} />
             // </span>
           ))}
         </BlossomCarousel>
