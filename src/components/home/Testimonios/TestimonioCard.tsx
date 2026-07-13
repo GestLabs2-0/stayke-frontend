@@ -1,35 +1,28 @@
-import { StarIcon } from "@/icons";
+import Image from "next/image";
 import type { TestimonioCardProps } from "@/types/testimonios";
-
-const Stars = ({ count }: { count: number }) => {
-  return (
-    <div className="flex gap-0.5">
-      {[1, 2, 3, 4, 5].map((i) => (
-        <StarIcon
-          key={i}
-          filled={i <= count}
-          className="w-4 h-4 text-purple-400"
-        />
-      ))}
-    </div>
-  );
-};
+import { Stars } from "./Stars";
 
 export const TestimonioCard = ({ testimonio }: TestimonioCardProps) => {
   return (
-    <div className="flex flex-col justify-between gap-4 bg-purple-950 rounded-2xl p-6 shadow-lg text-white">
+    <div className="lg:flex flex-col bg-purple-deep rounded-2xl p-6 shadow-lg text-white max-[700px]:h-80 inline-flex first:ml-0 mr-5 max-[700px]:max-w-70 max-lg:max-w-80">
       {/* Estrellas */}
       <Stars count={testimonio.stars} />
 
-      {/* Texto */}
-      <p className="font-sans text-sm leading-relaxed flex-1">
+      {/* Texto scrolleable */}
+      <p className="font-sans text-sm leading-relaxed flex-1 overflow-y-auto my-4 min-h-0 scrollbar-hide">
         {testimonio.text}
       </p>
 
-      {/* Autor */}
-      <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-full bg-purple-500/30 flex items-center justify-center text-sm font-bold text-purple-200">
-          {testimonio.avatar}
+      {/* Autor (siempre visible al fondo) */}
+      <div className="flex items-center gap-3 shrink-0">
+        <div className="w-10 h-10 rounded-full overflow-hidden shrink-0">
+          <Image
+            src="/avatars/testimonial-avatar.jpg"
+            alt={testimonio.author}
+            width={40}
+            height={40}
+            className="object-cover w-full h-full"
+          />
         </div>
         <div className="flex flex-col">
           <span className="font-sans text-sm font-bold text-white">
