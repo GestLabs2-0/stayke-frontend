@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Montserrat } from "next/font/google";
-
+import { Footer } from "../components/layout/Footer/Footer";
 import { Navbar } from "../components/layout/Navbar/Navbar";
 
 import "@blossom-carousel/react/style.css";
@@ -43,7 +43,8 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col">
         <NetworkContextProvider>
           <Navbar />
-          <main className="bg-white pt-10">{children}</main>
+          <main className="bg-white pt-10 flex-1">{children}</main>
+          <Footer />
         </NetworkContextProvider>
       </body>
     </html>
