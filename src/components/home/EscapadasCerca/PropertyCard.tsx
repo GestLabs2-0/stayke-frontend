@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useState } from "react";
+
 import { HeartIcon } from "@/icons";
 import type { PropertyCardProps } from "@/types/property-cards";
 

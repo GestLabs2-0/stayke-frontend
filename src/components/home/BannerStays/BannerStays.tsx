@@ -1,4 +1,5 @@
 import Image from "next/image";
+
 import { SectionWrapper } from "@/components/shared/SectionWrapper";
 
 // TODO: esto se refactorizara cuando se implemente una accion en el boton de Anunciar alojamiento

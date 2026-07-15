@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+
 import useNetwork from "@/hooks/useNetwork";
 import { CheckIcon, ChevronDownIcon } from "@/icons";
 import { CLUSTERS } from "@/shared/constants";

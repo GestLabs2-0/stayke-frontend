@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+
 import { SectionWrapper } from "@/components/shared/SectionWrapper";
 import type { PopularStaysProps } from "@/types/SliderTypes";
 

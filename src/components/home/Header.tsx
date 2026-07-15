@@ -1,4 +1,5 @@
 import Image from "next/image";
+
 import { SearchBar } from "./SearchBar/SearchBar";
 
 export const Header = () => {

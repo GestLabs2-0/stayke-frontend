@@ -17,6 +17,14 @@
   "linter": {
     "enabled": true,
     "rules": {
+      "style": {
+        "useImportType": {
+          "level": "on",
+          "options": {
+            "style": "separatedType"
+          }
+        }
+      },
       "recommended": true,
       "suspicious": {
         "noUnknownAtRules": "off"
@@ -30,7 +38,19 @@
   "assist": {
     "actions": {
       "source": {
-        "organizeImports": "on"
+        "organizeImports": {
+          "level": "on",
+          "options": {
+            "groups": [
+              [":BUN:", ":NODE:"],
+              ":BLANK_LINE:",
+              [":PACKAGE:", "!@GestLabs2-0/**"],
+              ":BLANK_LINE:",
+              "@GestLabs2-0/**",
+              [":ALIAS:", ":PATH:"]
+            ]
+          }
+        }
       }
     }
   }

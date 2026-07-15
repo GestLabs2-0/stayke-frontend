@@ -1,6 +1,7 @@
 "use client";
 
 import { BlossomNext, BlossomPrev } from "@blossom-carousel/react";
+
 import { IconNextArrow } from "@/components/Icons/IconNextArrow";
 import { IconPrevArrow } from "@/components/Icons/IconPrevArrow";
 import type { PopularStaysArrowsProps } from "@/types/SliderTypes";

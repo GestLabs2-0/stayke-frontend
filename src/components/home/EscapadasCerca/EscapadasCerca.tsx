@@ -1,4 +1,5 @@
 import React from "react";
+
 import { SectionWrapper } from "@/components/shared/SectionWrapper";
 import type { EscapadasCercaProps } from "@/types/escapadas-cerca";
 import { FilterBar } from "../FilterBar/FilterBar";

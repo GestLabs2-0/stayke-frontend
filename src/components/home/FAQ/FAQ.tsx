@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+
 import { SectionWrapper } from "@/components/shared/SectionWrapper";
 import { routes } from "@/constants/routes";
 import { MailIcon } from "@/icons";

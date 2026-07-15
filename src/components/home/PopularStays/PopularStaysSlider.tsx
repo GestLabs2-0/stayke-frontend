@@ -1,6 +1,7 @@
 "use client";
 
 import { BlossomCarousel } from "@blossom-carousel/react";
+
 import type { PopularStaysSliderProps } from "@/types/SliderTypes";
 import { PopularStaysArrows } from "./PopularStaysArrows";
 import { SectionHeader } from "./SectionHeader";

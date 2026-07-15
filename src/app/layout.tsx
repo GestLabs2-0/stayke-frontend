@@ -1,10 +1,17 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Montserrat } from "next/font/google";
+import {
+  Geist,
+  Geist_Mono,
+  Montserrat,
+  Plus_Jakarta_Sans,
+} from "next/font/google";
+
 import { Footer } from "../components/layout/Footer/Footer";
 import { Navbar } from "../components/layout/Navbar/Navbar";
 
 import "@blossom-carousel/react/style.css";
 import "./globals.css";
+
 import { NetworkContextProvider } from "@/context/NetworkContext";
 
 const geistSans = Geist({
@@ -23,6 +30,12 @@ const montserrat = Montserrat({
   weight: ["400", "500", "600", "700", "900"],
 });
 
+const plusJakartaSans = Plus_Jakarta_Sans({
+  variable: "--font-plus-jakarta",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
+});
+
 export const metadata: Metadata = {
   title:
     "Stayke - Your preferred hosting platform for decentralized applications",
@@ -38,7 +51,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${montserrat.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${montserrat.variable} ${plusJakartaSans.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
         <NetworkContextProvider>

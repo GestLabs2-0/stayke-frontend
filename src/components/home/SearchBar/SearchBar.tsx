@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+
 import { CalendarIcon, LocationIcon, PersonIcon } from "@/icons";
 import { SearchButton } from "./SearchButton";
 import { SearchField } from "./SearchField";
