@@ -18,7 +18,7 @@ export const Navbar = () => {
   const menuTriggerRef = useRef<HTMLButtonElement>(null);
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-(--background-navbar) font-montserrat">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-background-navbar font-montserrat">
       <section className="container mx-auto flex items-center justify-between px-4 py-4">
         {/* Desktop Logo */}
         <div className="hidden md:flex items-center gap-6">
