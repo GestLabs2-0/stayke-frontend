@@ -2,8 +2,8 @@
 
 import { BlossomNext, BlossomPrev } from "@blossom-carousel/react";
 
-import { IconNextArrow } from "@/components/Icons/IconNextArrow";
-import { IconPrevArrow } from "@/components/Icons/IconPrevArrow";
+import { IconNextArrow } from "@/icons/IconNextArrow";
+import { IconPrevArrow } from "@/icons/IconPrevArrow";
 import type { PopularStaysArrowsProps } from "@/types/SliderTypes";
 
 const arrowButtonClass =

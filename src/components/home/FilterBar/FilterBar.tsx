@@ -3,7 +3,7 @@
 import { BlossomCarousel } from "@blossom-carousel/react";
 import { useState } from "react";
 
-import { IconFilter } from "@/components/Icons/IconFilter";
+import { IconFilter } from "@/icons/IconFilter";
 import type { FilterKey } from "@/types/FilterBar";
 import { FilterCategoryButton } from "./FilterCategoryButton";
 import { filters } from "./mocks/filters";

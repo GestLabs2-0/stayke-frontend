@@ -6,7 +6,7 @@ import React from "react";
 
 import { footerLegalLinks, footerLinks } from "../../../constants/constants";
 import { routes } from "../../../constants/routes";
-import { LogoStayke } from "../../Icons/LogoStayke";
+import { LogoStayke } from "../../../icons/LogoStayke";
 import { FooterItem } from "./FooterItem";
 
 export const Footer = () => {

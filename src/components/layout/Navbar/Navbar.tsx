@@ -7,7 +7,7 @@ import { useRef, useState } from "react";
 import { NETWORK_SELECTOR } from "@/shared/constants";
 import { linkNavegation } from "../../../constants/constants";
 import { routes } from "../../../constants/routes";
-import { LogoStayke } from "../../Icons/LogoStayke";
+import { LogoStayke } from "../../../icons/LogoStayke";
 import { NetworkSelector } from "../NetworkSelector";
 import { NavbarMenuDesktop } from "./NavbarMenuDesktop";
 import { NavbarMobileDropdown } from "./NavbarMobile";
