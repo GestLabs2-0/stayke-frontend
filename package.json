@@ -9,7 +9,7 @@
     "lint": "biome check",
     "format": "biome check --write",
     "ci": "pnpm run build && pnpm run lint",
-    "prepare": "husky"
+    "prepare": "[ -f .husky/install.mjs ] && node .husky/install.mjs || true"
   },
   "dependencies": {
     "@GestLabs2-0/stayke-config": "1.0.2",
@@ -46,6 +46,9 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@commitlint/cli": "19.5.0",
+    "@commitlint/config-conventional": "19.6.0",
+    "@commitlint/types": "19.5.0",
     "husky": "^9.1.7",
     "tailwindcss": "^4",
     "typescript": "^5"

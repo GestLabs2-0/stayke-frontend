@@ -1,1 +1,3 @@
-pnpm ci
+#!/bin/bash
+echo "hook: pre-commit"
+npx biome check --staged && npx next build

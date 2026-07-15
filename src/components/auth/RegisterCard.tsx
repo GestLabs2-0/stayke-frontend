@@ -4,14 +4,14 @@ import { useAppKit } from "@reown/appkit/react";
 import { useAppKitWallet } from "@reown/appkit-wallet-button/react";
 import Link from "next/link";
 
+import { BinanceIcon } from "@/icons/BinanceIcon";
 import { ChevronLeftIcon } from "@/icons/ChevronLeftIcon";
 import { FacebookIcon } from "@/icons/FacebookIcon";
 import { GitHubIcon } from "@/icons/GitHubIcon";
 import { GoogleIcon } from "@/icons/GoogleIcon";
-import { PhantomIcon } from "@/icons/PhantomIcon";
-import { BinanceIcon } from "@/icons/BinanceIcon";
 import { MetamaskIcon } from "@/icons/MetamaskIcon";
 import { MoreIcon } from "@/icons/MoreIcon";
+import { PhantomIcon } from "@/icons/PhantomIcon";
 
 const socialProviders = [
   { id: "google", icon: GoogleIcon, label: "Google", type: "google" },
@@ -23,9 +23,9 @@ const socialProviders = [
 ] as const;
 
 export const RegisterCard = () => {
-  const { connect, data } = useAppKitWallet({
+  const { connect } = useAppKitWallet({
     namespace: "solana",
-    onSuccess: (address) => {
+    onSuccess: (address: unknown) => {
       console.log("Connected to Solana: ", address);
     },
   });
