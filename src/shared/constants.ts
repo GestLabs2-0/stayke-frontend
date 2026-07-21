@@ -28,3 +28,11 @@ if (CLUSTERS.indexOf(DEFAULT_NETWORK as ClusterNames) === -1) {
     )}`,
   );
 }
+
+export const LOCAL_STORAGE_KEYS = {
+  accessToken: "acc_token_stayke",
+  refreshToken: "rf_token_stayke",
+};
+
+export const API_URL =
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";

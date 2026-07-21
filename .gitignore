@@ -46,3 +46,9 @@ next-env.d.ts
 .windsurf
 .claude
 .agents
+.opencode
+.codex
+.kiro
+.gemini
+.github/skills
+.github/hooks

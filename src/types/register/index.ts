@@ -1,5 +1,1 @@
-export type {
-  RegisterCardProps,
-  RegisterFormData,
-  SocialProvider,
-} from "./RegisterForm";
+export type { RegisterCardProps, RegisterFormData } from "./RegisterForm";
