@@ -3,10 +3,11 @@
 import { Globe, Menu, UserRound } from "lucide-react";
 import Link from "next/link";
 import { useRef, useState } from "react";
+
 import { NETWORK_SELECTOR } from "@/shared/constants";
 import { linkNavegation } from "../../../constants/constants";
 import { routes } from "../../../constants/routes";
-import { LogoStayke } from "../../Icons/LogoStayke";
+import { LogoStayke } from "../../../icons/LogoStayke";
 import { NetworkSelector } from "../NetworkSelector";
 import { NavbarMenuDesktop } from "./NavbarMenuDesktop";
 import { NavbarMobileDropdown } from "./NavbarMobile";
@@ -98,7 +99,7 @@ export const Navbar = () => {
           <button
             type="button"
             aria-label="Iniciar sesión"
-            className="p-2 text-(--letter-navbar) hover:opacity-80 transition-opacity rounded-full border border-white "
+            className="p-2 text-letter-navbar hover:opacity-80 transition-opacity rounded-full border border-white "
           >
             <UserRound className="size-5" />
           </button>
@@ -111,7 +112,7 @@ export const Navbar = () => {
             type="button"
             aria-label="Abrir menú"
             onClick={() => setIsMenuOpen((prev) => !prev)}
-            className="p-2 text-(--letter-navbar) hover:opacity-80 transition-opacity"
+            className="p-2 text-letter-navbar hover:opacity-80 transition-opacity"
           >
             <Menu className="size-5" />
           </button>

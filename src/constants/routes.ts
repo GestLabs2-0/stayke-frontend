@@ -6,6 +6,9 @@ export const routes = {
   AboutUs: "/AboutUs",
   Contact: "/Contact",
 
+  // Auth routes
+  Register: "/register",
+
   // Footer routes
   HelpCenter: "/help-center",
   AirCover: "/aircover",

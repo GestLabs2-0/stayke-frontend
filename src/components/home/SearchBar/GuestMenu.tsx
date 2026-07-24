@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+
 import { MinusIcon, PlusIcon } from "@/icons";
 import { categorias } from "./mocks";
 

@@ -1,4 +1,5 @@
 import Image from "next/image";
+
 import type { TestimonioCardProps } from "@/types/testimonios";
 import { Stars } from "./Stars";
 

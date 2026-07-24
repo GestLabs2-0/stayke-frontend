@@ -1,11 +1,21 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import React from "react";
+
 import { footerLegalLinks, footerLinks } from "../../../constants/constants";
 import { routes } from "../../../constants/routes";
-import { LogoStayke } from "../../Icons/LogoStayke";
+import { LogoStayke } from "../../../icons/LogoStayke";
 import { FooterItem } from "./FooterItem";
 
 export const Footer = () => {
   const currentYear = new Date().getFullYear();
+  const path = usePathname();
+
+  if (path === routes.Register) {
+    return <React.Fragment />;
+  }
 
   return (
     <footer className="w-full bg-[#F7F7F7] px-4 py-16 md:px-6 lg:px-20 xl:px-40 2xl:px-60">

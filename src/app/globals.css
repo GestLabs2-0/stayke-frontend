@@ -32,6 +32,8 @@
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
   --font-montserrat: var(--font-montserrat);
+  --font-plus-jakarta:
+    "Plus Jakarta Sans", var(--font-plus-jakarta), sans-serif;
 }
 
 body {

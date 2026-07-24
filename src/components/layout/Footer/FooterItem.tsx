@@ -1,4 +1,5 @@
 import Link from "next/link";
+
 import type { FooterLinkGroup } from "@/types/FooterTypes";
 
 export function FooterItem({ links, title }: FooterLinkGroup) {

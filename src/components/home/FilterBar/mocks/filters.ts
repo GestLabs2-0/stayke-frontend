@@ -1,9 +1,9 @@
-import { IconArtic } from "@/components/Icons/IconArtic";
-import { IconBeach } from "@/components/Icons/IconBeach";
-import { IconCamp } from "@/components/Icons/IconCamp";
-import { IconDiamond } from "@/components/Icons/IconDiamond";
-import { IconHouse } from "@/components/Icons/IconHouse";
-import { IconSwimming } from "@/components/Icons/IconSwimming";
+import { IconArtic } from "@/icons/IconArtic";
+import { IconBeach } from "@/icons/IconBeach";
+import { IconCamp } from "@/icons/IconCamp";
+import { IconDiamond } from "@/icons/IconDiamond";
+import { IconHouse } from "@/icons/IconHouse";
+import { IconSwimming } from "@/icons/IconSwimming";
 import type { FilterItem } from "@/types/FilterBar";
 
 export const filters: FilterItem[] = [
