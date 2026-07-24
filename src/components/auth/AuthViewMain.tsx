@@ -4,13 +4,9 @@ import { useUser } from "@dynamic-labs-sdk/react-hooks";
 
 import { LogoStayke } from "@/icons/LogoStayke";
 import { MailIcon } from "@/icons/MailIcon";
+import type { AuthViewMainProps } from "@/types/auth";
 import { SocialLoginButtons } from "./SocialLoginButtons";
 import { WalletLoginList } from "./WalletLoginList";
-
-interface AuthViewMainProps {
-  onEmailClick: () => void;
-  onClose: () => void;
-}
 
 export function AuthViewMain({ onEmailClick, onClose }: AuthViewMainProps) {
   const { data: user } = useUser();
@@ -19,13 +15,13 @@ export function AuthViewMain({ onEmailClick, onClose }: AuthViewMainProps) {
     return (
       <div className="space-y-6 text-center">
         <div className="flex justify-center">
-          <LogoStayke className="h-7 w-auto text-[#3B007F]" />
+          <LogoStayke size={140} className="h-9 text-[#3B007F]" />
         </div>
 
         <div>
-          <h2 className="font-plus-jakarta text-lg font-bold text-[#171717]">
+          <h4 className="font-plus-jakarta text-lg font-bold text-[#171717]">
             Ya iniciaste sesión
-          </h2>
+          </h4>
           <p className="mt-1 text-sm text-[#434654]">
             {user.email ?? user.alias ?? "Usuario"}
           </p>
@@ -47,13 +43,13 @@ export function AuthViewMain({ onEmailClick, onClose }: AuthViewMainProps) {
       {/* Header */}
       <div className="text-center">
         <div className="mb-4 flex justify-center">
-          <LogoStayke className="h-7 w-auto text-[#3B007F]" />
+          <LogoStayke size={140} className="h-9 text-[#3B007F]" />
         </div>
-        <h2 className="font-plus-jakarta text-lg font-bold text-[#171717]">
+        <h4 className="font-plus-jakarta text-lg font-bold text-[#171717]">
           Inicia sesión o regístrate
-        </h2>
+        </h4>
         <p className="mt-1 text-sm text-[#434654]">
-          Elegí cómo querés continuar
+          Elige cómo quieres continuar
         </p>
       </div>
 
@@ -64,7 +60,7 @@ export function AuthViewMain({ onEmailClick, onClose }: AuthViewMainProps) {
       <div className="flex items-center gap-3">
         <div className="h-px flex-1 bg-[#EBE7E7]" />
         <span className="text-xs font-plus-jakarta font-semibold uppercase tracking-wider text-[#A0A5B5]">
-          O continuá con
+          Continua con
         </span>
         <div className="h-px flex-1 bg-[#EBE7E7]" />
       </div>

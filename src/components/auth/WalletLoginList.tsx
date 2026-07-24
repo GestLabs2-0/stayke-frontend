@@ -12,8 +12,6 @@ export function WalletLoginList() {
   const { mutate: connectWallet, isPending } =
     useConnectAndVerifyWithWalletProvider();
 
-  console.log(providers);
-
   const handleConnect = useCallback(
     (key: string) => {
       connectWallet({ walletProviderKey: key });
@@ -25,9 +23,9 @@ export function WalletLoginList() {
 
   return (
     <div className="space-y-3">
-      <div className="text-center text-xs font-plus-jakarta font-semibold uppercase tracking-wider text-[#A0A5B5]">
-        O conecta tu wallet
-      </div>
+      <p className="text-center text-xs font-plus-jakarta font-semibold uppercase tracking-wider text-[#A0A5B5]">
+        Conecta tu wallet
+      </p>
 
       {providers.length > 0 && (
         <div className="flex flex-wrap gap-2">
