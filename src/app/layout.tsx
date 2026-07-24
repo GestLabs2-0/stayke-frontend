@@ -12,7 +12,10 @@ import { Navbar } from "../components/layout/Navbar/Navbar";
 import "@blossom-carousel/react/style.css";
 import "./globals.css";
 
+import AuthClientLayer from "@/components/auth/AuthClientLayer";
+import { EmbeddedProvider } from "@/context/EmbeddedProvider";
 import { NetworkContextProvider } from "@/context/NetworkContext";
+import { WalletContextProvider } from "@/context/WalletContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -43,7 +46,7 @@ export const metadata: Metadata = {
     "A decentralized, open-source, and secure platform for managing and sharing your digital assets.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
@@ -55,9 +58,15 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <NetworkContextProvider>
-          <Navbar />
-          <main className="bg-white pt-10 flex-1">{children}</main>
-          <Footer />
+          <EmbeddedProvider>
+            <WalletContextProvider>
+              <AuthClientLayer>
+                <Navbar />
+                <main className="bg-white pt-10 flex-1">{children}</main>
+                <Footer />
+              </AuthClientLayer>
+            </WalletContextProvider>
+          </EmbeddedProvider>
         </NetworkContextProvider>
       </body>
     </html>
