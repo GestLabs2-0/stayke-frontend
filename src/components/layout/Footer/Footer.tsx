@@ -13,7 +13,7 @@ export const Footer = () => {
   const currentYear = new Date().getFullYear();
   const path = usePathname();
 
-  if (path === routes.Register) {
+  if (path === routes.Register || path.startsWith("/profile")) {
     return <React.Fragment />;
   }
 

@@ -7,3 +7,4 @@ This repo follows strict rules when developing components:
 - Components should be reusable 
 - Components should'nt tighly coupled
 - SVG elements should live in src/icons
+- Components names in English
