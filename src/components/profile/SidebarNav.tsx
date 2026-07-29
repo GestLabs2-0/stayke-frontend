@@ -21,7 +21,7 @@ export function SidebarNav({
             onClick={() => onSelect(item)}
             className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-medium transition-all duration-200 ${
               item.id === activeItem && !isLogout
-                ? "bg-[#3b007f] text-white border-l-2 border-accent-warm"
+                ? "bg-[#3b007f] text-white "
                 : isLogout
                   ? "text-red-500 hover:bg-red-50 bg-white"
                   : "bg-white text-[#434654] hover:bg-[#f0eaf5]"

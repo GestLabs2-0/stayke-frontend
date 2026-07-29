@@ -62,7 +62,7 @@ The crypto onboarding should follow the Nivel 0 → 1 → 2 progression from the
 ## Accessibility & Inclusion
 
 - WCAG 2.1 AA target. Body text contrast ≥ 4.5:1.
-- Spanish-language first (UI, copy, error messages). English as secondary.
+- Neutral Spanish-language first (UI, copy, error messages). English as secondary.
 - Designed for users with varying levels of technical literacy — from first-time internet users in LATAM to crypto-native travelers.
 - Reduced motion support on all animations.
 - Color is not the sole carrier of meaning (reputation changes, booking states, dispute status).

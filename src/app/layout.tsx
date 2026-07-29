@@ -5,6 +5,7 @@ import {
   Montserrat,
   Plus_Jakarta_Sans,
 } from "next/font/google";
+import { Toaster } from "sileo";
 
 import { Footer } from "../components/layout/Footer/Footer";
 import { Navbar } from "../components/layout/Navbar/Navbar";
@@ -68,6 +69,7 @@ export default async function RootLayout({
             </WalletContextProvider>
           </EmbeddedProvider>
         </NetworkContextProvider>
+        <Toaster position="top-right" />
       </body>
     </html>
   );

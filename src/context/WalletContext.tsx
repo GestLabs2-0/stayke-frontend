@@ -1,15 +1,21 @@
 "use client";
 
-import { useGetWalletAccounts, useUser } from "@dynamic-labs-sdk/react-hooks";
+import {
+  useGetWalletAccounts,
+  useLogout,
+  useUser,
+} from "@dynamic-labs-sdk/react-hooks";
 import type { Address } from "@solana/kit";
 import { address, isAddress } from "@solana/kit";
-import { createContext, useMemo } from "react";
+import { useRouter } from "next/navigation";
+import { createContext, useCallback, useMemo } from "react";
 
 import { useAutoCreateWaasWallets } from "@/hooks/useAutoCreateWallets";
 
 type WalletContextProps = {
   userWallet: Address | null;
   isAuthenticated: boolean;
+  logout: () => void;
   // isConnected: boolean;
   // signTransaction: (transaction: Transaction) => Promise<string>;
 };
@@ -17,6 +23,7 @@ type WalletContextProps = {
 export const WalletContext = createContext<WalletContextProps>({
   userWallet: null,
   isAuthenticated: false,
+  logout: () => {},
   // isConnected: false,
   // signTransaction: async () => {
   //   return await Promise.resolve("placeholder");
@@ -32,6 +39,8 @@ export const WalletContextProvider = ({
 
   const { data: walletAccounts } = useGetWalletAccounts();
   const { data: user } = useUser();
+  const { mutate: logout } = useLogout();
+  const router = useRouter();
 
   const userWallet = useMemo(() => {
     if (walletAccounts && walletAccounts.length > 0) {
@@ -41,11 +50,17 @@ export const WalletContextProvider = ({
     return null;
   }, [walletAccounts]);
 
+  const handleLogout = useCallback(() => {
+    logout();
+    router.push("/");
+  }, [logout, router]);
+
   return (
     <WalletContext.Provider
       value={{
         userWallet,
         isAuthenticated: Boolean(user),
+        logout: handleLogout,
       }}
     >
       {children}
