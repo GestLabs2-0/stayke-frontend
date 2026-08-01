@@ -69,7 +69,7 @@ export default async function RootLayout({
             </WalletContextProvider>
           </EmbeddedProvider>
         </NetworkContextProvider>
-        <Toaster position="top-right" />
+        <Toaster position="top-right" theme="dark" />
       </body>
     </html>
   );

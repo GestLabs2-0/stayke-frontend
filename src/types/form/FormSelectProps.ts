@@ -5,5 +5,5 @@ export interface FormSelectProps
   name: string;
   label: string;
   placeholder: string;
-  options: readonly string[];
+  options: { value: string; label: string }[];
 }

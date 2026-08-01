@@ -9,11 +9,19 @@ import {
 import { addWaasSolanaExtension } from "@dynamic-labs-sdk/solana/waas";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-import { DYNAMIC_CLIENT_ID, FRONTEND_URL } from "@/shared/constants";
+import {
+  API_URL,
+  DYNAMIC_CLIENT_ID,
+  ENVIRONMENT,
+  FRONTEND_URL,
+} from "@/shared/constants";
 
 export const client = createDynamicClient({
   // biome-ignore  lint/style/noNonNullAssertion: already checked
   environmentId: DYNAMIC_CLIENT_ID!,
+  coreConfig: {
+    ...(ENVIRONMENT === "production" && { apiBaseUrl: `${API_URL}/api/v0` }),
+  },
   metadata: {
     name: "Stayke",
     // biome-ignore  lint/style/noNonNullAssertion: already checked

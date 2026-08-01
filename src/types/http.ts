@@ -44,6 +44,7 @@ export interface ApiResponse<T> {
   status: boolean;
   data: T | null;
   message: string | string[];
+  errors?: string[];
 }
 
 export interface LoginResponse {
