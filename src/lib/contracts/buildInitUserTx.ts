@@ -7,11 +7,13 @@ import {
   createTransactionMessage,
   pipe,
   setTransactionMessageFeePayerSigner,
+  setTransactionMessageLifetimeUsingBlockhash,
 } from "@solana/kit";
 
 import { getInitializeUserProfileInstructionAsync } from "@GestLabs2-0/stayke-core";
+import type { SolanaClient } from "@/context/NetworkContext";
 
-export async function buildInitUserTx(addr: Address) {
+export async function buildInitUserTx(addr: Address, client: SolanaClient) {
   const authority = createNoopSigner(addr);
 
   const instruction = await getInitializeUserProfileInstructionAsync({
@@ -20,12 +22,13 @@ export async function buildInitUserTx(addr: Address) {
     payer: authority,
   });
 
-  // const { value: latestBlockhash } = await rpc.getLatestBlockhash().send();
+  const { value: latestBlockhash } = await client.rpc
+    .getLatestBlockhash()
+    .send();
   const tx = pipe(
     createTransactionMessage({ version: 0 }),
     (tx) => setTransactionMessageFeePayerSigner(authority, tx),
-    // (tx) =>
-    // setTransactionMessageLifetimeUsingBlockhash(latestBlockhash, tx),
+    (tx) => setTransactionMessageLifetimeUsingBlockhash(latestBlockhash, tx),
     (tx) => appendTransactionMessageInstructions([instruction], tx),
     (tx) => compileTransaction(tx),
   );

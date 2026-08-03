@@ -4,7 +4,6 @@ export const CLUSTERS: ClusterNames[] = [
   "mainnet",
   "devnet",
   "testnet",
-  "localnet",
   "custom",
 ];
 

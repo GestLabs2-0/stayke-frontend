@@ -11,7 +11,6 @@ const CLUSTER_LABELS: Record<ClusterNames, string> = {
   mainnet: "Mainnet",
   devnet: "Devnet",
   testnet: "Testnet",
-  localnet: "Localnet",
   custom: "Custom",
 };
 
@@ -19,7 +18,6 @@ const CLUSTER_COLORS: Record<ClusterNames, string> = {
   mainnet: "bg-emerald-500",
   devnet: "bg-amber-500",
   testnet: "bg-red-500",
-  localnet: "bg-violet-500",
   custom: "bg-sky-500",
 };
 

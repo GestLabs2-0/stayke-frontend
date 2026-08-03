@@ -73,7 +73,7 @@ export class StaykeApi {
     }
   }
 
-  async me(body: RegisterUser) {
+  async me() {
     const result: ApiResponse<UserProfileResponse> = {
       data: null,
       status: false,
@@ -83,7 +83,6 @@ export class StaykeApi {
     try {
       const { data } = await this.httpClient.post({
         url: "/auth/me",
-        body,
       });
 
       // Backend now returns raw shape: { access_token, token_type, expires_in }

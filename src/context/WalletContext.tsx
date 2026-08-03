@@ -5,29 +5,45 @@ import {
   useLogout,
   useUser,
 } from "@dynamic-labs-sdk/react-hooks";
-import type { Address } from "@solana/kit";
+import type { Account, Address } from "@solana/kit";
 import { address, isAddress } from "@solana/kit";
 import { useRouter } from "next/navigation";
-import { createContext, useCallback, useMemo } from "react";
+import {
+  createContext,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 
+import type {
+  ReputationProfile,
+  UserProfile as UserProfileOnchain,
+} from "@GestLabs2-0/stayke-core";
+import { routes } from "@/constants/routes";
+import { useGetUser } from "@/hooks/contracts/useGetUser";
 import { useAutoCreateWaasWallets } from "@/hooks/useAutoCreateWallets";
+import { staykeApi } from "@/lib/staykeApi";
+import type { UserProfileResponse } from "@/types/api/auth";
 
 type WalletContextProps = {
   userWallet: Address | null;
   isAuthenticated: boolean;
   logout: () => void;
-  // isConnected: boolean;
-  // signTransaction: (transaction: Transaction) => Promise<string>;
+  reputationProfile: Account<ReputationProfile> | null;
+  userProfile: Account<UserProfileOnchain> | null;
+  userBackend: UserProfileResponse | null;
+  refetchAccounts: () => Promise<void>;
 };
 
 export const WalletContext = createContext<WalletContextProps>({
   userWallet: null,
   isAuthenticated: false,
   logout: () => {},
-  // isConnected: false,
-  // signTransaction: async () => {
-  //   return await Promise.resolve("placeholder");
-  // },
+  reputationProfile: null,
+  userProfile: null,
+  userBackend: null,
+  refetchAccounts: () => Promise.resolve(),
 });
 
 export const WalletContextProvider = ({
@@ -36,11 +52,13 @@ export const WalletContextProvider = ({
   children: React.ReactNode;
 }) => {
   useAutoCreateWaasWallets();
-
   const { data: walletAccounts } = useGetWalletAccounts();
   const { data: user } = useUser();
   const { mutate: logout } = useLogout();
   const router = useRouter();
+  const [userBackend, setUserBackend] = useState<UserProfileResponse | null>(
+    null,
+  );
 
   const userWallet = useMemo(() => {
     if (walletAccounts && walletAccounts.length > 0) {
@@ -49,6 +67,43 @@ export const WalletContextProvider = ({
     }
     return null;
   }, [walletAccounts]);
+
+  const { fetchUserData, reputationProfile, userProfile } =
+    useGetUser(userWallet);
+
+  const fetchUserBackend = useCallback(async () => {
+    if (userWallet) {
+      try {
+        const response = await staykeApi.me();
+        if (response.status) {
+          setUserBackend(response.data);
+        }
+      } catch (error) {
+        console.error("Error fetching user backend data:", error);
+        setUserBackend(null);
+      }
+    } else {
+      setUserBackend(null);
+    }
+  }, [userWallet]);
+
+  useEffect(() => {
+    Promise.all([fetchUserData(), fetchUserBackend()]).catch((error) => {
+      console.error("Error fetching user data:", error);
+    });
+  }, [fetchUserData, fetchUserBackend]);
+
+  useEffect(() => {
+    if (!userBackend && userWallet) {
+      router.push(routes.Register);
+    }
+  }, [userBackend, userWallet, router]);
+
+  const refetchAccounts = useCallback(async () => {
+    await Promise.all([fetchUserData(), fetchUserBackend()]).catch((error) => {
+      console.error("Error refetching user data:", error);
+    });
+  }, [fetchUserData, fetchUserBackend]);
 
   const handleLogout = useCallback(() => {
     logout();
@@ -61,6 +116,10 @@ export const WalletContextProvider = ({
         userWallet,
         isAuthenticated: Boolean(user),
         logout: handleLogout,
+        reputationProfile,
+        userProfile,
+        userBackend,
+        refetchAccounts,
       }}
     >
       {children}

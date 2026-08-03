@@ -58,8 +58,8 @@ export default async function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} ${montserrat.variable} ${plusJakartaSans.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <NetworkContextProvider>
-          <EmbeddedProvider>
+        <EmbeddedProvider>
+          <NetworkContextProvider>
             <WalletContextProvider>
               <AuthClientLayer>
                 <Navbar />
@@ -67,8 +67,8 @@ export default async function RootLayout({
                 <Footer />
               </AuthClientLayer>
             </WalletContextProvider>
-          </EmbeddedProvider>
-        </NetworkContextProvider>
+          </NetworkContextProvider>
+        </EmbeddedProvider>
         <Toaster position="top-right" theme="dark" />
       </body>
     </html>
