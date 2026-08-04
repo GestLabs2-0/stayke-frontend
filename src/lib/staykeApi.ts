@@ -4,6 +4,10 @@ import axios from "axios";
 import { API_URL, LOCAL_STORAGE_KEYS } from "@/shared/constants";
 import type { RegisterUser, UserProfileResponse } from "@/types/api/auth";
 import type {
+  DiditProgressResponse,
+  DiditSessionResponse,
+} from "@/types/api/didit";
+import type {
   ApiResponse,
   HttpClientInterface,
   LoginResponse,
@@ -95,6 +99,58 @@ export class StaykeApi {
       result.data = rawResponse.data;
 
       result.message = rawResponse.message; // No message from raw response
+      return result;
+    } catch (error) {
+      return handleApiError(error, result);
+    }
+  }
+
+  async createDiditSession() {
+    const result: ApiResponse<DiditSessionResponse> = {
+      data: null,
+      status: false,
+      message: "",
+    };
+
+    try {
+      const { data } = await this.httpClient.post({
+        url: "/verification/start",
+      });
+
+      const rawResponse = data as ApiResponse<DiditSessionResponse>;
+
+      if (rawResponse?.status) {
+        result.status = true;
+      }
+      result.data = rawResponse.data;
+
+      result.message = rawResponse.message;
+      return result;
+    } catch (error) {
+      return handleApiError(error, result);
+    }
+  }
+
+  async getDiditProgress() {
+    const result: ApiResponse<DiditProgressResponse> = {
+      data: null,
+      status: false,
+      message: "",
+    };
+
+    try {
+      const { data } = await this.httpClient.post({
+        url: "/verification/progress",
+      });
+
+      const rawResponse = data as ApiResponse<DiditProgressResponse>;
+
+      if (rawResponse?.status) {
+        result.status = true;
+      }
+      result.data = rawResponse.data;
+
+      result.message = rawResponse.message;
       return result;
     } catch (error) {
       return handleApiError(error, result);

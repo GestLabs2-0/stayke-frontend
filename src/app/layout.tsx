@@ -16,6 +16,7 @@ import "./globals.css";
 import AuthClientLayer from "@/components/auth/AuthClientLayer";
 import { EmbeddedProvider } from "@/context/EmbeddedProvider";
 import { NetworkContextProvider } from "@/context/NetworkContext";
+import { ProfileProvider } from "@/context/ProfileContext";
 import { WalletContextProvider } from "@/context/WalletContext";
 
 const geistSans = Geist({
@@ -61,11 +62,13 @@ export default async function RootLayout({
         <EmbeddedProvider>
           <NetworkContextProvider>
             <WalletContextProvider>
-              <AuthClientLayer>
-                <Navbar />
-                <main className="bg-white pt-10 flex-1">{children}</main>
-                <Footer />
-              </AuthClientLayer>
+              <ProfileProvider>
+                <AuthClientLayer>
+                  <Navbar />
+                  <main className="bg-white pt-10 flex-1">{children}</main>
+                  <Footer />
+                </AuthClientLayer>
+              </ProfileProvider>
             </WalletContextProvider>
           </NetworkContextProvider>
         </EmbeddedProvider>

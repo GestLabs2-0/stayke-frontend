@@ -6,7 +6,7 @@ import { useState } from "react";
 
 import { ProfileSidebar } from "@/components/profile/ProfileSidebar";
 import { routes } from "@/constants/routes";
-import { ProfileProvider, useProfile } from "@/context/ProfileContext";
+import { useProfile } from "@/hooks/useProfile";
 import { useWalletContext } from "@/hooks/useWallet";
 
 function ProfileShell({ children }: { children: ReactNode }) {
@@ -59,9 +59,5 @@ function ProfileShell({ children }: { children: ReactNode }) {
 }
 
 export default function ProfileLayout({ children }: { children: ReactNode }) {
-  return (
-    <ProfileProvider>
-      <ProfileShell>{children}</ProfileShell>
-    </ProfileProvider>
-  );
+  return <ProfileShell>{children}</ProfileShell>;
 }
