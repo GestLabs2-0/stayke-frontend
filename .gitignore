@@ -41,3 +41,14 @@ yarn-error.log*
 next-env.d.ts
 
 .atl
+.codegraph
+.pi
+.windsurf
+.claude
+.agents
+.opencode
+.codex
+.kiro
+.gemini
+.github/skills
+.github/hooks

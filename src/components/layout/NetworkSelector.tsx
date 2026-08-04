@@ -1,7 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+
 import useNetwork from "@/hooks/useNetwork";
+import { CheckIcon, ChevronDownIcon } from "@/icons";
 import { CLUSTERS } from "@/shared/constants";
 import type { ClusterNames } from "@/types";
 
@@ -61,21 +63,13 @@ export const NetworkSelector = () => {
           className={`block h-2 w-2 rounded-full ${CLUSTER_COLORS[selectedCluster]}`}
         />
         {CLUSTER_LABELS[selectedCluster]}
-        <svg
-          className={`h-4 w-4 transition-transform ${
+        <span
+          className={`inline-flex transition-transform ${
             isOpen ? "rotate-180" : ""
           }`}
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 20 20"
-          fill="currentColor"
-          aria-hidden="true"
         >
-          <path
-            fillRule="evenodd"
-            d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
-            clipRule="evenodd"
-          />
-        </svg>
+          <ChevronDownIcon />
+        </span>
       </button>
 
       {isOpen && (
@@ -102,19 +96,9 @@ export const NetworkSelector = () => {
               />
               <span className="flex-1">{CLUSTER_LABELS[cluster]}</span>
               {selectedCluster === cluster && (
-                <svg
-                  className="h-4 w-4 text-zinc-500"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                  aria-hidden="true"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z"
-                    clipRule="evenodd"
-                  />
-                </svg>
+                <span className="text-zinc-500">
+                  <CheckIcon />
+                </span>
               )}
             </button>
           ))}

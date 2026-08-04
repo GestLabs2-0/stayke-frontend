@@ -3,24 +3,41 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --letter-navbar: #ffffff;
+  --background-navbar: #3b007f;
+
+  --color-primary: #3b007f;
+  --color-primary-hover: #5307ad;
+  --color-purple-deep: #3b027d;
+  --color-secondary: #434654;
+  --color-muted: #a0a5b5;
+  --color-border: #c3c6d6;
+  --color-surface: #ebe7e7;
+  --color-icon-selected: #191c1e;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-primary: var(--color-primary);
+  --color-primary-hover: var(--color-primary-hover);
+  --color-purple-deep: var(--color-purple-deep);
+  --color-secondary: var(--color-secondary);
+  --color-muted: var(--color-muted);
+  --color-border: var(--color-border);
+  --color-surface: var(--color-surface);
+  --color-icon-selected: var(--color-icon-selected);
+  --color-background-navbar: var(--background-navbar);
+  --color-letter-navbar: var(--letter-navbar);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-montserrat: var(--font-montserrat);
+  --font-plus-jakarta:
+    "Plus Jakarta Sans", var(--font-plus-jakarta), sans-serif;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
 }

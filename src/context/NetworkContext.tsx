@@ -1,17 +1,42 @@
 "use client";
+
+import { solana, solanaDevnet, solanaTestnet } from "@reown/appkit/networks";
+import { createAppKit } from "@reown/appkit/react";
+import { SolanaAdapter } from "@reown/appkit-adapter-solana/react";
 import { createClient } from "@solana/kit";
 import { rpc, rpcAirdrop } from "@solana/kit-plugin-rpc";
+import type { ReactNode } from "react";
 import {
   createContext,
-  type ReactNode,
   useCallback,
   useEffect,
   useMemo,
   useState,
 } from "react";
+
+import { PROJECT_ID } from "@/constants/constants";
 import { getExplorerUrl } from "@/lib/getExplorerUrl";
 import { CLUSTERS, DEFAULT_NETWORK, RPC_URL, WS_URL } from "@/shared/constants";
 import type { ClusterNames } from "@/types";
+
+const solanaKitJsAdapter = new SolanaAdapter();
+
+const metadataAppKit = {
+  name: "Stayke Appkit",
+  description: "Stayke Solana Appkit",
+  url: process.env.NEXT_PUBLIC_URL ?? "http://localhost:3000",
+  icons: ["https://avatars.githubusercontent.com/u/179229932"],
+};
+console.log(PROJECT_ID);
+createAppKit({
+  adapters: [solanaKitJsAdapter],
+  metadata: metadataAppKit,
+  networks: [solana, solanaTestnet, solanaDevnet],
+  projectId: PROJECT_ID ?? "",
+  features: {
+    analytics: true,
+  },
+});
 
 const NETWORKS: Record<
   ClusterNames,
