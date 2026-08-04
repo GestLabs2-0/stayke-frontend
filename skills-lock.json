@@ -6,6 +6,12 @@
       "sourceType": "github",
       "skillPath": "skills/appkit/SKILL.md",
       "computedHash": "da138387a82d54bb1c354ec4c347033ea86b91b2c71d9f839218b21941a29c08"
+    },
+    "web3auth": {
+      "source": "web3auth/skill",
+      "sourceType": "github",
+      "skillPath": "skills/web3auth/SKILL.md",
+      "computedHash": "b2d37fe412d73cd873db4dd4a1b5a79019b3847933524e8a8696e82a1a36d84f"
     }
   }
 }
