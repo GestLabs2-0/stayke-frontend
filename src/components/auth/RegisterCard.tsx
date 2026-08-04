@@ -66,7 +66,7 @@ export const RegisterCard = () => {
           Crear cuenta
         </h1>
         <p className="mt-2 font-plus-jakarta text-[14px] font-medium text-white/70">
-          Completá tus datos para registrarte en Stayke
+          Completa tus datos para registrarte en Stayke
         </p>
 
         {/* Form */}

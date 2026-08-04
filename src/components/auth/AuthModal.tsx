@@ -1,19 +1,12 @@
 "use client";
 
-import type { ReactNode } from "react";
 import { useEffect, useRef, useState } from "react";
 
 import { XIcon } from "@/icons/XIcon";
-import type { AuthView } from "@/types/auth";
+import type { AuthModalShellProps, AuthView } from "@/types/auth";
 import { AuthViewMain } from "./AuthViewMain";
 import { EmailLoginForm } from "./EmailLoginForm";
 import { OTPVerificationForm } from "./OTPVerificationForm";
-
-interface AuthModalShellProps {
-  isOpen: boolean;
-  onClose: () => void;
-  children: ReactNode;
-}
 
 function AuthModalShell({ isOpen, onClose, children }: AuthModalShellProps) {
   const overlayRef = useRef<HTMLDivElement>(null);
@@ -33,7 +26,7 @@ function AuthModalShell({ isOpen, onClose, children }: AuthModalShellProps) {
     // biome-ignore lint/a11y/useKeyWithClickEvents: overlay click to close
     <div
       ref={overlayRef}
-      className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 p-4"
+      className="fixed inset-0 z-60 flex items-center justify-center bg-black/50 p-4"
       onClick={(e) => {
         if (e.target === overlayRef.current) onClose();
       }}

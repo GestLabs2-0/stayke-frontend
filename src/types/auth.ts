@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 export type AuthView = "main" | "email" | "otp";
 
 export interface AuthModalProps {
@@ -15,4 +16,14 @@ export interface OTPFormProps {
   verificationUUID: string;
   onSuccess?: () => void;
   onBack: () => void;
+}
+
+export interface AuthViewMainProps {
+  onEmailClick: () => void;
+  onClose: () => void;
+}
+export interface AuthModalShellProps {
+  isOpen: boolean;
+  onClose: () => void;
+  children: ReactNode;
 }

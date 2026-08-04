@@ -6,29 +6,21 @@ import type {
 } from "@solana/kit";
 import { getTransactionEncoder } from "@solana/kit";
 import { VersionedMessage, VersionedTransaction } from "@solana/web3.js";
-import { useMemo, useState } from "react";
-
-import { useWalletContext } from "./useWallet";
+import { useState } from "react";
 
 const encoder = getTransactionEncoder();
-export function useSignTx() {
+export function useSignTx<
+  T extends Transaction & TransactionWithBlockhashLifetime,
+>(transaction: T) {
   // TODO: expand hook to sign and send transactions depending on wallet type
-  const { userWallet } = useWalletContext();
-
   const [signature, setSignature] = useState("");
-  const walletAccount = useMemo(() => {
-    const wallets = getWalletAccounts();
-    if (!userWallet) return null;
-    if (wallets.length > 0 && wallets[0].address === userWallet.toString())
-      return wallets[0];
-    return null;
-  }, [userWallet]);
 
-  const handleSignAndSend = async <
-    T extends Transaction & TransactionWithBlockhashLifetime,
-  >(
-    transaction: T,
-  ) => {
+  const wallets = getWalletAccounts();
+  let walletAccount = null;
+
+  if (wallets && wallets.length > 0) walletAccount = wallets[0];
+
+  const handleSignAndSend = async () => {
     if (!walletAccount) return;
     const wireBytes = new Uint8Array(encoder.encode(transaction));
     const versionedMessage = VersionedMessage.deserialize(wireBytes);
