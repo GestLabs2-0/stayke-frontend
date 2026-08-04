@@ -7,9 +7,19 @@ allowBuilds:
   bigint-buffer: false
   bufferutil: false
   keccak: false
+  protobufjs: true
   sharp: false
+  tiny-secp256k1: set this to true or false
   unrs-resolver: false
   utf-8-validate: false
 
+
 lockfileIncludeTarballUrl: true
 
+
+minimumReleaseAgeExclude:
+  - '@GestLabs2-0/stayke-config@1.0.3'
+  - '@GestLabs2-0/stayke-core@1.0.3'
+  - '@GestLabs2-0/stayke-disputes@1.0.3'
+  - '@GestLabs2-0/stayke-escrow@1.0.3'
+  - '@GestLabs2-0/stayke-treasury@1.0.3'

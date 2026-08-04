@@ -36,3 +36,18 @@ export const LOCAL_STORAGE_KEYS = {
 
 export const API_URL =
   process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+
+export const JWT_DURATION = Number(
+  process.env.NEXT_PUBLIC_JWT_DURATION ?? "86400",
+);
+
+export const FRONTEND_URL = process.env.NEXT_PUBLIC_FRONTEND_URL;
+
+if (!FRONTEND_URL) {
+  throw new Error("FRONTEND_URL unknown");
+}
+export const DYNAMIC_CLIENT_ID = process.env.NEXT_PUBLIC_DYNAMIC_CLIENT_ID;
+
+if (!DYNAMIC_CLIENT_ID) {
+  throw new Error("DYNAMIC_CLIENT_ID unknown");
+}

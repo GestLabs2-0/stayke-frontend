@@ -1,9 +1,11 @@
 "use client";
 
+import { useLogout, useUser } from "@dynamic-labs-sdk/react-hooks";
 import { Globe, Menu, UserRound } from "lucide-react";
 import Link from "next/link";
 import { useRef, useState } from "react";
 
+import { AuthModal } from "@/components/auth/AuthModal";
 import { NETWORK_SELECTOR } from "@/shared/constants";
 import { linkNavegation } from "../../../constants/constants";
 import { routes } from "../../../constants/routes";
@@ -16,7 +18,16 @@ import { NavbarMobileDropdown } from "./NavbarMobile";
 export const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const [isDesktopMenuOpen, setIsDesktopMenuOpen] = useState<boolean>(false);
+  const [isAuthOpen, setIsAuthOpen] = useState<boolean>(false);
   const menuTriggerRef = useRef<HTMLButtonElement>(null);
+
+  const { data: user } = useUser();
+  const { mutate: logout } = useLogout();
+
+  const handleLogout = () => {
+    logout();
+    setIsAuthOpen(false);
+  };
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background-navbar font-montserrat">
@@ -40,7 +51,7 @@ export const Navbar = () => {
                 lg:text-xs
                 xl:text-base
                 font-semibold
-                text-(--letter-navbar)
+                text-letter-navbar
                 transition-opacity
                 hover:opacity-80
               "
@@ -60,26 +71,47 @@ export const Navbar = () => {
               lg:text-sm
               xl:text-base
               font-semibold
-              text-(--letter-navbar)
+              text-letter-navbar
             "
           >
             Aloja tu Casa
           </Link>
 
-          <Globe className="size-4 lg:size-5 shrink-0 text-(--letter-navbar)" />
+          <Globe className="size-4 lg:size-5 shrink-0 text-letter-navbar" />
 
-          <div className=" relative">
-            <button
-              type="button"
-              ref={menuTriggerRef}
-              onClick={() => setIsDesktopMenuOpen((prev) => !prev)}
-              className=" flex items-center gap-2 rounded-2xl border border-white/80 bg-white px-4 py-2"
-            >
-              <span className="flex items-center cursor-pointer hover:opacity-80 transition-opacity">
+          <div className="relative flex items-center gap-2">
+            {user ? (
+              <>
+                <button
+                  type="button"
+                  ref={menuTriggerRef}
+                  onClick={() => setIsDesktopMenuOpen((prev) => !prev)}
+                  className="flex items-center gap-2 rounded-2xl border border-white/80 bg-white px-4 py-2 transition-opacity hover:opacity-80"
+                >
+                  <Menu className="size-4 text-[#3B007f]" />
+                  <span className="text-xs font-semibold text-[#3B007f]">
+                    {user.email?.split("@")[0]}
+                  </span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  className="rounded-xl border border-white/80 bg-white px-3 py-2 text-xs font-semibold text-red-500 transition-colors hover:bg-red-50 hover:text-red-600"
+                >
+                  Logout
+                </button>
+              </>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setIsAuthOpen(true)}
+                className="flex items-center gap-2 rounded-2xl border border-white/80 bg-white px-4 py-2 transition-opacity hover:opacity-80"
+              >
                 <Menu className="size-4 text-[#3B007f]" />
-              </span>
-              <UserRound className="size-4 text-[#3B007f]" />
-            </button>
+                <UserRound className="size-4 text-[#3B007f]" />
+              </button>
+            )}
 
             {/* NavegationMenuDesktop */}
             <NavbarMenuDesktop
@@ -96,13 +128,29 @@ export const Navbar = () => {
         )}
         {/* Mobile Interface */}
         <div className="flex md:hidden items-center justify-between w-full">
-          <button
-            type="button"
-            aria-label="Iniciar sesión"
-            className="p-2 text-letter-navbar hover:opacity-80 transition-opacity rounded-full border border-white "
-          >
-            <UserRound className="size-5" />
-          </button>
+          {user ? (
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-semibold text-letter-navbar truncate max-w-[100px]">
+                {user.email?.split("@")[0]}
+              </span>
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="text-xs text-red-500 hover:text-red-600 font-semibold"
+              >
+                Logout
+              </button>
+            </div>
+          ) : (
+            <button
+              type="button"
+              aria-label="Iniciar sesión"
+              onClick={() => setIsAuthOpen(true)}
+              className="p-2 text-letter-navbar hover:opacity-80 transition-opacity rounded-full border border-white "
+            >
+              <UserRound className="size-5" />
+            </button>
+          )}
 
           <Link href={routes.Home}>
             <LogoStayke className="text-white w-40 h-8" />
@@ -111,7 +159,7 @@ export const Navbar = () => {
           <button
             type="button"
             aria-label="Abrir menú"
-            onClick={() => setIsMenuOpen((prev) => !prev)}
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
             className="p-2 text-letter-navbar hover:opacity-80 transition-opacity"
           >
             <Menu className="size-5" />
@@ -123,6 +171,9 @@ export const Navbar = () => {
       {isMenuOpen && (
         <NavbarMobileDropdown onClose={() => setIsMenuOpen(false)} />
       )}
+
+      {/* Auth Modal */}
+      <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} />
     </nav>
   );
 };
