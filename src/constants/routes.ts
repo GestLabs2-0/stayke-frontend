@@ -6,6 +6,7 @@ export const routes = {
   Experiences: "/Experiences",
   AboutUs: "/AboutUs",
   Contact: "/Contact",
+  Destinys: "/destinys",
 
   // Auth routes
   Register: "/register",

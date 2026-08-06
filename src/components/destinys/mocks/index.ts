@@ -1,0 +1,1 @@
+export { destinyPlacesData } from "./destinyPlacesData";
