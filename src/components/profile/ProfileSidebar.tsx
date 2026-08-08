@@ -3,32 +3,47 @@
 import {
   ChevronLeft,
   ChevronRight,
+  House,
   LogOut,
   Settings,
   User,
 } from "lucide-react";
 import Image from "next/image";
 
+import { routes } from "@/constants/routes";
 import type { NavItem, ProfileSidebarProps } from "@/types/profile";
 import { SidebarMobile } from "./SidebarMobile";
 import { SidebarModeFooter } from "./SidebarModeFooter";
 import { SidebarNav } from "./SidebarNav";
 
 const NAV_ITEMS: NavItem[] = [
-  { id: "profile", label: "Perfil", icon: User },
-  { id: "settings", label: "Configuración", icon: Settings },
+  {
+    id: routes.Profile.index,
+    label: "Perfil",
+    icon: User,
+    role: "all",
+    action: { type: "navigate", link: routes.Profile.index },
+  },
+  {
+    id: routes.Profile.properties.index,
+    label: "Propiedades",
+    icon: House,
+    role: "host",
+    action: { type: "navigate", link: routes.Profile.properties.index },
+  },
+  { id: "settings", label: "Configuración", icon: Settings, role: "all" },
   {
     id: "logout",
     label: "Cerrar sesión",
     icon: LogOut,
-    action: "logout",
+    action: { type: "logout" },
+    role: "all",
   },
 ];
 
 export function ProfileSidebar({
   expanded,
   onToggleExpand,
-  activeItem,
   onNavigate,
   mode,
   onChangeMode,
@@ -40,10 +55,12 @@ export function ProfileSidebar({
   const baseWidth = minimized ? "w-16" : expanded ? "w-64" : "w-16";
 
   const handleSelect = (item: NavItem) => {
-    if (item.action === "logout") {
-      onNavigate("logout");
-    } else {
-      onNavigate(item.id);
+    if (item.action) {
+      if (item.action.type === "navigate") {
+        onNavigate(item.id, item.action.link);
+      } else {
+        onNavigate(item.id, "");
+      }
     }
     onMobileClose();
   };
@@ -85,8 +102,8 @@ export function ProfileSidebar({
           </div>
 
           <SidebarNav
+            mode={mode}
             items={NAV_ITEMS}
-            activeItem={activeItem}
             onSelect={handleSelect}
             expanded={expanded}
           />
@@ -104,7 +121,6 @@ export function ProfileSidebar({
         open={mobileOpen}
         onClose={onMobileClose}
         items={NAV_ITEMS}
-        activeItem={activeItem}
         onSelect={handleSelect}
         profile={profile}
         mode={mode}

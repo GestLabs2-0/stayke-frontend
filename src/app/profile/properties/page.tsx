@@ -21,7 +21,7 @@ function HostPropertiesGated({ onEnable }: { onEnable: () => void }) {
       <button
         type="button"
         onClick={onEnable}
-        className="mt-5 rounded-full bg-accent-warm px-5 py-2.5 font-plus-jakarta text-[14px] font-semibold text-white transition-colors hover:bg-accent-warm-hover"
+        className="mt-5 cursor-pointer rounded-full bg-accent-warm px-5 py-2.5 font-plus-jakarta text-[14px] font-semibold text-white transition-colors hover:bg-accent-warm-hover"
       >
         Cambiar a modo anfitrión
       </button>

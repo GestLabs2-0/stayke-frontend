@@ -20,8 +20,6 @@ export interface HostPropertyFiltersProps {
     value: PropertyFilters[K],
   ) => void;
   onReset: () => void;
-  resultCount: number;
-  totalCount: number;
 }
 
 export interface HostPropertyConfirmDialogProps {
@@ -31,11 +29,47 @@ export interface HostPropertyConfirmDialogProps {
   onConfirm: () => void;
 }
 
+export interface HostPropertyPaginationProps {
+  pageIndex: number;
+  pages: number;
+  loading: boolean;
+  onPrevious: () => void;
+  onNext: () => void;
+}
+
 export interface HostPropertyListProps {
   properties: HostProperty[];
   totalCount: number;
+  loading: boolean;
   onEdit: (property: HostProperty) => void;
   onToggleActive: (property: HostProperty) => void;
   onCreate: () => void;
   onClearFilters: () => void;
 }
+
+export type PropertiesStateI = {
+  filters: PropertyFilters;
+  properties: HostProperty[];
+  totalCount: number;
+  pages: number;
+  pageIndex: number;
+  loading: boolean;
+};
+
+export type PropertiesReducerActions =
+  | {
+      type: "update_filter";
+      payload: Partial<PropertyFilters>;
+    }
+  | { type: "increment_page_index" }
+  | { type: "reduce_page_index" }
+  | { type: "reset_filter" }
+  | {
+      type: "set_properties";
+      payload: {
+        properties: HostProperty[];
+        totalCount: number;
+        pages: number;
+      };
+    }
+  | { type: "set_loading"; loading: boolean };

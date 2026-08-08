@@ -153,7 +153,7 @@ export function VerificationBanner() {
           type="button"
           onClick={handleVerify}
           disabled={isCreatingSession || isLoadingProgress}
-          className="mt-3 rounded-full bg-accent-warm px-5 py-2 font-sans text-xs font-semibold tracking-wide text-white uppercase transition-colors hover:bg-accent-warm-hover disabled:cursor-not-allowed disabled:opacity-60"
+          className="mt-3 rounded-full bg-accent-warm cursor-pointer px-5 py-2 font-sans text-xs font-semibold tracking-wide text-white uppercase transition-colors hover:bg-accent-warm-hover disabled:cursor-not-allowed disabled:opacity-60"
         >
           {isCreatingSession ? "Verificando..." : "Verificar con Didit"}
         </button>

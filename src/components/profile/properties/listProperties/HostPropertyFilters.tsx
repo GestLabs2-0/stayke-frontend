@@ -19,23 +19,18 @@ export function HostPropertyFilters({
   values,
   onChange,
   onReset,
-  resultCount,
-  totalCount,
 }: HostPropertyFiltersProps) {
   return (
     <div className="card-white space-y-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className="font-montserrat text-[15px] font-bold text-[#171717]">
+        <h3 className="font-montserrat text-[15px] font-bold text-[#171717]">
           Filtrar propiedades
-        </h2>
+        </h3>
         <div className="flex items-center gap-3">
-          <span className="font-sans text-[13px] text-[#a0a5b5]">
-            {resultCount} de {totalCount}
-          </span>
           <button
             type="button"
             onClick={onReset}
-            className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 font-plus-jakarta text-[13px] font-semibold text-[#3b007f] transition-colors hover:bg-[#3b007f]/5"
+            className="cursor-pointer inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 font-plus-jakarta text-[13px] font-semibold text-[#3b007f] transition-colors hover:bg-[#3b007f]/5"
           >
             <RotateCcw className="size-4" />
             Limpiar

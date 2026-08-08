@@ -1,9 +1,13 @@
 export const routes = {
   // Navbar routes
   Home: "/",
-  Profile: "/profile",
-  ProfileProperties: "/profile/properties",
-  ProfilePropertiesCreate: "/profile/properties/create",
+  Profile: {
+    index: "/profile",
+    properties: {
+      index: "/profile/properties",
+      create: "/profile/properties/create",
+    },
+  },
   Accommodation: "/Accommodation",
   Experiences: "/Experiences",
   AboutUs: "/AboutUs",
