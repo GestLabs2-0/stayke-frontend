@@ -41,9 +41,9 @@ export const FormSelect = ({
         <option value={SELECT_EMPTY_VALUE} disabled>
           {placeholder}
         </option>
-        {options.map((opt) => (
-          <option key={opt} value={opt}>
-            {opt}
+        {options.map(({ value, label }) => (
+          <option key={value} value={value}>
+            {label}
           </option>
         ))}
       </select>

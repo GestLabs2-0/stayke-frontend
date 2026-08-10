@@ -5,6 +5,7 @@ import {
   Montserrat,
   Plus_Jakarta_Sans,
 } from "next/font/google";
+import { Toaster } from "sileo";
 
 import { Footer } from "../components/layout/Footer/Footer";
 import { Navbar } from "../components/layout/Navbar/Navbar";
@@ -15,6 +16,7 @@ import "./globals.css";
 import AuthClientLayer from "@/components/auth/AuthClientLayer";
 import { EmbeddedProvider } from "@/context/EmbeddedProvider";
 import { NetworkContextProvider } from "@/context/NetworkContext";
+import { ProfileProvider } from "@/context/ProfileContext";
 import { WalletContextProvider } from "@/context/WalletContext";
 
 const geistSans = Geist({
@@ -57,17 +59,20 @@ export default async function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} ${montserrat.variable} ${plusJakartaSans.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <NetworkContextProvider>
-          <EmbeddedProvider>
+        <EmbeddedProvider>
+          <NetworkContextProvider>
             <WalletContextProvider>
-              <AuthClientLayer>
-                <Navbar />
-                <main className="bg-white pt-10 flex-1">{children}</main>
-                <Footer />
-              </AuthClientLayer>
+              <ProfileProvider>
+                <AuthClientLayer>
+                  <Navbar />
+                  <main className="bg-white pt-10 flex-1">{children}</main>
+                  <Footer />
+                </AuthClientLayer>
+              </ProfileProvider>
             </WalletContextProvider>
-          </EmbeddedProvider>
-        </NetworkContextProvider>
+          </NetworkContextProvider>
+        </EmbeddedProvider>
+        <Toaster position="top-right" theme="dark" />
       </body>
     </html>
   );

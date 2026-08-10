@@ -16,10 +16,9 @@ allowBuilds:
 
 lockfileIncludeTarballUrl: true
 
-
 minimumReleaseAgeExclude:
-  - '@GestLabs2-0/stayke-config@1.0.3'
-  - '@GestLabs2-0/stayke-core@1.0.3'
-  - '@GestLabs2-0/stayke-disputes@1.0.3'
-  - '@GestLabs2-0/stayke-escrow@1.0.3'
-  - '@GestLabs2-0/stayke-treasury@1.0.3'
+  - '@GestLabs2-0/stayke-config'
+  - '@GestLabs2-0/stayke-core'
+  - '@GestLabs2-0/stayke-disputes'
+  - '@GestLabs2-0/stayke-escrow'
+  - '@GestLabs2-0/stayke-treasury'

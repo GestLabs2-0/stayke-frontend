@@ -38,12 +38,14 @@ export interface DeleteParams {
 export interface LocalStorageKeys {
   accessToken: string;
   refreshToken: string;
+  dynamicSession: string;
 }
 
 export interface ApiResponse<T> {
   status: boolean;
   data: T | null;
   message: string | string[];
+  errors?: string[];
 }
 
 export interface LoginResponse {
