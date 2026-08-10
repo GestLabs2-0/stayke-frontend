@@ -38,6 +38,7 @@ export interface DeleteParams {
 export interface LocalStorageKeys {
   accessToken: string;
   refreshToken: string;
+  dynamicSession: string;
 }
 
 export interface ApiResponse<T> {

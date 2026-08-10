@@ -12,11 +12,16 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import {
   API_URL,
+  DEFAULT_NETWORK,
   DYNAMIC_CLIENT_ID,
   ENVIRONMENT,
   FRONTEND_URL,
+  GENESIS_HASH,
+  RPC_URL,
 } from "@/shared/constants";
-import { RPC_URL } from "../shared/constants";
+import type { ClusterNames } from "@/types";
+
+const CLUSTER = DEFAULT_NETWORK as ClusterNames;
 
 export const client = createDynamicClient({
   // biome-ignore  lint/style/noNonNullAssertion: already checked
@@ -24,29 +29,40 @@ export const client = createDynamicClient({
   coreConfig: {
     ...(ENVIRONMENT === "production" && { apiBaseUrl: `${API_URL}/api/v0` }),
   },
+  logLevel: "error",
   transformers: {
-    networksData: (networks) => [
-      ...networks,
-      {
-        blockExplorerUrls: ["https://explorer.solana.com"],
-        chain: "SOL",
-        displayName: "LocalNet",
-        cluster: "custom",
-        iconUrl:
-          "https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png",
-        name: "Local Network",
-        networkId: "solana-custom",
-        rpcUrls: {
-          http: [RPC_URL],
-        },
-        nativeCurrency: {
-          decimals: 9,
-          name: "SOL",
-          symbol: "SOL",
-        },
-        testnet: true,
-      } satisfies NetworkData,
-    ],
+    networksData: (networks) => {
+      // mainnet/devnet/testnet: usar las redes del dashboard con RPC override
+      if (CLUSTER !== "localnet") {
+        return networks
+          .filter((n) => n.chain === "SOL" && n.cluster === CLUSTER)
+          .map((n) => ({ ...n, rpcUrls: { http: [RPC_URL] } }));
+      }
+
+      // custom: inyectar red localnet (Phantom necesita addNetwork explícito)
+      return [
+        {
+          blockExplorerUrls: ["https://explorer.solana.com"],
+          chain: "SOL",
+          displayName: "LocalNet",
+          cluster: "custom",
+          iconUrl:
+            "https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png",
+          name: "Local Network",
+          networkId: "solana-custom",
+          rpcUrls: {
+            http: [RPC_URL],
+          },
+          nativeCurrency: {
+            decimals: 9,
+            name: "SOL",
+            symbol: "SOL",
+          },
+          testnet: true,
+          ...(GENESIS_HASH ? { genesisHash: GENESIS_HASH } : {}),
+        } satisfies NetworkData,
+      ];
+    },
   },
   metadata: {
     name: "Stayke",

@@ -9,7 +9,7 @@ export function getExplorerUrl(
   const url = new URL(path, base);
 
   if (cluster !== "mainnet") {
-    if (cluster === "custom") {
+    if (cluster === "localnet") {
       url.searchParams.set("cluster", "custom");
       url.searchParams.set("customUrl", customUrl ?? "http://localhost:8899");
     } else {

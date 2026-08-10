@@ -1,31 +1,29 @@
 "use client";
 
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import type { ReactNode } from "react";
 import { useState } from "react";
 
+import { RouteGuard } from "@/components/auth/RouteGuard";
 import { ProfileSidebar } from "@/components/profile/ProfileSidebar";
-import { routes } from "@/constants/routes";
 import { useProfile } from "@/hooks/useProfile";
 import { useWalletContext } from "@/hooks/useWallet";
 
 function ProfileShell({ children }: { children: ReactNode }) {
-  const pathname = usePathname();
   const { mode, setMode, profile, mobileOpen, setMobileOpen } = useProfile();
   const router = useRouter();
   const { logout } = useWalletContext();
 
   const [expanded, setExpanded] = useState(false);
 
-  // Determine active sidebar item from the current path
-  const activeItem = pathname === "/profile" ? "profile" : "profile";
-
-  const handleNavigate = (id: string) => {
+  const handleNavigate = (id: string, link: string) => {
     if (id === "logout") {
       logout();
+      return;
     }
-    if (id === "profile") {
-      router.push(routes.Profile);
+    if (link) {
+      router.prefetch(link);
+      router.push(link);
     }
   };
 
@@ -34,9 +32,8 @@ function ProfileShell({ children }: { children: ReactNode }) {
       <ProfileSidebar
         expanded={expanded}
         onToggleExpand={() => setExpanded((e) => !e)}
-        activeItem={activeItem}
-        onNavigate={(id) => {
-          handleNavigate(id);
+        onNavigate={(id, link) => {
+          handleNavigate(id, link);
           setMobileOpen(false);
         }}
         mode={mode}
@@ -59,5 +56,9 @@ function ProfileShell({ children }: { children: ReactNode }) {
 }
 
 export default function ProfileLayout({ children }: { children: ReactNode }) {
-  return <ProfileShell>{children}</ProfileShell>;
+  return (
+    <RouteGuard mode="protected">
+      <ProfileShell>{children}</ProfileShell>
+    </RouteGuard>
+  );
 }

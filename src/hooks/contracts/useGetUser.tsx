@@ -1,10 +1,12 @@
 import type { Account, Address } from "@solana/kit";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 import type { ReputationProfile, UserProfile } from "@GestLabs2-0/stayke-core";
 import {
-  fetchReputationProfile,
-  fetchUserProfile,
+  fetchMaybeReputationProfile,
+  fetchMaybeUserProfile,
+  findReputationProfilePda,
+  findUserProfilePda,
 } from "@GestLabs2-0/stayke-core";
 import useNetwork from "../useNetwork";
 
@@ -17,24 +19,34 @@ export function useGetUser(wallet: Address | null) {
     useState<Account<ReputationProfile> | null>(null);
   const [loading, setLoading] = useState(false);
 
-  async function fetchUserData() {
+  const fetchUserData = useCallback(async () => {
     setLoading(true);
     if (!wallet) {
       return;
     }
     try {
-      const [userProfileData, reputationProfileData] = await Promise.all([
-        fetchUserProfile(client.rpc, wallet),
-        fetchReputationProfile(client.rpc, wallet),
+      const [[userProfilePda], [userReputationPda]] = await Promise.all([
+        findUserProfilePda({ authority: wallet }),
+        findReputationProfilePda({
+          authority: wallet,
+        }),
       ]);
-      setUserProfile(userProfileData);
-      setReputationProfile(reputationProfileData);
+
+      const [userProfileData, reputationProfileData] = await Promise.all([
+        fetchMaybeUserProfile(client.rpc, userProfilePda),
+        fetchMaybeReputationProfile(client.rpc, userReputationPda),
+      ]);
+      if (userProfileData.exists && reputationProfileData.exists) {
+        setUserProfile(userProfileData);
+        setReputationProfile(reputationProfileData);
+      }
+      console.log(userProfileData, reputationProfileData);
     } catch (error) {
       console.error("Error fetching user data:", error);
     } finally {
       setLoading(false);
     }
-  }
+  }, [wallet, client.rpc]);
 
   return {
     fetchUserData,
@@ -43,3 +55,32 @@ export function useGetUser(wallet: Address | null) {
     reputationProfile,
   };
 }
+
+// async function fetchUserData(wallet: Address | null) {
+//   setLoading(true);
+//   if (!wallet) {
+//     return;
+//   }
+//   try {
+//     const [[userProfilePda], [userReputationPda]] = await Promise.all([
+//       findUserProfilePda({ authority: wallet }),
+//       findReputationProfilePda({
+//         authority: wallet,
+//       }),
+//     ]);
+
+//     const [userProfileData, reputationProfileData] = await Promise.all([
+//       fetchMaybeUserProfile(client.rpc, userProfilePda),
+//       fetchMaybeReputationProfile(client.rpc, userReputationPda),
+//     ]);
+//     if (userProfileData.exists && reputationProfileData.exists) {
+//       setUserProfile(userProfileData);
+//       setReputationProfile(reputationProfileData);
+//     }
+//     console.log(userProfileData, reputationProfileData);
+//   } catch (error) {
+//     console.error("Error fetching user data:", error);
+//   } finally {
+//     setLoading(false);
+//   }
+// }

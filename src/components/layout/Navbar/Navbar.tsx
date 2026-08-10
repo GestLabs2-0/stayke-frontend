@@ -6,14 +6,11 @@ import Link from "next/link";
 import { useRef, useState } from "react";
 
 import { AuthModal } from "@/components/auth/AuthModal";
-import { NETWORK_SELECTOR } from "@/shared/constants";
 import { linkNavegation } from "../../../constants/constants";
 import { routes } from "../../../constants/routes";
 import { LogoStayke } from "../../../icons/LogoStayke";
-import { NetworkSelector } from "../NetworkSelector";
 import { NavbarMenuDesktop } from "./NavbarMenuDesktop";
 import { NavbarMobileDropdown } from "./NavbarMobile";
-// import { NetworkSelector } from "./NetworkSelector";
 
 export const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
@@ -121,11 +118,6 @@ export const Navbar = () => {
             />
           </div>
         </div>
-        {NETWORK_SELECTOR && (
-          <div className="flex items-center gap-3">
-            <NetworkSelector />
-          </div>
-        )}
         {/* Mobile Interface */}
         <div className="flex md:hidden items-center justify-between w-full">
           {user ? (

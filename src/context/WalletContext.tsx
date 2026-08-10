@@ -33,6 +33,7 @@ type WalletContextProps = {
   reputationProfile: Account<ReputationProfile> | null;
   userProfile: Account<UserProfileOnchain> | null;
   userBackend: UserProfileResponse | null;
+  isLoadingUser: boolean;
   refetchAccounts: () => Promise<void>;
 };
 
@@ -43,6 +44,7 @@ export const WalletContext = createContext<WalletContextProps>({
   reputationProfile: null,
   userProfile: null,
   userBackend: null,
+  isLoadingUser: false,
   refetchAccounts: () => Promise.resolve(),
 });
 
@@ -59,6 +61,7 @@ export const WalletContextProvider = ({
   const [userBackend, setUserBackend] = useState<UserProfileResponse | null>(
     null,
   );
+  const [isLoadingUser, setIsLoadingUser] = useState(true);
 
   const userWallet = useMemo(() => {
     if (walletAccounts && walletAccounts.length > 0) {
@@ -73,6 +76,7 @@ export const WalletContextProvider = ({
 
   const fetchUserBackend = useCallback(async () => {
     if (userWallet) {
+      setIsLoadingUser(true);
       try {
         const response = await staykeApi.me();
         if (response.status) {
@@ -81,9 +85,12 @@ export const WalletContextProvider = ({
       } catch (error) {
         console.error("Error fetching user backend data:", error);
         setUserBackend(null);
+      } finally {
+        setIsLoadingUser(false);
       }
     } else {
       setUserBackend(null);
+      setIsLoadingUser(false);
     }
   }, [userWallet]);
 
@@ -119,6 +126,7 @@ export const WalletContextProvider = ({
         reputationProfile,
         userProfile,
         userBackend,
+        isLoadingUser,
         refetchAccounts,
       }}
     >

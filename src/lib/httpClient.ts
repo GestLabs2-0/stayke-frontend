@@ -1,3 +1,4 @@
+import { getDefaultClient } from "@dynamic-labs-sdk/client";
 import type { Axios, AxiosError } from "axios";
 
 import type {
@@ -28,7 +29,9 @@ export class HttpClient implements HttpClientInterface {
    */
   getAuthorization() {
     return {
-      token: localStorage.getItem(this.localStorageKeys.accessToken),
+      token:
+        getDefaultClient().token ??
+        localStorage.getItem(this.localStorageKeys.accessToken),
     };
   }
 
@@ -64,13 +67,13 @@ export class HttpClient implements HttpClientInterface {
     const { token } = this.getAuthorization();
 
     const { headers: headers_, ...restOptions } = options;
-
+    console.log(token);
     return this.http.post(this.readUrl(url), body, {
       headers: {
         ...this.default_headers,
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
         ...headers,
         ...headers_,
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },
       ...restOptions,
     });
@@ -78,7 +81,6 @@ export class HttpClient implements HttpClientInterface {
 
   async put({ url = "", body = {}, headers = {}, options = {} }: PutParams) {
     const { token } = this.getAuthorization();
-
     return this.http.put(this.readUrl(url), body, {
       headers: {
         ...this.default_headers,
