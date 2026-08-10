@@ -1,6 +1,7 @@
 export const routes = {
   // Navbar routes
   Home: "/",
+  Profile: "/profile",
   Accommodation: "/Accommodation",
   Experiences: "/Experiences",
   AboutUs: "/AboutUs",

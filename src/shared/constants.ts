@@ -4,7 +4,6 @@ export const CLUSTERS: ClusterNames[] = [
   "mainnet",
   "devnet",
   "testnet",
-  "localnet",
   "custom",
 ];
 
@@ -35,7 +34,7 @@ export const LOCAL_STORAGE_KEYS = {
 };
 
 export const API_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/api/v1.0";
 
 export const JWT_DURATION = Number(
   process.env.NEXT_PUBLIC_JWT_DURATION ?? "86400",

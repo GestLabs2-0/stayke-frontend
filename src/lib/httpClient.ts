@@ -122,9 +122,13 @@ export function handleApiError<T>(
   error: unknown,
   result: ApiResponse<T>,
 ): ApiResponse<T> {
-  const axiosError = error as AxiosError<{ message?: string }>;
+  const axiosError = error as AxiosError<{
+    message?: string;
+    errors?: string[];
+  }>;
   console.log(axiosError);
   const message = axiosError.response?.data?.message;
   result.message = message || "Ocurrió un error inesperado.";
+  result.errors = axiosError.response?.data?.errors || [];
   return result;
 }
