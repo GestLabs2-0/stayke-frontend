@@ -11,5 +11,6 @@ export type RouteGuardMode = "protected" | "guest-only";
 
 export type RouteGuardProps = {
   mode: RouteGuardMode;
+  excludeRoute?: string;
   children: ReactNode;
 };

@@ -1,7 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { createContext, useMemo, useState } from "react";
+import { createContext, useEffect, useMemo, useState } from "react";
 
 import { useWalletContext } from "@/hooks/useWallet";
 import type { ProfileData, ProfileMode } from "@/types/profile";
@@ -23,12 +23,27 @@ function computeScore(totalScore: bigint, reviews: number): number {
   return Math.round(average * 10) / 10;
 }
 
+const LOCAL_STORAGE_KEYS = {
+  mode: "mode",
+};
+
 // ── Provider ──
 
 export function ProfileProvider({ children }: { children: ReactNode }) {
-  const [mode, setMode] = useState<ProfileMode>("host");
+  const [mode, setMode] = useState<ProfileMode>(() => {
+    if (typeof window !== "undefined") {
+      const localMode = localStorage.getItem(LOCAL_STORAGE_KEYS.mode);
+      if (localMode && (localMode === "host" || localMode === "guest"))
+        return localMode;
+    }
+    return "guest";
+  });
   const [mobileOpen, setMobileOpen] = useState(false);
   const { userProfile, userBackend, reputationProfile } = useWalletContext();
+
+  useEffect(() => {
+    localStorage.setItem(LOCAL_STORAGE_KEYS.mode, mode);
+  }, [mode]);
 
   const profile: ProfileData = useMemo(() => {
     const hasIdentityPda = userProfile?.data.identity.__option === "Some";

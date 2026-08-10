@@ -20,7 +20,6 @@ import type {
   ReputationProfile,
   UserProfile as UserProfileOnchain,
 } from "@GestLabs2-0/stayke-core";
-import { routes } from "@/constants/routes";
 import { useGetUser } from "@/hooks/contracts/useGetUser";
 import { useAutoCreateWaasWallets } from "@/hooks/useAutoCreateWallets";
 import { staykeApi } from "@/lib/staykeApi";
@@ -99,12 +98,6 @@ export const WalletContextProvider = ({
       console.error("Error fetching user data:", error);
     });
   }, [fetchUserData, fetchUserBackend]);
-
-  useEffect(() => {
-    if (!userBackend && userWallet) {
-      router.push(routes.Register);
-    }
-  }, [userBackend, userWallet, router]);
 
   const refetchAccounts = useCallback(async () => {
     await Promise.all([fetchUserData(), fetchUserBackend()]).catch((error) => {

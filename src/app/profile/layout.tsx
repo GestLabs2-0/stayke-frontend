@@ -6,6 +6,7 @@ import { useState } from "react";
 
 import { RouteGuard } from "@/components/auth/RouteGuard";
 import { ProfileSidebar } from "@/components/profile/ProfileSidebar";
+import { routes } from "@/constants/routes";
 import { useProfile } from "@/hooks/useProfile";
 import { useWalletContext } from "@/hooks/useWallet";
 
@@ -57,7 +58,7 @@ function ProfileShell({ children }: { children: ReactNode }) {
 
 export default function ProfileLayout({ children }: { children: ReactNode }) {
   return (
-    <RouteGuard mode="protected">
+    <RouteGuard mode="protected" excludeRoute={routes.Profile.index}>
       <ProfileShell>{children}</ProfileShell>
     </RouteGuard>
   );

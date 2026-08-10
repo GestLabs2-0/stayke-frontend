@@ -1,7 +1,7 @@
 "use client";
 
 import { useUser } from "@dynamic-labs-sdk/react-hooks";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 import { routes } from "@/constants/routes";
@@ -18,9 +18,10 @@ import type { RouteGuardProps } from "@/types/routeGuard";
  * Renders `null` while the auth/backend state is still resolving so it never
  * flashes protected content or a registration form at the wrong user.
  */
-export function RouteGuard({ mode, children }: RouteGuardProps) {
+export function RouteGuard({ mode, children, excludeRoute }: RouteGuardProps) {
   const { isPending, isFetched } = useUser();
   const { isAuthenticated, userBackend, isLoadingUser } = useWalletContext();
+  const pathname = usePathname();
   const router = useRouter();
 
   const authResolved = !isPending && isFetched;
@@ -40,10 +41,16 @@ export function RouteGuard({ mode, children }: RouteGuardProps) {
       : routes.Profile.index;
 
   useEffect(() => {
+    if (excludeRoute && isAuthenticated) {
+      if (shouldRedirect && !pathname.includes(excludeRoute)) {
+        router.replace(target);
+      }
+      return;
+    }
     if (shouldRedirect) {
       router.replace(target);
     }
-  }, [shouldRedirect, target, router]);
+  }, [shouldRedirect, target, router, pathname, excludeRoute, isAuthenticated]);
 
   if (!determined || shouldRedirect) return null;
 
