@@ -12,8 +12,12 @@ import { ImageUpload } from "@/components/profile/properties/ImageUpload";
 import { LocationMap } from "@/components/profile/properties/LocationMap";
 import { PropertyPreview } from "@/components/profile/properties/PropertyPreview";
 import { SectionCard } from "@/components/profile/properties/SectionCard";
-import { useWalletContext } from "@/hooks/useWallet";
 import { parseDraft, serializeDraft } from "@/helpers/draft";
+import { hexToUint8Array } from "@/helpers/hexToUint8Array";
+import useNetwork from "@/hooks/useNetwork";
+import { useSignAndSendTx } from "@/hooks/useSignAndSendTx";
+import { useWalletContext } from "@/hooks/useWallet";
+import { buildInitPropertyTx } from "@/lib/contracts/buildInitPropertyTx";
 import { staykeApi } from "@/lib/staykeApi";
 import type { CreatePropertyFormValues } from "@/types/property/createProperty";
 import {
@@ -37,7 +41,10 @@ export function CreatePropertyForm() {
   const [showDraftBanner, setShowDraftBanner] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
 
-  const { userProfile } = useWalletContext();
+  const { userProfile, userWallet, refetchAccounts } = useWalletContext();
+  const { client } = useNetwork();
+  const { handleSignAndSend, loading: loadingSignAndSend } =
+    useSignAndSendTx(userWallet);
 
   const latestRef = useRef(CREATE_PROPERTY_INITIAL_VALUES);
 
@@ -60,6 +67,10 @@ export function CreatePropertyForm() {
         sileo.error({ title: "Tu perfil on-chain no está disponible aún" });
         return;
       }
+      if (!userWallet) {
+        sileo.error({ title: "No se pudo obtener tu billetera" });
+        return;
+      }
 
       try {
         const listingId = userProfile.data.listings;
@@ -68,19 +79,43 @@ export function CreatePropertyForm() {
           listingId,
         });
 
+        // 1. Create the property off-chain (backend), using the listing PDA.
         const payload = toCreatePropertyRequest(formValues, listingPda);
         const result = await staykeApi.createProperty(payload);
 
-        if (result.status) {
-          sileo.success({ title: "Propiedad creada con éxito" });
-          localStorage.removeItem(DRAFT_KEY);
-          helpers.resetForm();
-        } else {
+        if (!result.status || !result.data) {
           const msg = Array.isArray(result.message)
             ? result.message.join(", ")
             : result.message;
           sileo.error({ title: msg || "Error al crear la propiedad" });
+          return;
         }
+
+        // 2. Initialize the property on-chain (stayke-core initializeListing).
+        const stateHash = hexToUint8Array(result.data.hashedValue);
+        const contentRef = new Uint8Array(32); // TODO: Arweave/IPFS content ref
+        const { tx } = await buildInitPropertyTx({
+          wallet: userWallet,
+          userProfile: userProfile.address,
+          listingId,
+          price: formValues.price,
+          stateHash,
+          contentRef,
+          client,
+        });
+
+        const { status } = await handleSignAndSend(tx);
+        if (!status) {
+          sileo.error({
+            title: "No se pudo crear la propiedad en blockchain",
+          });
+          return;
+        }
+
+        await refetchAccounts();
+        sileo.success({ title: "Propiedad creada con éxito" });
+        localStorage.removeItem(DRAFT_KEY);
+        helpers.resetForm();
       } catch {
         sileo.error({ title: "Error al conectar con el servidor" });
       }
@@ -182,11 +217,12 @@ export function CreatePropertyForm() {
 
   const submitLabel = useMemo(() => {
     if (!userProfile) return "Cargando perfil...";
+    if (loadingSignAndSend) return "Creando en blockchain...";
     if (isSubmitting) return "Guardando...";
     return "Guardar";
-  }, [userProfile, isSubmitting]);
+  }, [userProfile, loadingSignAndSend, isSubmitting]);
 
-  const disableSubmit = isSubmitting || !userProfile;
+  const disableSubmit = isSubmitting || loadingSignAndSend || !userProfile;
 
   // ── Render ──
 
