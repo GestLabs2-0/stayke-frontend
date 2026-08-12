@@ -1,3 +1,5 @@
+import type { CreatePropertyRequest, PropertyType } from "@/types/api/property";
+
 // ── Predefined options ──
 
 export const PREDEFINED_AMENITIES = [
@@ -24,58 +26,95 @@ export const PREDEFINED_RULES = [
   "No zapatos en interiores",
 ] as const;
 
+export const PROPERTY_TYPE_OPTIONS: { value: PropertyType; label: string }[] = [
+  { value: "casa", label: "Casa" },
+  { value: "apto", label: "Apartamento" },
+  { value: "cabaña", label: "Cabaña" },
+  { value: "otro", label: "Otro" },
+];
+
 // ── Form values (what the form collects) ──
 
 export interface CreatePropertyFormValues {
-  name: string;
+  pda: string;
+  title: string;
   description: string;
+  propertyType: PropertyType;
+  countryCode: string;
+  city: string;
+  state: string;
   address: string;
-  addressGuide: string;
+  addressHint: string;
   latitude: number | null;
   longitude: number | null;
   images: File[];
   amenities: string[];
-  rules: string[];
-  checkIn: string; // HH:mm
-  checkOut: string; // HH:mm
-  maxGuests: number;
-  pricePerNight: number;
-}
-
-// ── API payload (what gets sent to the backend) ──
-
-export interface CreatePropertyPayload {
-  name: string;
-  description: string;
-  address: string;
-  addressGuide: string;
-  latitude: number;
-  longitude: number;
-  amenities: string[];
-  rules: string[];
-  checkIn: string;
-  checkOut: string;
-  maxGuests: number;
-  pricePerNight: number;
+  houseRules: string[];
+  maxGuest: number;
+  bedrooms: number;
+  bathrooms: number;
+  price: number;
+  minNights: number;
+  maxNights: number;
+  checkinTime: string;
+  checkoutTime: string;
 }
 
 // ── Default values for Formik ──
 
 export const CREATE_PROPERTY_INITIAL_VALUES: CreatePropertyFormValues = {
-  name: "",
+  pda: "",
+  title: "",
   description: "",
+  propertyType: "casa",
+  countryCode: "",
+  city: "",
+  state: "",
   address: "",
-  addressGuide: "",
+  addressHint: "",
   latitude: null,
   longitude: null,
   images: [],
   amenities: [],
-  rules: [],
-  checkIn: "15:00",
-  checkOut: "11:00",
-  maxGuests: 1,
-  pricePerNight: 0,
+  houseRules: [],
+  maxGuest: 1,
+  bedrooms: 0,
+  bathrooms: 0,
+  price: 0,
+  minNights: 1,
+  maxNights: 7,
+  checkinTime: "15:00",
+  checkoutTime: "11:00",
 };
+
+// ── Converts form values to API payload ──
+
+export function toCreatePropertyRequest(
+  values: CreatePropertyFormValues,
+): CreatePropertyRequest {
+  return {
+    pda: values.pda,
+    title: values.title,
+    description: values.description,
+    propertyType: values.propertyType,
+    countryCode: values.countryCode,
+    city: values.city,
+    state: values.state,
+    address: values.address,
+    addressHint: values.addressHint,
+    latitude: values.latitude ?? 0,
+    longitude: values.longitude ?? 0,
+    maxGuest: values.maxGuest,
+    bedrooms: values.bedrooms,
+    bathrooms: values.bathrooms,
+    price: values.price,
+    minNights: values.minNights,
+    maxNights: values.maxNights,
+    checkinTime: values.checkinTime,
+    checkoutTime: values.checkoutTime,
+    houseRules: [...values.amenities, ...values.houseRules],
+  };
+}
 
 // ── Image config ──
 
