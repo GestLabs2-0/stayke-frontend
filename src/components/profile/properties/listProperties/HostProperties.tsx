@@ -88,7 +88,7 @@ export function HostProperties() {
       dialog.property.id,
       dispatchProperties,
     );
-    const activating = !dialog.property.active;
+    const activating = !dialog.property.isActive;
 
     sileo.success({
       title: activating ? "Propiedad activada" : "Propiedad desactivada",

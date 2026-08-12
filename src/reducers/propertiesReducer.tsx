@@ -1,6 +1,6 @@
 import type { Dispatch } from "react";
 
-import { hostPropertiesMock } from "@/components/profile/properties/listProperties/mockHostProperties";
+import { staykeApi } from "@/lib/staykeApi";
 import type {
   PropertiesReducerActions,
   PropertiesStateI,
@@ -75,40 +75,64 @@ export function fetchProperties(
 ) {
   action({ type: "set_loading", loading: true });
 
-  const filteredProperties = hostPropertiesMock.filter((item) => {
-    if (
-      filters.name &&
-      !item.name.toLowerCase().includes(filters.name.toLowerCase())
-    )
-      return false;
-    if (
-      filters.address &&
-      !item.address.toLowerCase().includes(filters.address.toLowerCase())
-    )
-      return false;
-    if (filters.reviewsFrom > item.reviews) return false;
-    if (filters.priceUpTo > item.pricePerNight) return false;
-    if (filters.status === "active" && !item.active) return false;
-    if (filters.status === "inactive" && item.active) return false;
+  const limit = 50;
 
-    return true;
-  });
+  staykeApi
+    .getProperties({ limit, offset: 0 })
+    .then((result) => {
+      if (!result.status || !result.data) {
+        action({ type: "set_loading", loading: false });
+        action({
+          type: "set_properties",
+          payload: { properties: [], pages: 0, totalCount: 0 },
+        });
+        return;
+      }
 
-  // Latencia simulada para el mock. Reemplazar por la llamada real al API.
-  return simulateLatency().then(() => {
-    const totalCount = filteredProperties.length;
-    const pages = Math.ceil(totalCount / 10);
-    action({ type: "set_loading", loading: false });
+      // Map backend response to HostProperty
+      const data = result.data as unknown as {
+        data: HostProperty[];
+        meta: { totalPages: number; total: number };
+      };
+      const properties = data.data ?? [];
+      const meta = data.meta;
 
-    action({
-      type: "set_properties",
-      payload: {
-        properties: filteredProperties,
-        pages,
-        totalCount,
-      },
+      // Client-side filtering for unsupported backend params
+      const filtered = properties.filter((item) => {
+        if (
+          filters.name &&
+          !item.title.toLowerCase().includes(filters.name.toLowerCase())
+        )
+          return false;
+        if (
+          filters.address &&
+          !item.address.toLowerCase().includes(filters.address.toLowerCase())
+        )
+          return false;
+        if (filters.reviewsFrom > (item.reviews ?? 0)) return false;
+        if (filters.priceUpTo > 0 && filters.priceUpTo < item.price)
+          return false;
+        if (filters.status === "active" && !item.isActive) return false;
+        if (filters.status === "inactive" && item.isActive) return false;
+        return true;
+      });
+
+      const totalCount = filtered.length;
+      const pages = Math.max(1, Math.ceil(totalCount / limit));
+
+      action({ type: "set_loading", loading: false });
+      action({
+        type: "set_properties",
+        payload: { properties: filtered, pages, totalCount },
+      });
+    })
+    .catch(() => {
+      action({ type: "set_loading", loading: false });
+      action({
+        type: "set_properties",
+        payload: { properties: [], pages: 0, totalCount: 0 },
+      });
     });
-  });
 }
 
 export function updatePropertieStatus(
@@ -118,27 +142,37 @@ export function updatePropertieStatus(
 ) {
   action({ type: "set_loading", loading: true });
 
-  const updatedProperties = properties.map((p) =>
-    p.id === id ? { ...p, active: !p.active } : p,
-  );
-
-  // Latencia simulada para el mock. Reemplazar por la llamada real al API.
-  return simulateLatency().then(() => {
-    const totalCount = updatedProperties.length;
-    const pages = Math.ceil(totalCount / 10);
+  const property = properties.find((p) => p.id === id);
+  if (!property) {
     action({ type: "set_loading", loading: false });
+    return;
+  }
 
-    action({
-      type: "set_properties",
-      payload: {
-        properties: updatedProperties,
-        pages,
-        totalCount,
-      },
+  const newActive = !property.isActive;
+
+  staykeApi
+    .updateProperty(id, { isActive: newActive })
+    .then((result) => {
+      if (!result.status) {
+        action({ type: "set_loading", loading: false });
+        return;
+      }
+
+      const updated = properties.map((p) =>
+        p.id === id ? { ...p, isActive: newActive } : p,
+      );
+
+      action({ type: "set_loading", loading: false });
+      action({
+        type: "set_properties",
+        payload: {
+          properties: updated,
+          pages: Math.max(1, Math.ceil(updated.length / 50)),
+          totalCount: updated.length,
+        },
+      });
+    })
+    .catch(() => {
+      action({ type: "set_loading", loading: false });
     });
-  });
-}
-
-function simulateLatency(ms = 600) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
 }

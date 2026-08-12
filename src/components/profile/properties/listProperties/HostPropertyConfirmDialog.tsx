@@ -24,7 +24,7 @@ export function HostPropertyConfirmDialog({
 
   if (!open || !property) return null;
 
-  const deactivating = property.active;
+  const deactivating = property.isActive;
 
   return (
     // biome-ignore lint/a11y/noStaticElementInteractions: is allowed
@@ -61,8 +61,8 @@ export function HostPropertyConfirmDialog({
 
         <p className="mt-3 font-sans text-sm text-[#434654]">
           {deactivating
-            ? `¿Querés dejar de recibir reservas en "${property.name}"? Podrás volver a activarla cuando quieras.`
-            : `¿Querés habilitar de nuevo "${property.name}" para recibir reservas?`}
+            ? `¿Querés dejar de recibir reservas en "${property.title}"? Podrás volver a activarla cuando quieras.`
+            : `¿Querés habilitar de nuevo "${property.title}" para recibir reservas?`}
         </p>
 
         <div className="mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
