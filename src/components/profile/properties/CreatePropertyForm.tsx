@@ -11,8 +11,8 @@ import { ImageUpload } from "@/components/profile/properties/ImageUpload";
 import { LocationMap } from "@/components/profile/properties/LocationMap";
 import { PropertyPreview } from "@/components/profile/properties/PropertyPreview";
 import { SectionCard } from "@/components/profile/properties/SectionCard";
-import { staykeApi } from "@/lib/staykeApi";
 import { parseDraft, serializeDraft } from "@/helpers/draft";
+import { staykeApi } from "@/lib/staykeApi";
 import type { CreatePropertyFormValues } from "@/types/property/createProperty";
 import {
   CREATE_PROPERTY_INITIAL_VALUES,
@@ -38,23 +38,6 @@ export function CreatePropertyForm() {
 
   const latestRef = useRef(CREATE_PROPERTY_INITIAL_VALUES);
 
-  // ── Fetch user wallet (pda) on mount ──
-
-  useEffect(() => {
-    staykeApi
-      .me()
-      .then((res) => {
-        if (res.status && res.data?.owner) {
-          setFieldValue("pda", res.data.owner);
-        }
-      })
-      .catch(() => {
-        sileo.info({ title: "No se pudo obtener tu billetera" });
-      })
-      .finally(() => setFetchingPda(false));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   const {
     values,
     errors,
@@ -79,10 +62,9 @@ export function CreatePropertyForm() {
           localStorage.removeItem(DRAFT_KEY);
           helpers.resetForm();
         } else {
-          const msg =
-            Array.isArray(result.message)
-              ? result.message.join(", ")
-              : result.message;
+          const msg = Array.isArray(result.message)
+            ? result.message.join(", ")
+            : result.message;
           sileo.error({ title: msg || "Error al crear la propiedad" });
         }
       } catch {
@@ -92,6 +74,22 @@ export function CreatePropertyForm() {
   });
 
   latestRef.current = values;
+
+  // ── Fetch user wallet (pda) on mount ──
+
+  useEffect(() => {
+    staykeApi
+      .me()
+      .then((res) => {
+        if (res.status && res.data?.owner) {
+          setFieldValue("pda", res.data.owner);
+        }
+      })
+      .catch(() => {
+        sileo.info({ title: "No se pudo obtener tu billetera" });
+      })
+      .finally(() => setFetchingPda(false));
+  }, [setFieldValue]);
 
   // ── Draft: restore on mount ──
 

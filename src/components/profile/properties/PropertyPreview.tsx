@@ -131,7 +131,9 @@ export function PropertyPreview({
           {(values.checkinTime || values.checkoutTime) && (
             <p className="font-sans text-sm text-secondary">
               Check-in: {values.checkinTime || "—"}
-              {values.checkoutTime ? ` \u2022 Check-out: ${values.checkoutTime}` : ""}
+              {values.checkoutTime
+                ? ` \u2022 Check-out: ${values.checkoutTime}`
+                : ""}
             </p>
           )}
 

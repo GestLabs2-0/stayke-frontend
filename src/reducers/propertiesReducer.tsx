@@ -95,7 +95,7 @@ export function fetchProperties(
         meta: { totalPages: number; total: number };
       };
       const properties = data.data ?? [];
-      const meta = data.meta;
+      const _meta = data.meta;
 
       // Client-side filtering for unsupported backend params
       const filtered = properties.filter((item) => {
