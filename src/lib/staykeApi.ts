@@ -8,6 +8,12 @@ import type {
   DiditSessionResponse,
 } from "@/types/api/didit";
 import type {
+  CreatePropertyRequest,
+  EditPropertyRequest,
+  PropertyListApiResponse,
+  PropertyResponse,
+} from "@/types/api/property";
+import type {
   ApiResponse,
   HttpClientInterface,
   LoginResponse,
@@ -150,6 +156,90 @@ export class StaykeApi {
       }
       result.data = rawResponse.data;
 
+      result.message = rawResponse.message;
+      return result;
+    } catch (error) {
+      return handleApiError(error, result);
+    }
+  }
+
+  // ── Properties ──
+
+  async createProperty(body: CreatePropertyRequest) {
+    const result: ApiResponse<PropertyResponse> = {
+      data: null,
+      status: false,
+      message: "",
+    };
+
+    try {
+      const { data } = await this.httpClient.post({
+        url: "/properties",
+        body,
+      });
+
+      const rawResponse = data as ApiResponse<PropertyResponse>;
+
+      if (rawResponse?.status) {
+        result.status = true;
+      }
+      result.data = rawResponse.data;
+      result.message = rawResponse.message;
+      return result;
+    } catch (error) {
+      return handleApiError(error, result);
+    }
+  }
+
+  async getProperties(params?: { limit?: number; offset?: number }) {
+    const result: ApiResponse<PropertyListApiResponse> = {
+      data: null,
+      status: false,
+      message: "",
+    };
+
+    try {
+      const queryParams = new URLSearchParams();
+      if (params?.limit) queryParams.append("limit", String(params.limit));
+      if (params?.offset) queryParams.append("offset", String(params.offset));
+
+      const query = queryParams.toString();
+      const url = query ? `/properties?${query}` : "/properties";
+
+      const { data } = await this.httpClient.get({ url });
+
+      const rawResponse = data as ApiResponse<PropertyListApiResponse>;
+
+      if (rawResponse?.status) {
+        result.status = true;
+      }
+      result.data = rawResponse.data;
+      result.message = rawResponse.message;
+      return result;
+    } catch (error) {
+      return handleApiError(error, result);
+    }
+  }
+
+  async updateProperty(id: string, body: EditPropertyRequest) {
+    const result: ApiResponse<PropertyResponse> = {
+      data: null,
+      status: false,
+      message: "",
+    };
+
+    try {
+      const { data } = await this.httpClient.put({
+        url: `/properties/${id}`,
+        body,
+      });
+
+      const rawResponse = data as ApiResponse<PropertyResponse>;
+
+      if (rawResponse?.status) {
+        result.status = true;
+      }
+      result.data = rawResponse.data;
       result.message = rawResponse.message;
       return result;
     } catch (error) {

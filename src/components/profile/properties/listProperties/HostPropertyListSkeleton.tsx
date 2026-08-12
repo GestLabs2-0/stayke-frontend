@@ -1,9 +1,13 @@
 "use client";
 
+const skeleton = Array.from({ length: 4 }, () => {
+  return crypto.randomUUID();
+});
+
 export function HostPropertyListSkeleton() {
   return (
     <div className="space-y-3">
-      {Array.from({ length: 4 }, crypto.randomUUID).map((key) => (
+      {skeleton.map((key) => (
         <article
           key={key}
           className="card-white animate-skeleton-pulse flex flex-col gap-4 p-4 sm:flex-row sm:items-center"
