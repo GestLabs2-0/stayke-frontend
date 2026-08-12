@@ -22,7 +22,7 @@ export interface HostProperty {
   maxNights: number;
   checkinTime: string;
   checkoutTime: string;
-  houseRules: string[];
+  houseRules: string;
   hashedValue: string;
   isActive: boolean;
   blockChainExists?: boolean;

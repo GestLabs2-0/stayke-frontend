@@ -24,7 +24,7 @@ export interface PropertyResponse {
   maxNights: number;
   checkinTime: string;
   checkoutTime: string;
-  houseRules: string[];
+  houseRules: string;
   hashedValue: string;
   isActive?: boolean;
   blockChainExists?: boolean;
@@ -52,7 +52,7 @@ export interface CreatePropertyRequest {
   maxNights: number;
   checkinTime: string;
   checkoutTime: string;
-  houseRules: string[];
+  houseRules: string;
 }
 
 export interface EditPropertyRequest {
@@ -74,7 +74,7 @@ export interface EditPropertyRequest {
   maxNights?: number;
   checkinTime?: string;
   checkoutTime?: string;
-  houseRules?: string[];
+  houseRules?: string;
   isActive?: boolean;
 }
 

@@ -112,7 +112,8 @@ export function toCreatePropertyRequest(
     maxNights: values.maxNights,
     checkinTime: values.checkinTime,
     checkoutTime: values.checkoutTime,
-    houseRules: [...values.amenities, ...values.houseRules],
+    // Backend stores houseRules as a single string; serialize amenities + rules
+    houseRules: JSON.stringify([...values.amenities, ...values.houseRules]),
   };
 }
 
