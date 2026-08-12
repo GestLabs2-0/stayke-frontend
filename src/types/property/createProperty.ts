@@ -36,7 +36,6 @@ export const PROPERTY_TYPE_OPTIONS: { value: PropertyType; label: string }[] = [
 // ── Form values (what the form collects) ──
 
 export interface CreatePropertyFormValues {
-  pda: string;
   title: string;
   description: string;
   propertyType: PropertyType;
@@ -63,7 +62,6 @@ export interface CreatePropertyFormValues {
 // ── Default values for Formik ──
 
 export const CREATE_PROPERTY_INITIAL_VALUES: CreatePropertyFormValues = {
-  pda: "",
   title: "",
   description: "",
   propertyType: "casa",
@@ -91,9 +89,10 @@ export const CREATE_PROPERTY_INITIAL_VALUES: CreatePropertyFormValues = {
 
 export function toCreatePropertyRequest(
   values: CreatePropertyFormValues,
+  pda: string,
 ): CreatePropertyRequest {
   return {
-    pda: values.pda,
+    pda,
     title: values.title,
     description: values.description,
     propertyType: values.propertyType,

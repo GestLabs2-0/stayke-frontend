@@ -4,6 +4,7 @@ import { useFormik } from "formik";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { sileo } from "sileo";
 
+import { findListingPda } from "@GestLabs2-0/stayke-core";
 import { ChipSelector } from "@/components/profile/properties/ChipSelector";
 import { FormInput } from "@/components/profile/properties/FormInput";
 import { FormTextarea } from "@/components/profile/properties/FormTextarea";
@@ -11,6 +12,7 @@ import { ImageUpload } from "@/components/profile/properties/ImageUpload";
 import { LocationMap } from "@/components/profile/properties/LocationMap";
 import { PropertyPreview } from "@/components/profile/properties/PropertyPreview";
 import { SectionCard } from "@/components/profile/properties/SectionCard";
+import { useWalletContext } from "@/hooks/useWallet";
 import { parseDraft, serializeDraft } from "@/helpers/draft";
 import { staykeApi } from "@/lib/staykeApi";
 import type { CreatePropertyFormValues } from "@/types/property/createProperty";
@@ -34,7 +36,8 @@ const AUTO_SAVE_INTERVAL = 30_000;
 export function CreatePropertyForm() {
   const [showDraftBanner, setShowDraftBanner] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
-  const [fetchingPda, setFetchingPda] = useState(true);
+
+  const { userProfile } = useWalletContext();
 
   const latestRef = useRef(CREATE_PROPERTY_INITIAL_VALUES);
 
@@ -53,8 +56,19 @@ export function CreatePropertyForm() {
     validateOnBlur: true,
     validateOnChange: true,
     onSubmit: async (formValues, helpers) => {
+      if (!userProfile) {
+        sileo.error({ title: "Tu perfil on-chain no está disponible aún" });
+        return;
+      }
+
       try {
-        const payload = toCreatePropertyRequest(formValues);
+        const listingId = userProfile.data.listings;
+        const [listingPda] = await findListingPda({
+          userProfile: userProfile.address,
+          listingId,
+        });
+
+        const payload = toCreatePropertyRequest(formValues, listingPda);
         const result = await staykeApi.createProperty(payload);
 
         if (result.status) {
@@ -74,22 +88,6 @@ export function CreatePropertyForm() {
   });
 
   latestRef.current = values;
-
-  // ── Fetch user wallet (pda) on mount ──
-
-  useEffect(() => {
-    staykeApi
-      .me()
-      .then((res) => {
-        if (res.status && res.data?.owner) {
-          setFieldValue("pda", res.data.owner);
-        }
-      })
-      .catch(() => {
-        sileo.info({ title: "No se pudo obtener tu billetera" });
-      })
-      .finally(() => setFetchingPda(false));
-  }, [setFieldValue]);
 
   // ── Draft: restore on mount ──
 
@@ -183,12 +181,12 @@ export function CreatePropertyForm() {
   );
 
   const submitLabel = useMemo(() => {
-    if (fetchingPda) return "Obteniendo billetera...";
+    if (!userProfile) return "Cargando perfil...";
     if (isSubmitting) return "Guardando...";
     return "Guardar";
-  }, [fetchingPda, isSubmitting]);
+  }, [userProfile, isSubmitting]);
 
-  const disableSubmit = isSubmitting || fetchingPda || !values.pda;
+  const disableSubmit = isSubmitting || !userProfile;
 
   // ── Render ──
 
