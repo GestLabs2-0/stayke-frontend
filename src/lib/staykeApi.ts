@@ -11,7 +11,8 @@ import type {
 import type {
   CreatePropertyRequest,
   EditPropertyRequest,
-  PropertyListApiResponse,
+  GetPropertiesParams,
+  PropertyListResult,
   PropertyResponse,
 } from "@/types/api/property";
 import type {
@@ -197,33 +198,52 @@ export class StaykeApi {
     }
   }
 
-  async getProperties(params?: { limit?: number; offset?: number }) {
-    const result: ApiResponse<PropertyListApiResponse> = {
+  async getProperties(
+    params?: GetPropertiesParams,
+  ): Promise<PropertyListResult> {
+    const result: PropertyListResult = {
       data: null,
+      meta: null,
       status: false,
       message: "",
     };
 
     try {
       const queryParams = new URLSearchParams();
+
+      if (params?.hostId) queryParams.append("hostId", params.hostId);
+      if (params?.isActive !== undefined)
+        queryParams.append("isActive", String(params.isActive));
+      if (params?.location) queryParams.append("location", params.location);
+      if (params?.checkIn) queryParams.append("checkIn", params.checkIn);
+      if (params?.checkOut) queryParams.append("checkOut", params.checkOut);
+      if (params?.guests) queryParams.append("guests", String(params.guests));
+      if (params?.minPrice)
+        queryParams.append("minPrice", String(params.minPrice));
+      if (params?.maxPrice)
+        queryParams.append("maxPrice", String(params.maxPrice));
+      if (params?.page) queryParams.append("page", String(params.page));
       if (params?.limit) queryParams.append("limit", String(params.limit));
-      if (params?.offset) queryParams.append("offset", String(params.offset));
 
       const query = queryParams.toString();
       const url = query ? `/properties?${query}` : "/properties";
 
       const { data } = await this.httpClient.get({ url });
 
-      const rawResponse = data as ApiResponse<PropertyListApiResponse>;
-
-      if (rawResponse?.status) {
-        result.status = true;
-      }
-      result.data = rawResponse.data;
-      result.message = rawResponse.message;
+      const rawResponse = data as PropertyListResult;
+      result.status = rawResponse?.status === true;
+      result.data = rawResponse?.data ?? null;
+      result.meta = rawResponse?.meta ?? null;
+      result.message = rawResponse?.message ?? "";
       return result;
     } catch (error) {
-      return handleApiError(error, result);
+      const axiosError = error as {
+        response?: { data?: { message?: string; errors?: string[] } };
+      };
+      result.message =
+        axiosError.response?.data?.message || "Ocurrió un error inesperado.";
+      result.errors = axiosError.response?.data?.errors || [];
+      return result;
     }
   }
 

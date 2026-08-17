@@ -10,9 +10,11 @@ import { HostPropertyFilters } from "@/components/profile/properties/listPropert
 import { HostPropertyList } from "@/components/profile/properties/listProperties/HostPropertyList";
 import { HostPropertyPagination } from "@/components/profile/properties/listProperties/HostPropertyPagination";
 import { routes } from "@/constants/routes";
+import { useWalletContext } from "@/hooks/useWallet";
 import {
   fetchProperties,
   INITIAL_STATE_PROPERTIES,
+  PROPERTIES_PAGE_SIZE,
   propertiesReducer,
   updatePropertieStatus,
 } from "@/reducers/propertiesReducer";
@@ -26,6 +28,8 @@ export function HostProperties() {
     INITIAL_STATE_PROPERTIES,
   );
   const router = useRouter();
+  const { userBackend } = useWalletContext();
+  const owner = userBackend?.owner;
 
   const [dialog, setDialog] = useState<{
     open: boolean;
@@ -39,11 +43,12 @@ export function HostProperties() {
 
   useEffect(() => {
     const requestId = ++requestIdRef.current;
+    if (!owner) return;
     // Ignorar resoluciones obsoletas cuando un fetch más reciente ya corrió.
-    fetchProperties(propertiesState.filters, (action) => {
+    fetchProperties(propertiesState.filters, owner, (action) => {
       if (requestId === requestIdRef.current) dispatchProperties(action);
     });
-  }, [propertiesState.filters]);
+  }, [propertiesState.filters, owner]);
 
   const handleChange = useCallback(
     <K extends keyof PropertyFilters>(field: K, value: PropertyFilters[K]) => {
@@ -96,6 +101,12 @@ export function HostProperties() {
     setDialog({ open: false, property: null });
   }, [dialog.property, propertiesState.properties]);
 
+  const startIndex = (propertiesState.pageIndex - 1) * PROPERTIES_PAGE_SIZE;
+  const pageItems = propertiesState.properties.slice(
+    startIndex,
+    startIndex + PROPERTIES_PAGE_SIZE,
+  );
+
   return (
     <div className="space-y-6">
       <Breadcrumb />
@@ -121,7 +132,7 @@ export function HostProperties() {
       />
 
       <HostPropertyList
-        properties={propertiesState.properties}
+        properties={pageItems}
         totalCount={propertiesState.totalCount}
         loading={propertiesState.loading}
         onEdit={handleEdit}

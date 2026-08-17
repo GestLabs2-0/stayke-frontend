@@ -78,6 +78,21 @@ export interface EditPropertyRequest {
   isActive?: boolean;
 }
 
+// ── List query params (GET /properties) ──
+
+export interface GetPropertiesParams {
+  hostId?: string;
+  isActive?: boolean;
+  location?: string;
+  checkIn?: string;
+  checkOut?: string;
+  guests?: number;
+  minPrice?: number;
+  maxPrice?: number;
+  page?: number;
+  limit?: number;
+}
+
 // ── Paginated response ──
 
 export interface PaginationMeta {
@@ -89,11 +104,12 @@ export interface PaginationMeta {
   hasNextPage: boolean;
 }
 
-export interface PropertyListApiResponse {
+export interface PropertyListResult {
   status: boolean;
-  data: PropertyResponse[];
-  meta: PaginationMeta;
-  message: string;
+  data: PropertyResponse[] | null;
+  meta: PaginationMeta | null;
+  message: string | string[];
+  errors?: string[];
 }
 
 // ── Property type display labels ──

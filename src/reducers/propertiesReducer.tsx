@@ -1,12 +1,18 @@
 import type { Dispatch } from "react";
 
 import { staykeApi } from "@/lib/staykeApi";
+import type { PropertyListResult } from "@/types/api/property";
 import type {
   PropertiesReducerActions,
   PropertiesStateI,
 } from "@/types/property/HostProperties";
 import type { HostProperty } from "@/types/property/hostProperty";
 import type { PropertyFilters } from "@/types/property/propertyFilters";
+
+/** Tamaño de página para la paginación en cliente. */
+export const PROPERTIES_PAGE_SIZE = 10;
+/** Máximo que el backend devuelve por request (límite de la API). */
+const PROPERTIES_FETCH_LIMIT = 100;
 
 export const INITIAL_STATE_PROPERTIES: PropertiesStateI = {
   filters: {
@@ -69,68 +75,75 @@ export function propertiesReducer(
   }
 }
 
+/**
+ * Filtros que el backend no soporta (nombre, dirección y reseñas) se aplican
+ * en cliente sobre el set completo de propiedades del host.
+ */
+function applyClientFilters(
+  properties: HostProperty[],
+  filters: PropertyFilters,
+): HostProperty[] {
+  return properties.filter((item) => {
+    if (
+      filters.name &&
+      !item.title.toLowerCase().includes(filters.name.toLowerCase())
+    )
+      return false;
+    if (
+      filters.address &&
+      !item.address.toLowerCase().includes(filters.address.toLowerCase())
+    )
+      return false;
+    if (filters.reviewsFrom > (item.reviews ?? 0)) return false;
+    return true;
+  });
+}
+
 export function fetchProperties(
   filters: PropertyFilters,
+  hostId: string | null | undefined,
   action: Dispatch<PropertiesReducerActions>,
 ) {
   action({ type: "set_loading", loading: true });
 
-  const limit = 50;
+  const maxPrice = filters.priceUpTo > 0 ? filters.priceUpTo : undefined;
 
-  staykeApi
-    .getProperties({ limit, offset: 0 })
-    .then((result) => {
-      if (!result.status || !result.data) {
-        action({ type: "set_loading", loading: false });
-        action({
-          type: "set_properties",
-          payload: { properties: [], pages: 0, totalCount: 0 },
-        });
-        return;
-      }
+  // El backend devuelve solo activas cuando isActive se omite, por lo que el
+  // estado "all" requiere dos requests (activas + inactivas) y se combinan.
+  const statusFlags: boolean[] =
+    filters.status === "all" ? [true, false] : [filters.status === "active"];
 
-      // Map backend response to HostProperty
-      const data = result.data as unknown as {
-        data: HostProperty[];
-        meta: { totalPages: number; total: number };
-      };
-      const properties = data.data ?? [];
-      const _meta = data.meta;
+  const requests: Promise<PropertyListResult>[] = statusFlags.map((isActive) =>
+    staykeApi.getProperties({
+      hostId: hostId ?? undefined,
+      isActive,
+      maxPrice,
+      limit: PROPERTIES_FETCH_LIMIT,
+    }),
+  );
 
-      // Client-side filtering for unsupported backend params
-      const filtered = properties.filter((item) => {
-        if (
-          filters.name &&
-          !item.title.toLowerCase().includes(filters.name.toLowerCase())
-        )
-          return false;
-        if (
-          filters.address &&
-          !item.address.toLowerCase().includes(filters.address.toLowerCase())
-        )
-          return false;
-        if (filters.reviewsFrom > (item.reviews ?? 0)) return false;
-        if (filters.priceUpTo > 0 && filters.priceUpTo < item.price)
-          return false;
-        if (filters.status === "active" && !item.isActive) return false;
-        if (filters.status === "inactive" && item.isActive) return false;
-        return true;
-      });
+  Promise.all(requests)
+    .then((results) => {
+      const all = results.flatMap((result) =>
+        result.status && Array.isArray(result.data) ? result.data : [],
+      ) as HostProperty[];
+
+      const filtered = applyClientFilters(all, filters);
 
       const totalCount = filtered.length;
-      const pages = Math.max(1, Math.ceil(totalCount / limit));
+      const pages = Math.max(1, Math.ceil(totalCount / PROPERTIES_PAGE_SIZE));
 
       action({ type: "set_loading", loading: false });
       action({
         type: "set_properties",
-        payload: { properties: filtered, pages, totalCount },
+        payload: { properties: filtered, totalCount, pages },
       });
     })
     .catch(() => {
       action({ type: "set_loading", loading: false });
       action({
         type: "set_properties",
-        payload: { properties: [], pages: 0, totalCount: 0 },
+        payload: { properties: [], totalCount: 0, pages: 0 },
       });
     });
 }
@@ -167,7 +180,7 @@ export function updatePropertieStatus(
         type: "set_properties",
         payload: {
           properties: updated,
-          pages: Math.max(1, Math.ceil(updated.length / 50)),
+          pages: Math.max(1, Math.ceil(updated.length / PROPERTIES_PAGE_SIZE)),
           totalCount: updated.length,
         },
       });
