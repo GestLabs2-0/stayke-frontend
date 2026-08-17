@@ -81,7 +81,10 @@ export function CreatePropertyForm() {
 
         // 1. Create the property off-chain (backend), using the listing PDA.
         const payload = toCreatePropertyRequest(formValues, listingPda);
-        const result = await staykeApi.createProperty(payload);
+        const result = await staykeApi.createProperty(
+          payload,
+          formValues.images[0],
+        );
 
         if (!result.status || !result.data) {
           const msg = Array.isArray(result.message)
@@ -363,6 +366,11 @@ export function CreatePropertyForm() {
               onChange={(files) => setFieldValue("images", files)}
               maxImages={MAX_IMAGES}
             />
+            {fieldError("images") && (
+              <p className="font-plus-jakarta text-[14px] font-medium text-red-400">
+                {fieldError("images")}
+              </p>
+            )}
           </SectionCard>
 
           {/* ── Comodidades ── */}

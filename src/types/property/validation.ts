@@ -17,7 +17,9 @@ export const formValidationSchema = Yup.object({
   addressHint: Yup.string(),
   latitude: Yup.number().nullable().required("Marca la ubicación en el mapa"),
   longitude: Yup.number().nullable().required("Marca la ubicación en el mapa"),
-  images: Yup.array(),
+  images: Yup.array()
+    .min(1, "Agrega al menos una foto")
+    .max(1, "Por ahora solo se permite una foto"),
   amenities: Yup.array().of(Yup.string()),
   houseRules: Yup.array().of(Yup.string()),
   maxGuest: Yup.number()

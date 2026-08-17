@@ -118,6 +118,14 @@ export function toCreatePropertyRequest(
 
 // ── Image config ──
 
-export const MAX_IMAGES = 8;
-export const MAX_IMAGE_SIZE_MB = 10;
-export const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
+// Backend (propertyImageSchema) accepts a SINGLE jpeg/png file ≤5MB, so the
+// frontend is limited to one image for now. To re-enable multi-image support
+// later: restore MAX_IMAGES to 8, un-comment the multi-file block in ImageUpload,
+// and re-add `multiple` to the file input there.
+export const MAX_IMAGES = 1; // was 8 — multi-image support paused
+export const MAX_IMAGE_SIZE_MB = 5; // was 10 — backend rejects files > 5MB
+export const ACCEPTED_IMAGE_TYPES = [
+  "image/jpeg",
+  "image/png",
+  // "image/webp", // backend only accepts jpeg/png — re-enable when supported
+];

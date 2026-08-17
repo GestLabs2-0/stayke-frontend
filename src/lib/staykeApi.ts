@@ -1,6 +1,7 @@
 import type { Address, Signature } from "@solana/kit";
 import axios from "axios";
 
+import { objectToFormData } from "@/helpers/formData";
 import { API_URL, LOCAL_STORAGE_KEYS } from "@/shared/constants";
 import type { RegisterUser, UserProfileResponse } from "@/types/api/auth";
 import type {
@@ -165,7 +166,7 @@ export class StaykeApi {
 
   // ── Properties ──
 
-  async createProperty(body: CreatePropertyRequest) {
+  async createProperty(body: CreatePropertyRequest, image?: File) {
     const result: ApiResponse<PropertyResponse> = {
       data: null,
       status: false,
@@ -173,9 +174,14 @@ export class StaykeApi {
     };
 
     try {
+      const formData = objectToFormData(body);
+      if (image) {
+        formData.append("image", image);
+      }
+
       const { data } = await this.httpClient.post({
         url: "/properties",
-        body,
+        body: formData,
       });
 
       const rawResponse = data as ApiResponse<PropertyResponse>;
@@ -221,7 +227,7 @@ export class StaykeApi {
     }
   }
 
-  async updateProperty(id: string, body: EditPropertyRequest) {
+  async updateProperty(id: string, body: EditPropertyRequest, image?: File) {
     const result: ApiResponse<PropertyResponse> = {
       data: null,
       status: false,
@@ -229,9 +235,14 @@ export class StaykeApi {
     };
 
     try {
+      const formData = objectToFormData(body);
+      if (image) {
+        formData.append("image", image);
+      }
+
       const { data } = await this.httpClient.put({
         url: `/properties/${id}`,
-        body,
+        body: formData,
       });
 
       const rawResponse = data as ApiResponse<PropertyResponse>;
