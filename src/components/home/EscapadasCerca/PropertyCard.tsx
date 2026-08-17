@@ -48,16 +48,20 @@ export const PropertyCard = ({
         </button>
 
         {/* Badge de rating */}
-        <div className="absolute bottom-3 left-3 flex items-center gap-1.5 rounded-full bg-white/90 px-3 py-1 shadow-sm backdrop-blur-sm">
-          <div className="flex items-center">
-            <span className="text-xs font-semibold text-white bg-purple-600 px-2 py-0.5 rounded-sm">
-              {property.rating.toFixed(1).replace(".", ",")}
-            </span>
+        {property.rating != null && (
+          <div className="absolute bottom-3 left-3 flex items-center gap-1.5 rounded-full bg-white/90 px-3 py-1 shadow-sm backdrop-blur-sm">
+            <div className="flex items-center">
+              <span className="text-xs font-semibold text-white bg-purple-600 px-2 py-0.5 rounded-sm">
+                {property.rating.toFixed(1).replace(".", ",")}
+              </span>
+            </div>
+            {property.ratingLabel && (
+              <span className="text-xs font-semibold text-zinc-700">
+                {property.ratingLabel}
+              </span>
+            )}
           </div>
-          <span className="text-xs font-semibold text-zinc-700">
-            {property.ratingLabel}
-          </span>
-        </div>
+        )}
       </div>
 
       {/* Info de la propiedad */}
