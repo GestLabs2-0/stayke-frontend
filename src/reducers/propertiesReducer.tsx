@@ -1,7 +1,6 @@
 import type { Dispatch } from "react";
 
 import { staykeApi } from "@/lib/staykeApi";
-import type { PropertyListResult } from "@/types/api/property";
 import type {
   PropertiesReducerActions,
   PropertiesStateI,
@@ -108,27 +107,24 @@ export function fetchProperties(
 
   const maxPrice = filters.priceUpTo > 0 ? filters.priceUpTo : undefined;
 
-  // El backend devuelve solo activas cuando isActive se omite, por lo que el
-  // estado "all" requiere dos requests (activas + inactivas) y se combinan.
-  const statusFlags: boolean[] =
-    filters.status === "all" ? [true, false] : [filters.status === "active"];
+  // El backend devuelve TODAS las propiedades cuando isActive se omite.
+  // Solo se filtra por estado cuando se piden explícitamente activas o inactivas.
+  const isActive =
+    filters.status === "all" ? undefined : filters.status === "active";
 
-  const requests: Promise<PropertyListResult>[] = statusFlags.map((isActive) =>
-    staykeApi.getProperties({
+  staykeApi
+    .getProperties({
       hostId: hostId ?? undefined,
       isActive,
       maxPrice,
       limit: PROPERTIES_FETCH_LIMIT,
-    }),
-  );
-
-  Promise.all(requests)
-    .then((results) => {
-      const all = results.flatMap((result) =>
-        result.status && Array.isArray(result.data) ? result.data : [],
+    })
+    .then((result) => {
+      const properties = (
+        result.status && Array.isArray(result.data) ? result.data : []
       ) as HostProperty[];
 
-      const filtered = applyClientFilters(all, filters);
+      const filtered = applyClientFilters(properties, filters);
 
       const totalCount = filtered.length;
       const pages = Math.max(1, Math.ceil(totalCount / PROPERTIES_PAGE_SIZE));

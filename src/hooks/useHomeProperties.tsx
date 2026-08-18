@@ -4,7 +4,6 @@ import { propertiesData } from "@/components/home/EscapadasCerca/mocks";
 import { popularStaysData } from "@/components/home/PopularStays/mocks";
 import { propertyToCard } from "@/helpers/propertyToCard";
 import { staykeApi } from "@/lib/staykeApi";
-import type { PropertyResponse } from "@/types/api/property";
 import type { PropertyCard } from "@/types/property-cards";
 
 const HOME_PROPERTIES_LIMIT = 10;
@@ -23,11 +22,11 @@ export function useHomeProperties() {
     let cancelled = false;
 
     staykeApi
-      .getProperties({ limit: HOME_PROPERTIES_LIMIT })
+      .getProperties({ limit: HOME_PROPERTIES_LIMIT, isActive: true })
       .then((result) => {
         if (cancelled) return;
 
-        const list = result.data as unknown as PropertyResponse[] | null;
+        const list = result.data;
 
         if (!result.status || !Array.isArray(list)) {
           setEscapadas(propertiesData);
