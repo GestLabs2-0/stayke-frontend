@@ -27,7 +27,7 @@ export interface HostProperty {
   isActive: boolean;
   blockChainExists?: boolean;
   // UI-only fields (not in backend response)
-  image?: string;
+  imageUrl?: string;
   reviews?: number;
   bookingsCompleted?: number;
 }

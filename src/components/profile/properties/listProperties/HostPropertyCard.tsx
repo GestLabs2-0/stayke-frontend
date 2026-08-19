@@ -21,9 +21,9 @@ export function HostPropertyCard({
   return (
     <article className="card-white flex flex-col gap-4 p-4 sm:flex-row sm:items-center">
       <div className="relative size-24 shrink-0 overflow-hidden rounded-xl md:size-28">
-        {property.image ? (
+        {property.imageUrl ? (
           <Image
-            src={property.image}
+            src={property.imageUrl}
             alt={property.title}
             fill
             className="object-cover"
