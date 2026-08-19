@@ -15,6 +15,7 @@ import type {
   PropertyListResult,
   PropertyResponse,
 } from "@/types/api/property";
+import type { PropertyDetail } from "@/types/api/propertyDetail";
 import type {
   ApiResponse,
   HttpClientInterface,
@@ -244,6 +245,37 @@ export class StaykeApi {
         axiosError.response?.data?.message || "Ocurrió un error inesperado.";
       result.errors = axiosError.response?.data?.errors || [];
       return result;
+    }
+  }
+
+  async getPropertyById(idPda: string): Promise<ApiResponse<PropertyDetail>> {
+    const result: ApiResponse<PropertyDetail> = {
+      data: null,
+      status: false,
+      message: "",
+    };
+
+    try {
+      const { data } = await this.httpClient.get({
+        url: `/properties/${idPda}`,
+      });
+
+      const rawResponse = data as ApiResponse<PropertyDetail>;
+
+      if (rawResponse?.status) {
+        result.status = true;
+        result.data = rawResponse.data
+          ? {
+              ...rawResponse.data,
+              amenities: rawResponse.data.amenities ?? [],
+              reviews: rawResponse.data.reviews ?? [],
+            }
+          : null;
+      }
+      result.message = rawResponse?.message ?? "";
+      return result;
+    } catch (error) {
+      return handleApiError(error, result);
     }
   }
 
