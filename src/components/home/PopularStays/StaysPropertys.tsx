@@ -11,7 +11,7 @@ export const StaysPropertys = ({ property }: StaysPropertysProps) => {
   const [isLiked, setIsLiked] = useState(property.isLiked ?? false);
 
   return (
-    <article className="h-full">
+    <article className="h-full shadow-sm hover:shadow-md duration-300 px-2 py-2 pb-4 rounded-lg">
       <Link
         href={property.href ?? "#"}
         className="group flex h-full flex-col gap-3 select-none"

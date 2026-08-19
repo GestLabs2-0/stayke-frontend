@@ -21,6 +21,7 @@ export interface PropertyResponse {
   bathrooms: number;
   price: number;
   minNights: number;
+  imageUrl: string;
   maxNights: number;
   checkinTime: string;
   checkoutTime: string;

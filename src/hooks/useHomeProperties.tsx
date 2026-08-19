@@ -34,9 +34,7 @@ export function useHomeProperties() {
           return;
         }
 
-        const cards = list.map((property, index) =>
-          propertyToCard(property, index),
-        );
+        const cards = list.map((property) => propertyToCard(property));
 
         setEscapadas(cards.slice(0, ESCAPADAS_PROPERTIES));
         setPopular(cards.slice(ESCAPADAS_PROPERTIES));

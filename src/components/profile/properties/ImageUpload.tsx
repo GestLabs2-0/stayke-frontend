@@ -29,12 +29,6 @@ export function ImageUpload({
     [images],
   );
 
-  // useEffect(() => {
-  //   return () => {
-  //     imageUrls.forEach((url) => URL.revokeObjectURL(url));
-  //   };
-  // }, [imageUrls]);
-
   const validateAndAdd = useCallback(
     (files: FileList) => {
       setError(null);
@@ -84,10 +78,8 @@ export function ImageUpload({
       e.stopPropagation();
       if (!e.dataTransfer.files.length) return;
       setIsAdding(true);
-      setTimeout(() => {
-        validateAndAdd(e.dataTransfer.files);
-        setIsAdding(false);
-      }, 0);
+      validateAndAdd(e.dataTransfer.files);
+      setIsAdding(false);
     },
     [validateAndAdd],
   );
@@ -102,10 +94,8 @@ export function ImageUpload({
       const files = e.target.files;
       if (!files?.length) return;
       setIsAdding(true);
-      setTimeout(() => {
-        validateAndAdd(files);
-        setIsAdding(false);
-      }, 0);
+      validateAndAdd(files);
+      setIsAdding(false);
       if (inputRef.current) inputRef.current.value = "";
     },
     [validateAndAdd],

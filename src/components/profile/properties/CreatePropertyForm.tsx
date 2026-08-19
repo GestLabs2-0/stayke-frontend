@@ -423,7 +423,6 @@ export function CreatePropertyForm() {
                 label="Precio por noche"
                 type="number"
                 min={0}
-                step={1000}
                 value={values.price}
                 onChange={setField("price")}
                 prefix="$"
