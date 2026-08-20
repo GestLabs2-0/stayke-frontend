@@ -135,3 +135,8 @@ body {
     border-color: #e8604c;
   }
 }
+
+[data-sileo-viewport] {
+  /* biome-ignore lint/complexity/noImportantStyles: i need to override sileo */
+  z-index: 1002 !important;
+}

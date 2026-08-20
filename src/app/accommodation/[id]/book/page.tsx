@@ -126,7 +126,7 @@ export default function BookPage() {
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-10 md:px-6">
       <Link
-        href={routes.Accommodation}
+        href={`${routes.Accommodation}/${property.pda}`}
         className="mb-6 inline-flex items-center gap-2 text-sm font-medium text-zinc-500 transition-colors hover:text-primary"
       >
         ← Volver

@@ -1,4 +1,4 @@
-import type { Address } from "@solana/kit";
+import type { Address, Instruction } from "@solana/kit";
 import { address, createNoopSigner } from "@solana/kit";
 import {
   getAssociatedTokenAddressSync,
@@ -16,6 +16,7 @@ import {
   findBookingPda,
   findEscrowConfigPda,
   findEscrowTokenAccountPda,
+  getCreateBookingCrossYearInstructionAsync,
   getCreateBookingInstructionAsync,
 } from "@GestLabs2-0/stayke-escrow";
 import type { SolanaClient } from "@/context/NetworkContext";
@@ -40,6 +41,8 @@ export interface BuildCreateBookingTxParams {
   /** Unix timestamp (seconds) of the check-out day. */
   checkOut: number;
   client: SolanaClient;
+
+  crossYear: boolean;
 }
 
 /**
@@ -55,6 +58,7 @@ export async function buildCreateBookingInstruction({
   checkIn,
   checkOut,
   client,
+  crossYear,
 }: BuildCreateBookingTxParams): Promise<CreateBookingTx> {
   const authority = createNoopSigner(wallet);
 
@@ -78,21 +82,47 @@ export async function buildCreateBookingInstruction({
     ).toBase58(),
   );
 
-  const instruction = await getCreateBookingInstructionAsync({
-    payer: authority,
-    client: authority,
-    clientProfile,
-    hostProfile,
-    booking,
-    property,
-    globalConfig,
-    bookingDays,
-    escrowTokenAccount,
-    clientTokenAccount,
-    mint,
-    checkIn,
-    checkOut,
-  });
+  let instruction: Instruction;
+
+  if (crossYear) {
+    const [bookingDaysNext] = await findBookingDaysPda({
+      property,
+      checkIn: checkOut,
+    });
+
+    instruction = await getCreateBookingCrossYearInstructionAsync({
+      payer: authority,
+      client: authority,
+      clientProfile,
+      hostProfile,
+      booking,
+      property,
+      globalConfig,
+      bookingDays,
+      bookingDaysNext,
+      escrowTokenAccount,
+      clientTokenAccount,
+      mint,
+      checkIn,
+      checkOut,
+    });
+  } else {
+    instruction = await getCreateBookingInstructionAsync({
+      payer: authority,
+      client: authority,
+      clientProfile,
+      hostProfile,
+      booking,
+      property,
+      globalConfig,
+      bookingDays,
+      escrowTokenAccount,
+      clientTokenAccount,
+      mint,
+      checkIn,
+      checkOut,
+    });
+  }
 
   const web3Instruction = fromSolanaKitIns(instruction);
 

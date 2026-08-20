@@ -20,7 +20,10 @@ export function BookingCard({ id, price, maxGuest }: BookingCardProps) {
 
   const handleReserve = () => {
     if (!checkIn || !checkOut) {
-      sileo.info({ title: "Selecciona las fechas de tu estadía" });
+      sileo.error({
+        title: "Error en solicitud",
+        description: "Selecciona en el calendario las fechas",
+      });
       return;
     }
     router.push(accommodationBookPath(id, { checkIn, checkOut }));

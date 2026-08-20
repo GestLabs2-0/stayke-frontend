@@ -54,6 +54,18 @@ export function useCreateBooking({
       }
 
       try {
+        const checkInYear = dates.checkIn.getFullYear();
+        const checkOutYear = dates.checkOut.getFullYear();
+        let crossYear = false;
+
+        if (checkInYear + 1 === checkOutYear) {
+          crossYear = true;
+        } else if (checkInYear + 1 < checkOutYear) {
+          throw new Error(
+            "No se permiten bookings que incluyan 3 años diferentes",
+          );
+        }
+
         const { tx } = await buildCreateBookingInstruction({
           wallet: userWallet,
           hostWallet,
@@ -61,6 +73,7 @@ export function useCreateBooking({
           checkIn: Math.floor(dates.checkIn.getTime() / 1000),
           checkOut: Math.floor(dates.checkOut.getTime() / 1000),
           client,
+          crossYear,
         });
 
         const txResult = await handleSignAndSend(tx);
@@ -73,7 +86,22 @@ export function useCreateBooking({
         return txResult as CreateBookingResult;
       } catch (error) {
         console.error("Error building createBooking tx:", error);
-        sileo.error({ title: "Error preparando la reserva" });
+
+        if (error instanceof Error) {
+          if (
+            error.message ===
+            "No se permiten bookings que incluyan 3 años diferentes"
+          ) {
+            sileo.error({
+              title: "Error preparando la reserva",
+              description: error.message,
+            });
+          } else {
+            sileo.error({
+              title: "Error preparando la reserva",
+            });
+          }
+        }
         return { status: false, error };
       }
     },
