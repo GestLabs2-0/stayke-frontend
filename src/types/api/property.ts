@@ -1,3 +1,5 @@
+import type { ApiPaginatedResponse } from "../http";
+
 export type PropertyType = "casa" | "apto" | "cabaña" | "otro";
 
 // ── Backend-aligned response ──
@@ -96,22 +98,8 @@ export interface GetPropertiesParams {
 
 // ── Paginated response ──
 
-export interface PaginationMeta {
-  total: number;
-  page: number;
-  limit: number;
-  totalPages: number;
-  hasPreviousPage: boolean;
-  hasNextPage: boolean;
-}
-
-export interface PropertyListResult {
-  status: boolean;
-  data: PropertyResponse[] | null;
-  meta: PaginationMeta | null;
-  message: string | string[];
-  errors?: string[];
-}
+export interface PropertyListResult
+  extends ApiPaginatedResponse<PropertyResponse> {}
 
 // ── Property type display labels ──
 

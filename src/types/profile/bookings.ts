@@ -35,14 +35,20 @@ export interface BookingFiltersProps {
 // ── BookingSection ──
 
 export interface BookingSectionProps {
-  /** Estado de la reserva que representa la sección. */
+  /** Estado que representa la sección (para el marcador de color). */
   status: BookingStatus;
+  /** Título de la sección (ej: "Pendientes por aceptar"). */
+  title: string;
   bookings: Booking[];
   loading?: boolean;
+  /** Mensaje cuando la sección no tiene reservas. */
+  emptyMessage?: string;
+  emptyDescription?: string;
 }
 
-/** Helper: grupo de reservas de una sección prioritaria. */
+/** Grupo de reservas de una sección prioritaria. */
 export interface BookingSectionGroup {
   status: BookingStatus;
+  title: string;
   bookings: Booking[];
 }

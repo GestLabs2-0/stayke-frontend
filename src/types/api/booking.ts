@@ -1,5 +1,5 @@
 import { BookingStatus } from "@GestLabs2-0/stayke-escrow";
-import type { PaginationMeta } from "./property";
+import type { ApiPaginatedResponse } from "../http";
 
 export type { BookingStatus };
 
@@ -7,12 +7,36 @@ export type { BookingStatus };
 export interface Booking {
   /** PDA on-chain de la reserva (44 caracteres base58). */
   idPda: string;
-  /** PDA on-chain de la propiedad (44 caracteres base58). */
-  property: string;
-  /** Wallet del huésped (44 caracteres base58). */
-  guest: string;
-  /** Wallet del anfitrión (44 caracteres base58). */
-  host: string;
+  /** Datos embebidos de la propiedad (sin consulta adicional). */
+  propertyValues: {
+    title: string;
+    price: number;
+    /** PDA on-chain de la propiedad. */
+    pda: string;
+    /** Clave de la imagen en el bucket; se concatena a la URL base. */
+    imageKey: string;
+    address: string;
+    city: string;
+    countryCode: string;
+  };
+  /** Datos embebidos del huésped. */
+  guestValues: {
+    name: string;
+    lastName: string;
+    /** PDA on-chain del perfil. */
+    userProfile: string;
+    /** PDA on-chain de la reputación. */
+    reputation: string;
+    deposited: number;
+  };
+  /** Datos embebidos del anfitrión. */
+  hostValues: {
+    name: string;
+    lastName: string;
+    userProfile: string;
+    reputation: string;
+    deposited: number;
+  };
   /** PDA de la cuenta escrow de la reserva. */
   escrow: string;
   /** Precio total de la reserva. */
@@ -45,13 +69,7 @@ export interface GetBookingsParams {
 }
 
 /** Respuesta paginada de GET /api/v1.0/bookings. */
-export interface BookingListResult {
-  status: boolean;
-  data: Booking[] | null;
-  meta: PaginationMeta | null;
-  message: string | string[];
-  errors?: string[];
-}
+export interface BookingListResult extends ApiPaginatedResponse<Booking> {}
 
 /** Etiquetas legibles (español) de cada estado de reserva. */
 export const BOOKING_STATUS_LABELS: Record<BookingStatus, string> = {
