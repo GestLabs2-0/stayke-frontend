@@ -1,9 +1,11 @@
 import type { Address, Signature } from "@solana/kit";
 import axios from "axios";
 
+import { BookingStatus } from "@GestLabs2-0/stayke-escrow";
 import { objectToFormData } from "@/helpers/formData";
 import { API_URL, LOCAL_STORAGE_KEYS } from "@/shared/constants";
 import type { RegisterUser, UserProfileResponse } from "@/types/api/auth";
+import type { BookingListResult, GetBookingsParams } from "@/types/api/booking";
 import type {
   DiditProgressResponse,
   DiditSessionResponse,
@@ -311,6 +313,58 @@ export class StaykeApi {
     }
   }
   // ── Bookings ──
+
+  /**
+   * GET /bookings — lista de reservas del anfitrión con filtros opcionales.
+   * Al pasar `status` se filtra por un estado concreto; al omitirlo se
+   * devuelven todas las reservas.
+   */
+  async getBookings(params: GetBookingsParams): Promise<BookingListResult> {
+    const result: BookingListResult = {
+      data: null,
+      meta: null,
+      status: false,
+      message: "",
+    };
+
+    try {
+      const queryParams = new URLSearchParams();
+
+      if (params.host) queryParams.append("host", params.host);
+      if (params.guest) queryParams.append("guest", params.guest);
+      if (params.status !== undefined) {
+        queryParams.append("status", BookingStatus[params.status]);
+      }
+      if (params.checkIn !== undefined)
+        queryParams.append("checkIn", String(params.checkIn));
+      if (params.checkOut !== undefined)
+        queryParams.append("checkOut", String(params.checkOut));
+      if (params.limit !== undefined)
+        queryParams.append("limit", String(params.limit));
+      if (params.offset !== undefined)
+        queryParams.append("offset", String(params.offset));
+
+      const query = queryParams.toString();
+      const url = query ? `/bookings?${query}` : "/bookings";
+
+      const { data } = await this.httpClient.get({ url });
+
+      const rawResponse = data as BookingListResult;
+      result.status = rawResponse?.status === true;
+      result.data = rawResponse?.data ?? null;
+      result.meta = rawResponse?.meta ?? null;
+      result.message = rawResponse?.message ?? "";
+      return result;
+    } catch (error) {
+      const axiosError = error as {
+        response?: { data?: { message?: string; errors?: string[] } };
+      };
+      result.message =
+        axiosError.response?.data?.message || "Ocurrió un error inesperado.";
+      result.errors = axiosError.response?.data?.errors || [];
+      return result;
+    }
+  }
 
   /**
    * GET /bookings/booked-dates — booked date ranges for a property. The

@@ -10,6 +10,7 @@ const routesTitle: { [key: string]: string } = {
   [routes.Profile.index]: "Perfil",
   [routes.Profile.properties.index]: "Propiedades",
   [routes.Profile.properties.create]: "Crear propiedad",
+  [routes.Profile.bookings.index]: "Reservas",
 };
 
 export function Breadcrumb() {

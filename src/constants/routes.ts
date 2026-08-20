@@ -3,6 +3,9 @@ export const routes = {
   Home: "/",
   Profile: {
     index: "/profile",
+    bookings: {
+      index: "/profile/bookings",
+    },
     properties: {
       index: "/profile/properties",
       create: "/profile/properties/create",

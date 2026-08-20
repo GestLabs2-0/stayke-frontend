@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  CalendarDays,
   ChevronLeft,
   ChevronRight,
   House,
@@ -30,6 +31,13 @@ const NAV_ITEMS: NavItem[] = [
     icon: House,
     role: "host",
     action: { type: "navigate", link: routes.Profile.properties.index },
+  },
+  {
+    id: routes.Profile.bookings.index,
+    label: "Reservas",
+    icon: CalendarDays,
+    role: "host",
+    action: { type: "navigate", link: routes.Profile.bookings.index },
   },
   { id: "settings", label: "Configuración", icon: Settings, role: "all" },
   {
