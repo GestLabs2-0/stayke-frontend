@@ -25,6 +25,9 @@ interface DateRangeCalendarProps {
   property?: string;
 }
 
+const startOfDay = (day: Date) =>
+  new Date(day.getFullYear(), day.getMonth(), day.getDate()).getTime();
+
 export function DateRangeCalendar({
   onChange,
   disabledDates = [],
@@ -47,9 +50,6 @@ export function DateRangeCalendar({
     setCheckOut(outDate);
     onChange?.(inDate, outDate);
   };
-
-  const startOfDay = (day: Date) =>
-    new Date(day.getFullYear(), day.getMonth(), day.getDate()).getTime();
 
   const [bookedNights, setBookedNights] = useState<number[]>([]);
 
