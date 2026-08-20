@@ -191,7 +191,7 @@ export default function PropertyDetailPage() {
             id="booking-card"
             className="lg:sticky lg:top-24 lg:self-start"
           >
-            <BookingCard price={price} maxGuest={maxGuest} />
+            <BookingCard id={id} price={price} maxGuest={maxGuest} />
           </aside>
         </div>
       </div>

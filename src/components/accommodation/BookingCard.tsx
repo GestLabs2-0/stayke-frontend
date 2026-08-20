@@ -1,29 +1,33 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { sileo } from "sileo";
 
 import { DateRangeCalendar } from "@/components/accommodation/DateRangeCalendar";
+import { accommodationBookPath } from "@/constants/routes";
 
 interface BookingCardProps {
+  id: string;
   price: number;
   maxGuest?: number;
 }
 
-export function BookingCard({ price, maxGuest }: BookingCardProps) {
+export function BookingCard({ id, price, maxGuest }: BookingCardProps) {
+  const router = useRouter();
   const [checkIn, setCheckIn] = useState<Date | null>(null);
   const [checkOut, setCheckOut] = useState<Date | null>(null);
 
-  const dateLabel = (date: Date) =>
-    date.toLocaleDateString("es", { day: "numeric", month: "short" });
-
   const handleReserve = () => {
-    if (!checkIn) {
+    if (!checkIn || !checkOut) {
       sileo.info({ title: "Selecciona las fechas de tu estadía" });
       return;
     }
-    sileo.info({ title: "El flujo de reserva llega pronto" });
+    router.push(accommodationBookPath(id, { checkIn, checkOut }));
   };
+
+  const dateLabel = (date: Date) =>
+    date.toLocaleDateString("es", { day: "numeric", month: "short" });
 
   const rangeLabel =
     checkIn && checkOut

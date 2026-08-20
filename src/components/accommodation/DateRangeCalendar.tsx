@@ -7,9 +7,17 @@ import { ChevronLeftIcon, ChevronRightIcon } from "@/icons";
 
 interface DateRangeCalendarProps {
   onChange?: (checkIn: Date | null, checkOut: Date | null) => void;
+  /**
+   * Start-of-day timestamps (ms) that are already booked and disabled so
+   * they cannot be selected nor included in a range.
+   */
+  disabledDates?: number[];
 }
 
-export function DateRangeCalendar({ onChange }: DateRangeCalendarProps) {
+export function DateRangeCalendar({
+  onChange,
+  disabledDates = [],
+}: DateRangeCalendarProps) {
   const today = new Date();
   const startOfToday = new Date(
     today.getFullYear(),
@@ -27,6 +35,9 @@ export function DateRangeCalendar({ onChange }: DateRangeCalendarProps) {
     setCheckOut(outDate);
     onChange?.(inDate, outDate);
   };
+
+  const startOfDay = (day: Date) =>
+    new Date(day.getFullYear(), day.getMonth(), day.getDate()).getTime();
 
   const goPrev = () => {
     if (viewMonth === 0) {
@@ -48,6 +59,7 @@ export function DateRangeCalendar({ onChange }: DateRangeCalendarProps) {
 
   const selectDay = (day: Date) => {
     if (day < startOfToday) return;
+    if (disabledDates.includes(startOfDay(day))) return;
     if (!checkIn || (checkIn && checkOut)) {
       commit(day, null);
       return;
@@ -115,6 +127,7 @@ export function DateRangeCalendar({ onChange }: DateRangeCalendarProps) {
         {Array.from({ length: daysInMonth }, (_, i) => i + 1).map((num) => {
           const day = new Date(viewYear, viewMonth, num);
           const isPast = day < startOfToday;
+          const isBooked = disabledDates.includes(startOfDay(day));
           const selected = isSelected(day);
           const inRange = isInRange(day);
 
@@ -126,6 +139,8 @@ export function DateRangeCalendar({ onChange }: DateRangeCalendarProps) {
             cellClass += " bg-primary/10 text-primary";
           } else if (isPast) {
             cellClass += " cursor-default text-zinc-300";
+          } else if (isBooked) {
+            cellClass += " cursor-not-allowed text-zinc-300 line-through";
           } else {
             cellClass += isToday(day)
               ? " cursor-pointer text-primary font-semibold hover:bg-white"
@@ -136,7 +151,7 @@ export function DateRangeCalendar({ onChange }: DateRangeCalendarProps) {
             <button
               key={num}
               type="button"
-              disabled={isPast}
+              disabled={isPast || isBooked}
               onClick={() => selectDay(day)}
               className={cellClass}
             >
