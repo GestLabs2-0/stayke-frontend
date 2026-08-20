@@ -4,6 +4,10 @@ import type { Address } from "@solana/kit";
 import { useCallback } from "react";
 import { sileo } from "sileo";
 
+import {
+  DEFAULT_BOOKING_ERROR,
+  getBookingErrorMessage,
+} from "@/helpers/bookingErrors";
 import useNetwork from "@/hooks/useNetwork";
 import { useSignAndSendTx } from "@/hooks/useSignAndSendTx";
 import { useWalletContext } from "@/hooks/useWallet";
@@ -19,6 +23,8 @@ interface UseCreateBookingParams {
 export interface CreateBookingResult {
   status: boolean;
   signature?: string;
+  /** Present when status is false; used to surface actionable on-chain errors. */
+  error?: unknown;
 }
 
 /**
@@ -56,11 +62,19 @@ export function useCreateBooking({
           checkOut: Math.floor(dates.checkOut.getTime() / 1000),
           client,
         });
-        return await handleSignAndSend(tx);
+
+        const txResult = await handleSignAndSend(tx);
+        if (!txResult.status) {
+          sileo.error({
+            title:
+              getBookingErrorMessage(txResult.error) ?? DEFAULT_BOOKING_ERROR,
+          });
+        }
+        return txResult as CreateBookingResult;
       } catch (error) {
         console.error("Error building createBooking tx:", error);
         sileo.error({ title: "Error preparando la reserva" });
-        return { status: false };
+        return { status: false, error };
       }
     },
     [client, handleSignAndSend, hostWallet, property, userWallet],

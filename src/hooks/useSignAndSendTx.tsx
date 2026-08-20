@@ -5,7 +5,6 @@ import type { Address } from "@solana/kit";
 import type { VersionedTransaction } from "@solana/web3.js";
 import { SendTransactionError } from "@solana/web3.js";
 import { useMemo, useState } from "react";
-import { sileo } from "sileo";
 
 export function useSignAndSendTx(wallet: Address | null) {
   const [signature, setSignature] = useState("");
@@ -37,15 +36,12 @@ export function useSignAndSendTx(wallet: Address | null) {
       console.log("Transaction sent:", signature);
       return { status: true, signature };
     } catch (error: unknown) {
-      sileo.error({
-        title: "Error enviando la transacción. Por favor, inténtalo de nuevo.",
-      });
-
       if (error instanceof SendTransactionError) {
         console.log("SendTransactionError:", error.logs);
       }
 
       console.log(error);
+      return { status: false, error };
     } finally {
       setLoading(false);
     }
