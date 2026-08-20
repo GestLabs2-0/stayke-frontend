@@ -1,13 +1,16 @@
 "use client";
 
+import { address, isAddress } from "@solana/kit";
 import Link from "next/link";
-import { useParams, useSearchParams } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
+import { sileo } from "sileo";
 
 import { BookingForm } from "@/components/accommodation/BookingForm";
 import { getMockBookedNights } from "@/components/accommodation/mocks/bookedDates";
 import { PropertyGallery } from "@/components/accommodation/PropertyGallery";
 import { routes } from "@/constants/routes";
+import { useCreateBooking } from "@/hooks/contracts/useCreateBooking";
 import { staykeApi } from "@/lib/staykeApi";
 import type { PropertyDetail } from "@/types/api/propertyDetail";
 
@@ -27,6 +30,25 @@ export default function BookPage() {
   const [property, setProperty] = useState<PropertyDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+
+  const router = useRouter();
+
+  const propertyAddress = useMemo(
+    () => (property && isAddress(property.pda) ? address(property.pda) : null),
+    [property],
+  );
+  const hostWallet = useMemo(
+    () =>
+      property && isAddress(property.host.owner)
+        ? address(property.host.owner)
+        : null,
+    [property],
+  );
+
+  const { createBooking, loading: submitting } = useCreateBooking({
+    property: propertyAddress,
+    hostWallet,
+  });
 
   const initialCheckIn = useMemo(
     () => parseDateParam(searchParams.get("checkIn")),
@@ -100,57 +122,63 @@ export default function BookPage() {
     .join(", ");
 
   return (
-    <>
-      <div className="mx-auto w-full max-w-6xl px-4 py-10 md:px-6">
-        <Link
-          href={routes.Accommodation}
-          className="mb-6 inline-flex items-center gap-2 text-sm font-medium text-zinc-500 transition-colors hover:text-primary"
-        >
-          ← Volver
-        </Link>
+    <div className="mx-auto w-full max-w-6xl px-4 py-10 md:px-6">
+      <Link
+        href={routes.Accommodation}
+        className="mb-6 inline-flex items-center gap-2 text-sm font-medium text-zinc-500 transition-colors hover:text-primary"
+      >
+        ← Volver
+      </Link>
 
-        <PropertyGallery
-          images={property.imageUrl ? [property.imageUrl] : []}
-          title={property.title}
-          fallbackLabel={`${property.title} · ${location}`}
-        />
+      <PropertyGallery
+        images={property.imageUrl ? [property.imageUrl] : []}
+        title={property.title}
+        fallbackLabel={`${property.title} · ${location}`}
+      />
 
-        <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_420px]">
-          <section className="space-y-6">
-            <header className="border-b border-border pb-6">
-              <h1 className="font-montserrat text-2xl font-bold tracking-tight text-zinc-900 md:text-3xl">
-                Confirma tu reserva
-              </h1>
-              <p className="mt-2 text-base text-zinc-500">
-                {property.title} · {location}
-              </p>
-              <p className="mt-3 text-sm text-zinc-600">
-                {formatHost(property.host.name, property.host.lastName)}{" "}
-                anfitrión
-                {property.host.isVerified ? " verificado" : ""}
-              </p>
-            </header>
-            <p className="text-sm leading-relaxed text-zinc-600">
-              Revisa las fechas y el número de huéspedes antes de confirmar. Las
-              fechas tachadas ya están reservadas y no están disponibles.
+      <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_420px]">
+        <section className="space-y-6">
+          <header className="border-b border-border pb-6">
+            <h1 className="font-montserrat text-2xl font-bold tracking-tight text-zinc-900 md:text-3xl">
+              Confirma tu reserva
+            </h1>
+            <p className="mt-2 text-base text-zinc-500">
+              {property.title} · {location}
             </p>
-          </section>
+            <p className="mt-3 text-sm text-zinc-600">
+              {formatHost(property.host.name, property.host.lastName)} anfitrión
+              {property.host.isVerified ? " verificado" : ""}
+            </p>
+          </header>
+          <p className="text-sm leading-relaxed text-zinc-600">
+            Revisa las fechas y el número de huéspedes antes de confirmar. Las
+            fechas tachadas ya están reservadas y no están disponibles.
+          </p>
+        </section>
 
-          <aside className="lg:sticky lg:top-24 lg:self-start">
-            <BookingForm
-              price={property.price}
-              maxGuest={property.maxGuest}
-              bookedNights={getMockBookedNights(property.id)}
-              initialCheckIn={initialCheckIn}
-              initialCheckOut={initialCheckOut}
-              onSubmit={(selection) => {
-                console.log("Booking submitted (mock for now):", selection);
-              }}
-            />
-          </aside>
-        </div>
+        <aside className="lg:sticky lg:top-24 lg:self-start">
+          <BookingForm
+            price={property.price}
+            maxGuest={property.maxGuest}
+            bookedNights={getMockBookedNights(property.id)}
+            initialCheckIn={initialCheckIn}
+            initialCheckOut={initialCheckOut}
+            submitLabel={submitting ? "Confirmando..." : "Confirmar reserva"}
+            onSubmit={async (selection) => {
+              if (!selection.checkIn || !selection.checkOut) return;
+              const result = await createBooking({
+                checkIn: selection.checkIn,
+                checkOut: selection.checkOut,
+              });
+              if (result.status) {
+                sileo.success({ title: "Reserva enviada a la cadena" });
+                router.push(routes.Accommodation);
+              }
+            }}
+          />
+        </aside>
       </div>
-    </>
+    </div>
   );
 }
 
