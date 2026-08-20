@@ -14,6 +14,24 @@ export interface BookedDateRange {
   end: number;
 }
 
+/** Range of booked dates returned by the backend (GET /bookings/booked-dates). */
+export interface ApiBookedDateRange {
+  /** Check-in day, YYYY-MM-DD (first occupied night). */
+  checkIn: string;
+  /** Check-out day, YYYY-MM-DD (exclusive). */
+  checkOut: string;
+}
+
+/** Query params for GET /bookings/booked-dates. */
+export interface GetBookedDatesParams {
+  /** On-chain property/listing address (required). */
+  property: string;
+  /** Inclusive start, YYYY-MM-DD (optional). */
+  from?: string;
+  /** Inclusive end, YYYY-MM-DD (optional). */
+  to?: string;
+}
+
 /**
  * Output of `buildCreateBookingInstruction`: the derived PDAs plus the
  * versioned transaction ready to be signed and sent by the wallet.

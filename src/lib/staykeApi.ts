@@ -16,6 +16,7 @@ import type {
   PropertyResponse,
 } from "@/types/api/property";
 import type { PropertyDetail } from "@/types/api/propertyDetail";
+import type { ApiBookedDateRange, GetBookedDatesParams } from "@/types/booking";
 import type {
   ApiResponse,
   HttpClientInterface,
@@ -304,6 +305,41 @@ export class StaykeApi {
       }
       result.data = rawResponse.data;
       result.message = rawResponse.message;
+      return result;
+    } catch (error) {
+      return handleApiError(error, result);
+    }
+  }
+  // ── Bookings ──
+
+  /**
+   * GET /bookings/booked-dates — booked date ranges for a property. The
+   * backend window defaults to today → +6 months; pass from/to (YYYY-MM-DD)
+   * to fetch a specific 6-month window.
+   */
+  async getBookedDates(
+    params: GetBookedDatesParams,
+  ): Promise<ApiResponse<ApiBookedDateRange[]>> {
+    const result: ApiResponse<ApiBookedDateRange[]> = {
+      data: null,
+      status: false,
+      message: "",
+    };
+
+    try {
+      const queryParams = new URLSearchParams();
+      queryParams.append("property", params.property);
+      if (params.from) queryParams.append("from", params.from);
+      if (params.to) queryParams.append("to", params.to);
+
+      const url = `/bookings/booked-dates?${queryParams.toString()}`;
+
+      const { data } = await this.httpClient.get({ url });
+
+      const rawResponse = data as ApiResponse<ApiBookedDateRange[]>;
+      result.status = rawResponse?.status === true;
+      result.data = rawResponse?.data ?? null;
+      result.message = rawResponse?.message ?? "";
       return result;
     } catch (error) {
       return handleApiError(error, result);
