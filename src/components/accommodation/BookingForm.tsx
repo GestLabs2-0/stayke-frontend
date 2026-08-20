@@ -20,6 +20,8 @@ interface BookingFormProps {
   maxGuest: number;
   /** Start-of-day timestamps (ms) already booked and disabled. */
   bookedNights?: number[];
+  /** On-chain property address; booked dates are fetched from the API. */
+  property?: string;
   /** Preloaded selection, e.g. from the listing detail page query params. */
   initialCheckIn?: Date | null;
   initialCheckOut?: Date | null;
@@ -33,6 +35,7 @@ export function BookingForm({
   price,
   maxGuest,
   bookedNights = [],
+  property,
   initialCheckIn = null,
   initialCheckOut = null,
   onSubmit,
@@ -93,6 +96,7 @@ export function BookingForm({
           setCheckOut(outDate);
         }}
         disabledDates={bookedNights}
+        property={property}
       />
 
       <div className="flex items-center justify-between gap-4 rounded-xl bg-surface/60 px-3 py-2">

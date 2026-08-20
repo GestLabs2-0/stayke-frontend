@@ -7,7 +7,6 @@ import { useEffect, useMemo, useState } from "react";
 import { sileo } from "sileo";
 
 import { BookingForm } from "@/components/accommodation/BookingForm";
-import { getMockBookedNights } from "@/components/accommodation/mocks/bookedDates";
 import { PropertyGallery } from "@/components/accommodation/PropertyGallery";
 import { routes } from "@/constants/routes";
 import { useCreateBooking } from "@/hooks/contracts/useCreateBooking";
@@ -162,7 +161,7 @@ export default function BookPage() {
           <BookingForm
             price={property.price}
             maxGuest={property.maxGuest}
-            bookedNights={getMockBookedNights(property.id)}
+            property={propertyAddress ?? undefined}
             initialCheckIn={initialCheckIn}
             initialCheckOut={initialCheckOut}
             submitting={submitting}
