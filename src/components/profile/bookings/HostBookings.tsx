@@ -8,12 +8,13 @@ import { useWalletContext } from "@/hooks/useWallet";
 import type { BookingStatusFilter } from "@/types/profile/bookings";
 import { Breadcrumb } from "../Breadcrumb";
 import { EmptyState } from "../EmptyState";
+import { BookingFilters } from "./BookingFilters";
 import { BookingListSkeleton } from "./BookingListSkeleton";
 import { HostBookingCard } from "./HostBookingCard";
 
 export function HostBookings() {
   const { userWallet } = useWalletContext();
-  const [status] = useState<BookingStatusFilter>(null);
+  const [status, setStatus] = useState<BookingStatusFilter>(null);
   const { bookings, loading } = useHostBookings(userWallet, status);
 
   const isEmpty = !loading && bookings.length === 0;
@@ -35,6 +36,12 @@ export function HostBookings() {
           </p>
         </div>
       </div>
+
+      <BookingFilters
+        value={status}
+        total={bookings.length}
+        onChange={setStatus}
+      />
 
       {loading ? (
         <BookingListSkeleton />
