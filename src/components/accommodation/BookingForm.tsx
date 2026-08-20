@@ -25,6 +25,8 @@ interface BookingFormProps {
   initialCheckOut?: Date | null;
   onSubmit?: (selection: BookingSelection) => void;
   submitLabel?: string;
+  /** Disables the submit button while a tx is in flight (idempotency). */
+  submitting?: boolean;
 }
 
 export function BookingForm({
@@ -35,6 +37,7 @@ export function BookingForm({
   initialCheckOut = null,
   onSubmit,
   submitLabel = "Confirmar reserva",
+  submitting = false,
 }: BookingFormProps) {
   const [checkIn, setCheckIn] = useState<Date | null>(initialCheckIn);
   const [checkOut, setCheckOut] = useState<Date | null>(initialCheckOut);
@@ -57,6 +60,7 @@ export function BookingForm({
   }, [initialCheckIn, initialCheckOut]);
 
   const handleSubmit = () => {
+    if (submitting) return;
     if (!checkIn || !checkOut) {
       sileo.info({ title: "Selecciona las fechas de tu estadía" });
       return;
@@ -154,7 +158,9 @@ export function BookingForm({
       <button
         type="button"
         onClick={handleSubmit}
-        className="w-full cursor-pointer rounded-xl bg-primary py-3.5 font-semibold text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-primary-hover hover:shadow-lg active:translate-y-0"
+        disabled={submitting}
+        aria-busy={submitting}
+        className="w-full rounded-xl bg-primary py-3.5 font-semibold text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-primary-hover hover:shadow-lg active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0 disabled:hover:shadow-none"
       >
         {submitLabel}
       </button>

@@ -11,6 +11,7 @@ import { getMockBookedNights } from "@/components/accommodation/mocks/bookedDate
 import { PropertyGallery } from "@/components/accommodation/PropertyGallery";
 import { routes } from "@/constants/routes";
 import { useCreateBooking } from "@/hooks/contracts/useCreateBooking";
+import { useWalletContext } from "@/hooks/useWallet";
 import { staykeApi } from "@/lib/staykeApi";
 import type { PropertyDetail } from "@/types/api/propertyDetail";
 
@@ -32,6 +33,7 @@ export default function BookPage() {
   const [error, setError] = useState(false);
 
   const router = useRouter();
+  const { userWallet } = useWalletContext();
 
   const propertyAddress = useMemo(
     () => (property && isAddress(property.pda) ? address(property.pda) : null),
@@ -163,9 +165,14 @@ export default function BookPage() {
             bookedNights={getMockBookedNights(property.id)}
             initialCheckIn={initialCheckIn}
             initialCheckOut={initialCheckOut}
+            submitting={submitting}
             submitLabel={submitting ? "Confirmando..." : "Confirmar reserva"}
             onSubmit={async (selection) => {
               if (!selection.checkIn || !selection.checkOut) return;
+              if (!userWallet) {
+                router.push(routes.Register);
+                return;
+              }
               const result = await createBooking({
                 checkIn: selection.checkIn,
                 checkOut: selection.checkOut,
