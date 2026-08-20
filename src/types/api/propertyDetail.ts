@@ -11,6 +11,10 @@ export interface PropertyHost {
   country: string;
   phone: string;
   listings: number;
+  // Address del anfitrión onchain (0–5). Fuente on-chain/reputación.
+  reputation?: number;
+  // Fecha ISO desde la que el anfitrión hospeda.
+  hostedSince?: string;
 }
 
 // Placeholder: FE-08 will define the real review shape.

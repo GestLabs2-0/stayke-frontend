@@ -10,5 +10,5 @@ export type PropertyCard = {
   isFeatured?: boolean;
   isLiked?: boolean;
   excepcional?: boolean;
-  href?: string;
+  href: string;
 };

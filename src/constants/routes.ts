@@ -8,10 +8,10 @@ export const routes = {
       create: "/profile/properties/create",
     },
   },
-  Accommodation: "/Accommodation",
-  Experiences: "/Experiences",
-  AboutUs: "/AboutUs",
-  Contact: "/Contact",
+  Accommodation: "/accommodation",
+  Experiences: "/experiences",
+  AboutUs: "/about-us",
+  Contact: "/contact",
 
   // Auth routes
   Register: "/register",

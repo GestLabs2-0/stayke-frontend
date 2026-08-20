@@ -13,7 +13,7 @@ export const StaysPropertys = ({ property }: StaysPropertysProps) => {
   return (
     <article className="h-full shadow-sm hover:shadow-md duration-300 px-2 py-2 pb-4 rounded-lg">
       <Link
-        href={property.href ?? "#"}
+        href={`${property.href}`}
         className="group flex h-full flex-col gap-3 select-none"
         draggable={false}
       >

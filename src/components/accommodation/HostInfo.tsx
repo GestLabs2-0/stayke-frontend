@@ -1,4 +1,11 @@
-import { CheckIcon } from "@/icons";
+"use client";
+
+import { address } from "@solana/kit";
+import { useEffect, useMemo } from "react";
+import { sileo } from "sileo";
+
+import { useGetUser } from "@/hooks/contracts/useGetUser";
+import { CheckIcon, ClockIcon, MessageIcon, StarIcon } from "@/icons";
 import type { PropertyHost } from "@/types/api/propertyDetail";
 
 interface HostInfoProps {
@@ -10,27 +17,67 @@ const getInitials = (name: string, lastName: string) =>
   `${name.trim().charAt(0)}${lastName.trim().charAt(0)}`.toUpperCase();
 
 export function HostInfo({ host, city }: HostInfoProps) {
+  const hasReputation = host.reputation != null;
+  const hostAddress = (() => {
+    try {
+      const addr = address(host.owner);
+      return addr;
+    } catch {
+      return null;
+    }
+  })();
+
+  const { reputationProfile, fetchUserData } = useGetUser(hostAddress);
+
+  // TODO: delete this line
+  const hostedSinceYear = host.hostedSince
+    ? new Date(host.hostedSince).getFullYear()
+    : null;
+  const yearsHosting = hostedSinceYear
+    ? Math.max(new Date().getFullYear() - hostedSinceYear, 0)
+    : null;
+
   const metaParts = [
     city,
     host.country,
     host.listings === 1 ? "1 publicación" : `${host.listings} publicaciones`,
   ].filter(Boolean);
 
+  const handleChat = () => {
+    sileo.info({ title: "El chat con el anfitrión llega pronto" });
+  };
+
+  useEffect(() => {
+    fetchUserData();
+  }, [fetchUserData]);
+
+  const reputation = useMemo(() => {
+    if (reputationProfile) {
+      return reputationProfile.data.hostReviews > 0
+        ? Number(reputationProfile.data.totalScoreHost) /
+            reputationProfile.data.hostReviews
+        : 0;
+    }
+    return 0;
+  }, [reputationProfile]);
+
   return (
     <section className="card-white">
-      <h2 className="text-xl font-semibold text-zinc-900">Anfitrión</h2>
+      <h2 className="font-montserrat text-2xl font-bold text-zinc-900">
+        Tu anfitrión
+      </h2>
 
-      <div className="mt-4 flex items-center gap-4">
+      <div className="mt-5 flex items-center gap-4">
         <span
           aria-hidden="true"
-          className="flex size-14 shrink-0 items-center justify-center rounded-full bg-primary text-lg font-semibold text-white"
+          className="flex size-16 shrink-0 items-center justify-center rounded-full bg-primary font-montserrat text-xl font-bold text-white"
         >
           {getInitials(host.name, host.lastName)}
         </span>
 
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
-            <p className="text-lg font-semibold text-zinc-900">
+            <p className="font-montserrat text-lg font-bold text-zinc-900">
               {host.name} {host.lastName}
             </p>
             {host.isVerified && (
@@ -44,8 +91,58 @@ export function HostInfo({ host, city }: HostInfoProps) {
           </div>
 
           <p className="mt-1 text-sm text-zinc-500">{metaParts.join(" · ")}</p>
+
+          {yearsHosting != null && (
+            <p className="mt-1.5 flex items-center gap-1.5 text-sm font-medium text-zinc-600">
+              <span className="flex items-center [&>svg]:size-4 text-accent-warm">
+                <ClockIcon />
+              </span>
+              Anfitrión desde {hostedSinceYear}
+              {yearsHosting > 0 && (
+                <span className="text-zinc-500">
+                  · {yearsHosting} {yearsHosting === 1 ? "año" : "años"}
+                </span>
+              )}
+            </p>
+          )}
+
+          {hasReputation && (
+            <div
+              className="mt-1.5 flex items-center gap-1.5"
+              role="img"
+              aria-label={`Reputación ${host.reputation} de 5`}
+            >
+              <div className="flex items-center gap-0.5">
+                {[1, 2, 3, 4, 5].map((i) => (
+                  <span key={i} className="flex items-center [&>svg]:size-4">
+                    <StarIcon
+                      filled={i <= reputation}
+                      className={
+                        i <= reputation ? "text-accent-warm" : "text-zinc-300"
+                      }
+                    />
+                  </span>
+                ))}
+              </div>
+              <span className="text-sm font-bold text-zinc-700">
+                {reputation}
+              </span>
+              <span className="text-sm text-zinc-500">reputación</span>
+            </div>
+          )}
         </div>
       </div>
+
+      <button
+        type="button"
+        onClick={handleChat}
+        className="mt-5 cursor-pointer flex w-full items-center justify-center gap-2 rounded-xl bg-accent-warm px-4 py-3 font-semibold text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-accent-warm-hover hover:shadow-lg active:translate-y-0"
+      >
+        <span className="flex items-center [&>svg]:size-5">
+          <MessageIcon />
+        </span>
+        Chatear con {host.name.split(" ")[0]}
+      </button>
     </section>
   );
 }

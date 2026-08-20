@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { AmenitiesList } from "@/components/accommodation/AmenitiesList";
 import { BookingCard } from "@/components/accommodation/BookingCard";
@@ -20,6 +20,15 @@ export default function PropertyDetailPage() {
   const [property, setProperty] = useState<PropertyDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+
+  const formattedRules = useMemo(() => {
+    try {
+      const res = JSON.parse(property?.houseRules ?? "[]") as string[];
+      return res;
+    } catch {
+      return [];
+    }
+  }, [property]);
 
   useEffect(() => {
     let cancelled = false;
@@ -50,7 +59,7 @@ export default function PropertyDetailPage() {
 
   if (loading) {
     return (
-      <div className="mx-auto w-full max-w-6xl px-4 py-8 md:px-6">
+      <div className="mx-auto w-full max-w-6xl px-4 py-12 md:px-6">
         <div className="aspect-[4/3] w-full animate-skeleton-pulse rounded-2xl bg-surface md:aspect-video" />
         <div className="mt-8 space-y-4">
           <div className="h-8 w-2/3 animate-skeleton-pulse rounded-lg bg-surface" />
@@ -93,7 +102,6 @@ export default function PropertyDetailPage() {
     checkinTime,
     checkoutTime,
     description,
-    houseRules,
     address,
     latitude,
     longitude,
@@ -116,7 +124,7 @@ export default function PropertyDetailPage() {
 
   return (
     <>
-      <div className="mx-auto w-full max-w-6xl px-4 pb-28 pt-8 md:px-6 lg:pb-12">
+      <div className="mx-auto w-full max-w-6xl px-4 pb-28 pt-11.5 md:pt-14 md:px-6 lg:pb-12">
         <PropertyGallery
           images={property.imageUrl ? [property.imageUrl] : []}
           title={title}
@@ -126,7 +134,7 @@ export default function PropertyDetailPage() {
         <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_360px]">
           <div className="min-w-0 space-y-8">
             <header className="border-b border-border pb-6">
-              <h1 className="text-3xl font-bold text-zinc-900 md:text-4xl">
+              <h1 className="font-montserrat text-3xl font-bold tracking-tight text-zinc-900 md:text-4xl">
                 {title}
               </h1>
               <p className="mt-2 text-base text-zinc-500">{location}</p>
@@ -134,7 +142,7 @@ export default function PropertyDetailPage() {
                 {chips.map((chip) => (
                   <span
                     key={chip}
-                    className="rounded-full border border-border bg-surface px-3 py-1 text-sm text-zinc-600"
+                    className="rounded-full border border-border bg-surface px-3 py-1 text-sm font-medium text-zinc-700 transition-colors hover:border-primary/30 hover:bg-white"
                   >
                     {chip}
                   </span>
@@ -146,19 +154,23 @@ export default function PropertyDetailPage() {
 
             {description && (
               <section className="card-white">
-                <h2 className="text-xl font-semibold text-zinc-900">
+                <h2 className="font-montserrat text-xl font-bold text-zinc-900">
                   Sobre este lugar
                 </h2>
                 <p className="mt-4 text-sm leading-relaxed text-zinc-700">
                   {description}
                 </p>
-                {houseRules && (
-                  <p className="mt-4 border-t border-border pt-4 text-sm text-zinc-700">
-                    <span className="font-semibold text-zinc-900">
+                {formattedRules.length > 0 && (
+                  <div className="mt-4 border-t border-border pt-4 text-sm">
+                    <p className="text-lg font-bold text-zinc-900">
                       Reglas de la casa:{" "}
-                    </span>
-                    {houseRules}
-                  </p>
+                    </p>
+                    <ul className="mt-3 list-disc pl-5 text-zinc-700">
+                      {formattedRules.map((rule) => (
+                        <li key={rule}>{rule}</li>
+                      ))}
+                    </ul>
+                  </div>
                 )}
               </section>
             )}
@@ -184,10 +196,10 @@ export default function PropertyDetailPage() {
         </div>
       </div>
 
-      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-white px-4 py-3 shadow-[0_-4px_12px_rgba(0,0,0,0.06)] lg:hidden">
+      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border z-1001 bg-white px-4 py-3 shadow-[0_-4px_12px_rgba(0,0,0,0.06)] lg:hidden">
         <div className="flex items-center justify-between gap-4">
           <div>
-            <p className="text-lg font-bold text-zinc-900">
+            <p className="font-montserrat text-lg font-bold text-zinc-900">
               {price.toLocaleString("es-CO")} $
             </p>
             <p className="text-xs text-zinc-500">por noche</p>
