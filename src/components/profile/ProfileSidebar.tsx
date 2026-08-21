@@ -36,7 +36,7 @@ const NAV_ITEMS: NavItem[] = [
     id: routes.Profile.bookings.index,
     label: "Reservas",
     icon: CalendarDays,
-    role: "host",
+    role: "all",
     action: { type: "navigate", link: routes.Profile.bookings.index },
   },
   { id: "settings", label: "Configuración", icon: Settings, role: "all" },
