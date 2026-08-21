@@ -152,7 +152,8 @@ export function HostBookingCard({ booking, onChanged }: HostBookingCardProps) {
         <BookingInfo
           location={location}
           rangeLabel={rangeLabel}
-          guestName={guestName}
+          personName={guestName}
+          personLabel="Huésped"
           price={formatPrice(booking.totalPrice)}
         />
       </div>
