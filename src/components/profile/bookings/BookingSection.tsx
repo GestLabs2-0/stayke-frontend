@@ -3,14 +3,31 @@
 import { useEffect } from "react";
 
 import { useBookingsByStatus } from "@/hooks/useBookingsByStatus";
-import type { BookingSectionProps } from "@/types/profile/bookings";
+import type {
+  BookingRole,
+  BookingSectionProps,
+} from "@/types/profile/bookings";
 import { EmptyState } from "../EmptyState";
 import { BookingListSkeleton } from "./BookingListSkeleton";
 import { STATUS_DOT_CLASSES } from "./bookingStatusStyles";
+import { GuestBookingCard } from "./GuestBookingCard";
 import { HostBookingCard } from "./HostBookingCard";
 
 const PAGE_BUTTON =
   "inline-flex cursor-pointer items-center justify-center rounded-full border border-primary/20 bg-primary/5 px-5 py-2 font-plus-jakarta text-[13px] font-semibold text-primary transition-colors hover:bg-primary/10 disabled:cursor-not-allowed disabled:opacity-40";
+
+/** Tarjeta a renderizar según el actor de la vista (host o guest). */
+function cardForRole(
+  role: BookingRole,
+  booking: Parameters<typeof HostBookingCard>[0]["booking"],
+  onChanged: () => void,
+) {
+  return role === "guest" ? (
+    <GuestBookingCard booking={booking} onChanged={onChanged} />
+  ) : (
+    <HostBookingCard booking={booking} onChanged={onChanged} />
+  );
+}
 
 /**
  * Sección de reservas de un estado: hace su propio fetch paginado y ofrece
@@ -19,8 +36,11 @@ const PAGE_BUTTON =
 export function BookingSection({
   status,
   title,
-  host,
+  wallet,
+  role = "host",
   pageSize = 8,
+  checkIn,
+  checkOut,
   emptyMessage,
   emptyDescription,
   onTotalChange,
@@ -35,7 +55,12 @@ export function BookingSection({
     hasNext,
     goToPage,
     refresh,
-  } = useBookingsByStatus(host, status, { pageSize });
+  } = useBookingsByStatus(wallet, status, {
+    pageSize,
+    role,
+    checkIn,
+    checkOut,
+  });
 
   useEffect(() => {
     onTotalChange?.(total);
@@ -44,10 +69,12 @@ export function BookingSection({
   return (
     <section className="space-y-3">
       <div className="flex items-center gap-2.5">
-        <span
-          aria-hidden="true"
-          className={`size-2.5 rounded-full ${STATUS_DOT_CLASSES[status]}`}
-        />
+        {status !== null && (
+          <span
+            aria-hidden="true"
+            className={`size-2.5 rounded-full ${STATUS_DOT_CLASSES[status]}`}
+          />
+        )}
         <h2 className="font-montserrat text-base font-bold text-foreground">
           {title}
         </h2>
@@ -73,7 +100,7 @@ export function BookingSection({
                 key={booking.idPda}
                 style={{ animationDelay: `${i * 40}ms` }}
               >
-                <HostBookingCard booking={booking} onChanged={refresh} />
+                {cardForRole(role, booking, refresh)}
               </div>
             ))}
           </div>

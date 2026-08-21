@@ -72,19 +72,29 @@ export interface BookingFiltersProps {
   /** Total de reservas visibles según el filtro actual. */
   total: number;
   onChange: (status: BookingStatusFilter) => void;
+  /** Fecha seleccionada ("YYYY-MM-DD"). Solo se muestra el selector si se pasa el handler. */
+  dateValue?: string;
+  onChangeDate?: (date: string) => void;
 }
 
 // ── BookingSection ──
 
 export interface BookingSectionProps {
-  /** Estado que representa la sección (para el fetch y el marcador de color). */
-  status: BookingStatus;
+  /** Estado que representa la sección (para el fetch y el marcador de color).
+   * null = todas las reservas del actor (vista unificada bajo filtros). */
+  status: BookingStatus | null;
   /** Título de la sección (ej: "Pendientes por aceptar"). */
   title: string;
-  /** Wallet del anfitrión autenticado. */
-  host: string | null | undefined;
+  /** Wallet del actor autenticado (anfitrión en la vista host, huésped en la guest). */
+  wallet: string | null | undefined;
+  /** Qué actor se consulta: "host" (default) o "guest". */
+  role?: BookingRole;
   /** Tamaño de página del fetch paginado. */
   pageSize?: number;
+  /** Filtro de fecha: solo reservas con check-in mayor o igual (segundos Unix). */
+  checkIn?: number;
+  /** Filtro de fecha: solo reservas con check-out menor o igual (segundos Unix). */
+  checkOut?: number;
   /** Mensaje cuando la sección no tiene reservas. */
   emptyMessage?: string;
   emptyDescription?: string;

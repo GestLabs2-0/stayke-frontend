@@ -80,7 +80,7 @@ export function HostBookings() {
             key={section.status}
             status={section.status}
             title={section.title}
-            host={userWallet}
+            wallet={userWallet}
             onTotalChange={handleTotalChange(section.status)}
           />
         ))}
