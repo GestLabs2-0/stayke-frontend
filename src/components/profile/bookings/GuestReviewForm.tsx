@@ -6,7 +6,10 @@ import { useEffect, useRef } from "react";
 import { sileo } from "sileo";
 
 import { fetchMaybeUserProfile } from "@GestLabs2-0/stayke-core";
+import { fetchMaybeBooking } from "@GestLabs2-0/stayke-escrow";
+import { useGuestReviewAction } from "@/hooks/contracts/useGuestReviewAction";
 import useNetwork from "@/hooks/useNetwork";
+import { useWalletContext } from "@/hooks/useWallet";
 import { StarIcon } from "@/icons/StarIcon";
 import { XIcon } from "@/icons/XIcon";
 import { staykeApi } from "@/lib/staykeApi";
@@ -22,8 +25,9 @@ import {
 const STAR_LABELS = ["1", "2", "3", "4", "5"];
 
 /**
- * Modal para que el huésped reseñe una reserva completada. Crea la reseña en el
- * backend (POST /reviews) resolviendo previamente la wallet del anfitrión.
+ * Modal para que el huésped reseñe una reserva completada. Primero firma la
+ * reseña on-chain (guestReview → booking.hostReview = score); recién después, si
+ * el backend aún no tiene la reseña, la persiste vía POST /reviews.
  */
 export function GuestReviewForm({
   open,
@@ -33,6 +37,8 @@ export function GuestReviewForm({
 }: GuestReviewFormProps) {
   const overlayRef = useRef<HTMLDivElement>(null);
   const { client } = useNetwork();
+  const { userWallet } = useWalletContext();
+  const { run: runReview } = useGuestReviewAction();
 
   useEffect(() => {
     if (!open) return;
@@ -49,43 +55,85 @@ export function GuestReviewForm({
       validationSchema: guestReviewValidationSchema,
       validateOnChange: true,
       onSubmit: async (formValues) => {
+        if (!userWallet) {
+          sileo.error({ title: "Conecta tu wallet para continuar" });
+          return;
+        }
+
         try {
+          // 1) Reseña on-chain primero (setea booking.hostReview = score).
+          const onchain = await runReview(booking, formValues.score);
+          if (!onchain.status) return;
+
+          // 2) Verificar que el hostReview quede seteado on-chain.
+          const account = await fetchMaybeBooking(
+            client.rpc,
+            address(booking.idPda),
+          );
+          const setOnChain = account.exists && account.data.hostReview > 0;
+          if (!setOnChain) {
+            sileo.info({
+              title: "Reseña guardada on-chain",
+              description:
+                "Aún no se ve reflejada; reintentá sincronizar en breve.",
+            });
+            onSubmitted();
+            onClose();
+            return;
+          }
+
+          // 3) Resolver la wallet del anfitrión (el reseñado).
           let userPda = booking.hostValues.userProfile;
           try {
-            const account = await fetchMaybeUserProfile(
+            const profile = await fetchMaybeUserProfile(
               client.rpc,
               address(booking.hostValues.userProfile),
             );
-            userPda = account.exists
-              ? account.data.authority
+            userPda = profile.exists
+              ? profile.data.authority
               : booking.hostValues.userProfile;
           } catch {
-            // fallback: se usa el perfil embebido si no se puede resolver la wallet
+            // fallback: se usa el perfil embebido si no se puede resolver
           }
 
-          const result = await staykeApi.createReview({
-            userPda,
+          // 4) Solo publicar en el backend si todavía no tiene la reseña.
+          const existing = await staykeApi.getReviews({
             bookingPda: booking.idPda,
-            propertyPda: booking.propertyValues.pda,
-            isHostReview: true,
-            score: formValues.score,
-            comment: formValues.comment.trim(),
+            reviewerPda: userWallet,
+            limit: 1,
           });
+          const alreadyHas =
+            existing.status && Array.isArray(existing.data)
+              ? existing.data.length > 0
+              : false;
 
-          if (result.status) {
-            sileo.success({ title: "Reseña publicada" });
-            onSubmitted();
-            onClose();
-          } else {
-            sileo.error({
-              title: "No se pudo publicar la reseña",
-              description: "Contactá al soporte si el problema continúa.",
+          if (!alreadyHas) {
+            const created = await staykeApi.createReview({
+              userPda,
+              bookingPda: booking.idPda,
+              propertyPda: booking.propertyValues.pda,
+              isHostReview: true,
+              score: formValues.score,
+              comment: formValues.comment.trim(),
             });
+            if (!created.status) {
+              sileo.info({
+                title: "La reseña on-chain se guardó",
+                description:
+                  "No se pudo sincronizar el comentario. Se reintentará luego.",
+              });
+            }
           }
         } catch (error) {
-          console.error("Error creating review:", error);
-          sileo.error({ title: "Error al crear la reseña" });
+          console.error("Error publishing review:", error);
+          sileo.info({
+            title: "La reseña on-chain se guardó",
+            description: "Hubo un problema sincronizando el comentario.",
+          });
         }
+
+        onSubmitted();
+        onClose();
       },
     });
 

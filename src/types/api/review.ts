@@ -1,3 +1,5 @@
+import type { ApiPaginatedResponse } from "../http";
+
 /** Cuerpo de POST /reviews. `reviewerPda` lo inyecta el servidor desde el JWT. */
 export interface CreateReviewRequest {
   /** PDA on-chain del usuario reseñado (para la reseña de huésped: el anfitrión). */
@@ -25,3 +27,21 @@ export interface Review {
   score: number;
   comment: string;
 }
+
+/** Query params de GET /api/v1.0/reviews. */
+export interface GetReviewsParams {
+  /** Wallet del usuario reseñado (ej: el anfitrión). */
+  userPda?: string;
+  /** Reserva que originó la reseña. */
+  bookingPda?: string;
+  /** Propiedad reseñada. */
+  propertyPda?: string;
+  /** Wallet del reseñador (para comprobar si ya reseñamos esta reserva). */
+  reviewerPda?: string;
+  score?: number;
+  limit?: number;
+  offset?: number;
+}
+
+/** Respuesta paginada de GET /api/v1.0/reviews. */
+export interface ReviewListResult extends ApiPaginatedResponse<Review> {}

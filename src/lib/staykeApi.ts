@@ -18,7 +18,12 @@ import type {
   PropertyResponse,
 } from "@/types/api/property";
 import type { PropertyDetail } from "@/types/api/propertyDetail";
-import type { CreateReviewRequest, Review } from "@/types/api/review";
+import type {
+  CreateReviewRequest,
+  GetReviewsParams,
+  Review,
+  ReviewListResult,
+} from "@/types/api/review";
 import type { ApiBookedDateRange, GetBookedDatesParams } from "@/types/booking";
 import type {
   ApiResponse,
@@ -396,6 +401,55 @@ export class StaykeApi {
       return result;
     } catch (error) {
       return handleApiError(error, result);
+    }
+  }
+
+  /**
+   * GET /reviews — lista reseñas con filtros opcionales. Se usa para comprobar
+   * si el backend ya tiene una reseña (por ejemplo la del huésped) antes de crear.
+   */
+  async getReviews(params: GetReviewsParams): Promise<ReviewListResult> {
+    const result: ReviewListResult = {
+      data: null,
+      meta: null,
+      status: false,
+      message: "",
+    };
+
+    try {
+      const queryParams = new URLSearchParams();
+      if (params.userPda) queryParams.append("userPda", params.userPda);
+      if (params.bookingPda)
+        queryParams.append("bookingPda", params.bookingPda);
+      if (params.propertyPda)
+        queryParams.append("propertyPda", params.propertyPda);
+      if (params.reviewerPda)
+        queryParams.append("reviewerPda", params.reviewerPda);
+      if (params.score !== undefined)
+        queryParams.append("score", String(params.score));
+      if (params.limit !== undefined)
+        queryParams.append("limit", String(params.limit));
+      if (params.offset !== undefined)
+        queryParams.append("offset", String(params.offset));
+
+      const { data } = await this.httpClient.get({
+        url: `/reviews?${queryParams.toString()}`,
+      });
+
+      const rawResponse = data as ReviewListResult;
+      result.status = rawResponse?.status === true;
+      result.data = rawResponse?.data ?? null;
+      result.meta = rawResponse?.meta ?? null;
+      result.message = rawResponse?.message ?? "";
+      return result;
+    } catch (error) {
+      const axiosError = error as {
+        response?: { data?: { message?: string; errors?: string[] } };
+      };
+      result.message =
+        axiosError.response?.data?.message || "Ocurrió un error inesperado.";
+      result.errors = axiosError.response?.data?.errors || [];
+      return result;
     }
   }
 
