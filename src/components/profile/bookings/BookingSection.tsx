@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 
 import { useBookingsByStatus } from "@/hooks/useBookingsByStatus";
+import type { Booking } from "@/types/api/booking";
 import type {
   BookingRole,
   BookingSectionProps,
@@ -19,7 +20,7 @@ const PAGE_BUTTON =
 /** Tarjeta a renderizar según el actor de la vista (host o guest). */
 function cardForRole(
   role: BookingRole,
-  booking: Parameters<typeof HostBookingCard>[0]["booking"],
+  booking: Booking,
   onChanged: () => void,
 ) {
   return role === "guest" ? (
