@@ -19,6 +19,7 @@ This repo follows strict rules when developing components:
 - Forms and validations uses Formik and Yup
 - Use sileo for toasts
 - Label forms always has to use htmlFor
+- Do not use window.confirm or window.alert, use sileo.action instead.
 
 ---
 ## Code quality checks

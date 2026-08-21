@@ -1,9 +1,26 @@
+import type { LucideIcon } from "lucide-react";
+
+import type { HostBookingAction } from "@/lib/contracts/buildHostBookingAction";
 import type { Booking, BookingStatus } from "@/types/api/booking";
 
 // ── HostBookingCard ──
 
 export interface HostBookingCardProps {
   booking: Booking;
+  /** Se llama tras una acción on-chain exitosa para refrescar la lista. */
+  onChanged?: () => void;
+}
+
+export type BookingActionVariant = "primary" | "danger";
+
+/** Acción de la tarjeta; `dispute` queda como placeholder pendiente de SDK. */
+export interface BookingAction {
+  id: HostBookingAction | "dispute";
+  label: string;
+  icon: LucideIcon;
+  variant: BookingActionVariant;
+  disabled?: boolean;
+  hint?: string;
 }
 
 // ── BookingListSkeleton ──
@@ -35,20 +52,17 @@ export interface BookingFiltersProps {
 // ── BookingSection ──
 
 export interface BookingSectionProps {
-  /** Estado que representa la sección (para el marcador de color). */
+  /** Estado que representa la sección (para el fetch y el marcador de color). */
   status: BookingStatus;
   /** Título de la sección (ej: "Pendientes por aceptar"). */
   title: string;
-  bookings: Booking[];
-  loading?: boolean;
+  /** Wallet del anfitrión autenticado. */
+  host: string | null | undefined;
+  /** Tamaño de página del fetch paginado. */
+  pageSize?: number;
   /** Mensaje cuando la sección no tiene reservas. */
   emptyMessage?: string;
   emptyDescription?: string;
-}
-
-/** Grupo de reservas de una sección prioritaria. */
-export interface BookingSectionGroup {
-  status: BookingStatus;
-  title: string;
-  bookings: Booking[];
+  /** Reporta el total de reservas de la sección al padre. */
+  onTotalChange?: (total: number) => void;
 }
