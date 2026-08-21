@@ -61,68 +61,69 @@ export function GuestReviewForm({
         }
 
         try {
-          // 1) Reseña on-chain primero (setea booking.hostReview = score).
-          const onchain = await runReview(booking, formValues.score);
-          if (!onchain.status) return;
-
-          // 2) Verificar que el hostReview quede seteado on-chain.
-          const account = await fetchMaybeBooking(
-            client.rpc,
-            address(booking.idPda),
-          );
-          const setOnChain = account.exists && account.data.hostReview > 0;
-          if (!setOnChain) {
-            sileo.info({
-              title: "Reseña guardada on-chain",
-              description:
-                "Aún no se ve reflejada; reintentá sincronizar en breve.",
-            });
-            onSubmitted();
-            onClose();
-            return;
-          }
-
-          // 3) Resolver la wallet del anfitrión (el reseñado).
-          let userPda = booking.hostValues.userProfile;
+          // 0) Resolver la wallet del anfitrión (el reseñado).
+          let hostWallet = booking.hostValues.userProfile;
           try {
             const profile = await fetchMaybeUserProfile(
               client.rpc,
               address(booking.hostValues.userProfile),
             );
-            userPda = profile.exists
+            hostWallet = profile.exists
               ? profile.data.authority
               : booking.hostValues.userProfile;
           } catch {
             // fallback: se usa el perfil embebido si no se puede resolver
           }
 
-          // 4) Solo publicar en el backend si todavía no tiene la reseña.
+          // 1) Off-chain primero: si el backend ya registró la reseña (única por
+          // booking + reviewer), no es necesario firmar on-chain.
           const existing = await staykeApi.getReviews({
             bookingPda: booking.idPda,
             reviewerPda: userWallet,
+            userPda: hostWallet,
             limit: 1,
           });
-          const alreadyHas =
-            existing.status && Array.isArray(existing.data)
-              ? existing.data.length > 0
-              : false;
+          const alreadyOnBackend = Array.isArray(existing.data)
+            ? existing.data.length > 0
+            : false;
+          if (alreadyOnBackend) {
+            sileo.info({ title: "Ya reseñaste esta reserva" });
+            onSubmitted();
+            onClose();
+            return;
+          }
 
-          if (!alreadyHas) {
-            const created = await staykeApi.createReview({
-              userPda,
-              bookingPda: booking.idPda,
-              propertyPda: booking.propertyValues.pda,
-              isHostReview: true,
-              score: formValues.score,
-              comment: formValues.comment.trim(),
+          // 2) Justo antes del on-chain, verificar on-chain (hostReview === 0).
+          const account = await fetchMaybeBooking(
+            client.rpc,
+            address(booking.idPda),
+          );
+          const alreadyOnChain = account.exists && account.data.hostReview > 0;
+          if (alreadyOnChain) {
+            sileo.info({ title: "Esta reserva ya fue reseñada on-chain" });
+            onClose();
+            return;
+          }
+
+          // 3) Firmar la reseña on-chain (setea booking.hostReview = score).
+          const onchain = await runReview(booking, formValues.score);
+          if (!onchain.status) return;
+
+          // 4) Persistir en el backend (off-chain ya confirmó que faltaba).
+          const created = await staykeApi.createReview({
+            userPda: hostWallet,
+            bookingPda: booking.idPda,
+            propertyPda: booking.propertyValues.pda,
+            isHostReview: true,
+            score: formValues.score,
+            comment: formValues.comment.trim(),
+          });
+          if (!created.status) {
+            sileo.info({
+              title: "Reseña guardada on-chain",
+              description:
+                "No se pudo sincronizar el comentario. Se reintentará luego.",
             });
-            if (!created.status) {
-              sileo.info({
-                title: "La reseña on-chain se guardó",
-                description:
-                  "No se pudo sincronizar el comentario. Se reintentará luego.",
-              });
-            }
           }
         } catch (error) {
           console.error("Error publishing review:", error);

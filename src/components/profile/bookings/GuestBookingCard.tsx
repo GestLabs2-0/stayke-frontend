@@ -1,14 +1,14 @@
 "use client";
 
-import { address } from "@solana/kit";
 import { useEffect, useState } from "react";
 import { sileo } from "sileo";
 
-import { BookingStatus, fetchMaybeBooking } from "@GestLabs2-0/stayke-escrow";
+import { BookingStatus } from "@GestLabs2-0/stayke-escrow";
 import { formatPrice } from "@/helpers/formatPrice";
 import { propertyImageUrl } from "@/helpers/propertyImageUrl";
 import { useGuestBookingAction } from "@/hooks/contracts/useGuestBookingAction";
-import useNetwork from "@/hooks/useNetwork";
+import { useWalletContext } from "@/hooks/useWallet";
+import { staykeApi } from "@/lib/staykeApi";
 import type {
   GuestBookingAction,
   GuestBookingActionId,
@@ -51,10 +51,10 @@ export function GuestBookingCard({
   onChanged,
 }: GuestBookingCardProps) {
   const { run } = useGuestBookingAction();
-  const { client } = useNetwork();
+  const { userWallet } = useWalletContext();
   const [busy, setBusy] = useState<GuestBookingActionId | null>(null);
   const [reviewOpen, setReviewOpen] = useState(false);
-  // Fuente de verdad on-chain: booking.hostReview > 0 significa que ya reseñó.
+  // Chequeo off-chain: si el backend ya tiene la reseña del huésped se oculta.
   // null = aún no consultado (no se muestra la reseña hasta conocerlo).
   const [guestHasReviewed, setGuestHasReviewed] = useState<boolean | null>(
     null,
@@ -62,16 +62,26 @@ export function GuestBookingCard({
 
   useEffect(() => {
     if (!REVIEWABLE_STATUSES.includes(booking.status)) return;
+    if (!userWallet) {
+      setGuestHasReviewed(null);
+      return;
+    }
 
     let mounted = true;
     setGuestHasReviewed(null);
 
-    fetchMaybeBooking(client.rpc, address(booking.idPda))
-      .then((account) => {
+    staykeApi
+      .getReviews({
+        bookingPda: booking.idPda,
+        reviewerPda: userWallet,
+        limit: 1,
+      })
+      .then((result) => {
         if (!mounted) return;
-        setGuestHasReviewed(
-          account.exists ? account.data.hostReview > 0 : false,
-        );
+        const exists = Array.isArray(result.data)
+          ? result.data.length > 0
+          : false;
+        setGuestHasReviewed(exists);
       })
       .catch(() => {
         if (mounted) setGuestHasReviewed(false);
@@ -80,7 +90,7 @@ export function GuestBookingCard({
     return () => {
       mounted = false;
     };
-  }, [booking, client.rpc]);
+  }, [booking.idPda, booking.status, userWallet]);
 
   const imageSrc = propertyImageUrl(booking.propertyValues.imageKey);
   const location = [
