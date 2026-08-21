@@ -47,9 +47,8 @@ export interface Booking {
   checkOut: number;
   /** Estado actual de la reserva. */
   status: BookingStatus;
+  /** El huésped ya reseñó al anfitrión si booking.hostReview > 0 (on-chain). */
   resellable: boolean;
-  guestReviewed: boolean;
-  hostReviewed: boolean;
 }
 
 /** Query params de GET /api/v1.0/bookings. */

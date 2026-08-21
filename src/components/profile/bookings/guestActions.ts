@@ -4,8 +4,15 @@ import { BookingStatus } from "@GestLabs2-0/stayke-escrow";
 import type { Booking } from "@/types/api/booking";
 import type { GuestBookingAction } from "@/types/profile/bookings";
 
-/** Acciones disponibles para el huésped según el estado de la reserva. */
-export function actionsForGuest(booking: Booking): GuestBookingAction[] {
+/**
+ * Acciones disponibles para el huésped según el estado de la reserva.
+ * `guestHasReviewed` se deriva del on-chain (booking.hostReview > 0); null =
+ * aún desconocido (no se genera el botón de reseña hasta conocerlo).
+ */
+export function actionsForGuest(
+  booking: Booking,
+  guestHasReviewed: boolean | null,
+): GuestBookingAction[] {
   switch (booking.status) {
     case BookingStatus.Pending:
     case BookingStatus.HostAccepted:
@@ -29,7 +36,7 @@ export function actionsForGuest(booking: Booking): GuestBookingAction[] {
           icon: Flag,
           variant: "danger",
         },
-        ...(booking.guestReviewed
+        ...(guestHasReviewed === false
           ? []
           : [
               {
@@ -41,7 +48,7 @@ export function actionsForGuest(booking: Booking): GuestBookingAction[] {
             ]),
       ];
     case BookingStatus.Released:
-      return booking.guestReviewed
+      return guestHasReviewed === false
         ? []
         : [
             {

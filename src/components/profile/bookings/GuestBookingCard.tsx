@@ -1,11 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { address } from "@solana/kit";
+import { useEffect, useState } from "react";
 import { sileo } from "sileo";
 
+import { BookingStatus, fetchMaybeBooking } from "@GestLabs2-0/stayke-escrow";
 import { formatPrice } from "@/helpers/formatPrice";
 import { propertyImageUrl } from "@/helpers/propertyImageUrl";
 import { useGuestBookingAction } from "@/hooks/contracts/useGuestBookingAction";
+import useNetwork from "@/hooks/useNetwork";
 import type {
   GuestBookingAction,
   GuestBookingActionId,
@@ -40,13 +43,44 @@ function fullName(name: string, lastName: string, fallback: string) {
   return full.length > 0 ? full : shortAddress(fallback);
 }
 
+/** Estados en los que el huésped puede reseñar al anfitrión. */
+const REVIEWABLE_STATUSES = [BookingStatus.Completed, BookingStatus.Released];
+
 export function GuestBookingCard({
   booking,
   onChanged,
 }: GuestBookingCardProps) {
   const { run } = useGuestBookingAction();
+  const { client } = useNetwork();
   const [busy, setBusy] = useState<GuestBookingActionId | null>(null);
   const [reviewOpen, setReviewOpen] = useState(false);
+  // Fuente de verdad on-chain: booking.hostReview > 0 significa que ya reseñó.
+  // null = aún no consultado (no se muestra la reseña hasta conocerlo).
+  const [guestHasReviewed, setGuestHasReviewed] = useState<boolean | null>(
+    null,
+  );
+
+  useEffect(() => {
+    if (!REVIEWABLE_STATUSES.includes(booking.status)) return;
+
+    let mounted = true;
+    setGuestHasReviewed(null);
+
+    fetchMaybeBooking(client.rpc, address(booking.idPda))
+      .then((account) => {
+        if (!mounted) return;
+        setGuestHasReviewed(
+          account.exists ? account.data.hostReview > 0 : false,
+        );
+      })
+      .catch(() => {
+        if (mounted) setGuestHasReviewed(false);
+      });
+
+    return () => {
+      mounted = false;
+    };
+  }, [booking, client.rpc]);
 
   const imageSrc = propertyImageUrl(booking.propertyValues.imageKey);
   const location = [
@@ -100,7 +134,7 @@ export function GuestBookingCard({
     });
   };
 
-  const actions = actionsForGuest(booking);
+  const actions = actionsForGuest(booking, guestHasReviewed);
 
   return (
     <>
