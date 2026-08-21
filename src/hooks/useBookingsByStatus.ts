@@ -4,20 +4,33 @@ import { useCallback, useEffect, useState } from "react";
 
 import { staykeApi } from "@/lib/staykeApi";
 import type { Booking, BookingStatus } from "@/types/api/booking";
+import type { BookingRole } from "@/types/profile/bookings";
 
 export interface UseBookingsByStatusOptions {
   pageSize?: number;
+  /** "host" filtra por reservas del anfitrión; "guest" por las del huésped. */
+  role?: BookingRole;
+  /** Filtro de fecha: solo reservas con check-in mayor o igual (segundos Unix). */
+  checkIn?: number;
+  /** Filtro de fecha: solo reservas con check-out menor o igual (segundos Unix). */
+  checkOut?: number;
 }
 
 /**
- * Carga las reservas del anfitrión para un único `status` con paginación por
- * páginas (`page`/`pageSize`). Expone `goToPage` para navegar y `refresh` para
- * recargar desde la primera página (por ejemplo tras una mutación on-chain).
+ * Carga las reservas de un actor (anfitrión o huésped) para un único `status` con
+ * paginación por páginas (`page`/`pageSize`). Expone `goToPage` para navegar y
+ * `refresh` para recargar desde la primera página (por ejemplo tras una mutación
+ * on-chain).
  */
 export function useBookingsByStatus(
-  host: string | null | undefined,
+  wallet: string | null | undefined,
   status: BookingStatus | null,
-  { pageSize = 8 }: UseBookingsByStatusOptions = {},
+  {
+    pageSize = 8,
+    role = "host",
+    checkIn,
+    checkOut,
+  }: UseBookingsByStatusOptions = {},
 ) {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
@@ -44,7 +57,7 @@ export function useBookingsByStatus(
     // refreshKey fuer un re-run tras una mutación on-chain.
     void refreshKey;
 
-    if (!host) {
+    if (!wallet) {
       setBookings([]);
       setTotal(0);
       setLoading(false);
@@ -56,8 +69,10 @@ export function useBookingsByStatus(
 
     staykeApi
       .getBookings({
-        host,
+        ...(role === "host" ? { host: wallet } : { guest: wallet }),
         status: status ?? undefined,
+        checkIn,
+        checkOut,
         limit: pageSize,
         offset,
       })
@@ -79,7 +94,7 @@ export function useBookingsByStatus(
     return () => {
       cancelled = true;
     };
-  }, [host, status, pageSize, page, refreshKey]);
+  }, [wallet, status, pageSize, page, refreshKey, role, checkIn, checkOut]);
 
   // Si la navegación quedó fuera de rango (p. ej. tras un refresh), se corrige.
   useEffect(() => {

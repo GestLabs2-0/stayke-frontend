@@ -18,6 +18,7 @@ import type {
   PropertyResponse,
 } from "@/types/api/property";
 import type { PropertyDetail } from "@/types/api/propertyDetail";
+import type { CreateReviewRequest, Review } from "@/types/api/review";
 import type { ApiBookedDateRange, GetBookedDatesParams } from "@/types/booking";
 import type {
   ApiResponse,
@@ -371,6 +372,33 @@ export class StaykeApi {
    * backend window defaults to today → +6 months; pass from/to (YYYY-MM-DD)
    * to fetch a specific 6-month window.
    */
+  // ── Reviews ──
+
+  /**
+   * POST /reviews — crea una reseña (de huésped o anfitrión) para una reserva.
+   * `reviewerPda` lo inyecta el backend desde el JWT autenticado.
+   */
+  async createReview(body: CreateReviewRequest): Promise<ApiResponse<Review>> {
+    const result: ApiResponse<Review> = {
+      data: null,
+      status: false,
+      message: "",
+    };
+
+    try {
+      const { data } = await this.httpClient.post({ url: "/reviews", body });
+
+      const rawResponse = data as ApiResponse<Review>;
+      if (rawResponse?.status) result.status = true;
+      result.data = rawResponse.data;
+      result.message = rawResponse.message;
+      result.errors = rawResponse.errors;
+      return result;
+    } catch (error) {
+      return handleApiError(error, result);
+    }
+  }
+
   async getBookedDates(
     params: GetBookedDatesParams,
   ): Promise<ApiResponse<ApiBookedDateRange[]>> {
