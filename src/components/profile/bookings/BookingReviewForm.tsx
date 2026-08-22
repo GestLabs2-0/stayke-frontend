@@ -6,39 +6,40 @@ import { useEffect, useRef } from "react";
 import { sileo } from "sileo";
 
 import { fetchMaybeUserProfile } from "@GestLabs2-0/stayke-core";
-import { fetchMaybeBooking } from "@GestLabs2-0/stayke-escrow";
-import { useGuestReviewAction } from "@/hooks/contracts/useGuestReviewAction";
 import useNetwork from "@/hooks/useNetwork";
 import { useWalletContext } from "@/hooks/useWallet";
 import { StarIcon } from "@/icons/StarIcon";
 import { XIcon } from "@/icons/XIcon";
 import { staykeApi } from "@/lib/staykeApi";
 import type {
-  GuestReviewFormProps,
-  GuestReviewFormValues,
-} from "@/types/profile/guestReview";
+  BookingReviewFormProps,
+  BookingReviewFormValues,
+} from "@/types/profile/bookingReview";
 import {
-  GUEST_REVIEW_INITIAL_VALUES,
-  guestReviewValidationSchema,
-} from "@/types/profile/guestReview";
+  BOOKING_REVIEW_INITIAL_VALUES,
+  bookingReviewValidationSchema,
+  reviewedProfilePda,
+} from "@/types/profile/bookingReview";
 
 const STAR_LABELS = ["1", "2", "3", "4", "5"];
 
 /**
- * Modal para que el huésped reseñe una reserva completada. Primero firma la
- * reseña on-chain (guestReview → booking.hostReview = score); recién después, si
- * el backend aún no tiene la reseña, la persiste vía POST /reviews.
+ * Modal para reseñar una reserva (huésped → anfitrión o anfitrión → huésped).
+ * Primero comprueba off-chain que no exista reseña; la verificación y envío
+ * on-chain quedan a cargo del `onChainReview` provisto por la tarjeta; recién
+ * después persiste el comentario vía POST /reviews.
  */
-export function GuestReviewForm({
+export function BookingReviewForm({
   open,
   booking,
+  isHostReview,
+  onChainReview,
   onClose,
   onSubmitted,
-}: GuestReviewFormProps) {
+}: BookingReviewFormProps) {
   const overlayRef = useRef<HTMLDivElement>(null);
   const { client } = useNetwork();
   const { userWallet } = useWalletContext();
-  const { run: runReview } = useGuestReviewAction();
 
   useEffect(() => {
     if (!open) return;
@@ -50,9 +51,9 @@ export function GuestReviewForm({
   }, [open, onClose]);
 
   const { values, errors, touched, isSubmitting, setFieldValue, handleSubmit } =
-    useFormik<GuestReviewFormValues>({
-      initialValues: GUEST_REVIEW_INITIAL_VALUES,
-      validationSchema: guestReviewValidationSchema,
+    useFormik<BookingReviewFormValues>({
+      initialValues: BOOKING_REVIEW_INITIAL_VALUES,
+      validationSchema: bookingReviewValidationSchema,
       validateOnChange: true,
       onSubmit: async (formValues) => {
         if (!userWallet) {
@@ -61,26 +62,26 @@ export function GuestReviewForm({
         }
 
         try {
-          // 0) Resolver la wallet del anfitrión (el reseñado).
-          let hostWallet = booking.hostValues.userProfile;
+          // 0) Resolver la wallet del usuario reseñado (para filtro y POST).
+          const profilePda = reviewedProfilePda(booking, isHostReview);
+          let reviewedWallet = profilePda;
           try {
             const profile = await fetchMaybeUserProfile(
               client.rpc,
-              address(booking.hostValues.userProfile),
+              address(profilePda),
             );
-            hostWallet = profile.exists
+            reviewedWallet = profile.exists
               ? profile.data.authority
-              : booking.hostValues.userProfile;
+              : profilePda;
           } catch {
             // fallback: se usa el perfil embebido si no se puede resolver
           }
 
-          // 1) Off-chain primero: si el backend ya registró la reseña (única por
-          // booking + reviewer), no es necesario firmar on-chain.
+          // 1) Off-chain primero: única por booking + reviewer.
           const existing = await staykeApi.getReviews({
             bookingPda: booking.idPda,
             reviewerPda: userWallet,
-            userPda: hostWallet,
+            userPda: reviewedWallet,
             limit: 1,
           });
           const alreadyOnBackend = Array.isArray(existing.data)
@@ -93,28 +94,24 @@ export function GuestReviewForm({
             return;
           }
 
-          // 2) Justo antes del on-chain, verificar on-chain (hostReview === 0).
-          const account = await fetchMaybeBooking(
-            client.rpc,
-            address(booking.idPda),
-          );
-          const alreadyOnChain = account.exists && account.data.hostReview > 0;
-          if (alreadyOnChain) {
-            sileo.info({ title: "Esta reserva ya fue reseñada on-chain" });
-            onClose();
+          // 2) Verificación + envío on-chain (asume el campo objetivo === 0).
+          const onchain = await onChainReview(formValues.score);
+          if (!onchain.ok) {
+            if (onchain.already) {
+              sileo.info({
+                title: "Esta reserva ya fue reseñada on-chain",
+              });
+              onClose();
+            }
             return;
           }
 
-          // 3) Firmar la reseña on-chain (setea booking.hostReview = score).
-          const onchain = await runReview(booking, formValues.score);
-          if (!onchain.status) return;
-
-          // 4) Persistir en el backend (off-chain ya confirmó que faltaba).
+          // 3) Persistir en el backend (off-chain ya confirmó que faltaba).
           const created = await staykeApi.createReview({
-            userPda: hostWallet,
+            userPda: reviewedWallet,
             bookingPda: booking.idPda,
             propertyPda: booking.propertyValues.pda,
-            isHostReview: true,
+            isHostReview,
             score: formValues.score,
             comment: formValues.comment.trim(),
           });
@@ -156,13 +153,13 @@ export function GuestReviewForm({
       <div
         role="dialog"
         aria-modal="true"
-        aria-labelledby="guest-review-dialog-title"
+        aria-labelledby="booking-review-dialog-title"
         className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl animate-in fade-in zoom-in-95 duration-200"
       >
         <div className="flex items-start justify-between gap-4">
           <div>
             <h3
-              id="guest-review-dialog-title"
+              id="booking-review-dialog-title"
               className="font-montserrat text-lg font-bold text-[#171717]"
             >
               Reseñar tu estadía
@@ -184,7 +181,7 @@ export function GuestReviewForm({
         <form onSubmit={handleSubmit} className="mt-5 space-y-5">
           <div>
             <span
-              id="guest-review-score-label"
+              id="booking-review-score-label"
               className="font-plus-jakarta text-[13px] font-semibold text-[#434654]"
             >
               Puntuación
@@ -218,13 +215,13 @@ export function GuestReviewForm({
 
           <div>
             <label
-              htmlFor="guest-review-comment"
+              htmlFor="booking-review-comment"
               className="font-plus-jakarta text-[13px] font-semibold text-[#434654]"
             >
               Comentario
             </label>
             <textarea
-              id="guest-review-comment"
+              id="booking-review-comment"
               value={values.comment}
               onChange={(e) => setFieldValue("comment", e.target.value, true)}
               rows={4}

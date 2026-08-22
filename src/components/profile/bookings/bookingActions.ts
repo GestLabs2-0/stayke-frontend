@@ -1,4 +1,12 @@
-import { CalendarCheck, Check, Flag, Play, RefreshCw, X } from "lucide-react";
+import {
+  CalendarCheck,
+  Check,
+  Flag,
+  Play,
+  RefreshCw,
+  Star,
+  X,
+} from "lucide-react";
 
 import { BookingStatus } from "@GestLabs2-0/stayke-escrow";
 import type { Booking } from "@/types/api/booking";
@@ -11,10 +19,21 @@ function isCheckOutReached(booking: Pick<Booking, "checkOut">): boolean {
   return booking.checkOut * 1000 <= Date.now();
 }
 
-/** Acciones disponibles según el estado de la reserva. */
+const REVIEW_ACTION: BookingAction = {
+  id: "review",
+  label: "Reseñar",
+  icon: Star,
+  variant: "primary",
+};
+
+/**
+ * Acciones disponibles según el estado de la reserva.
+ * `releaseReady` y `hostHasReviewed` provienen de lecturas off/on-chain.
+ */
 export function actionsFor(
   booking: Booking,
   releaseReady: boolean,
+  hostHasReviewed: boolean | null,
 ): BookingAction[] {
   switch (booking.status) {
     case BookingStatus.Pending:
@@ -69,7 +88,10 @@ export function actionsFor(
           hint: NOT_READY_HINT,
         },
         { id: "dispute", label: "Disputar", icon: Flag, variant: "danger" },
+        ...(hostHasReviewed === false ? [REVIEW_ACTION] : []),
       ];
+    case BookingStatus.Released:
+      return hostHasReviewed === false ? [REVIEW_ACTION] : [];
     default:
       return [];
   }

@@ -40,7 +40,7 @@ export type BookingActionVariant = "primary" | "danger";
 
 /** Acción de la tarjeta; `dispute` queda como placeholder pendiente de SDK. */
 export interface BookingAction {
-  id: HostBookingAction | "dispute";
+  id: HostBookingAction | "dispute" | "review";
   label: string;
   icon: LucideIcon;
   variant: BookingActionVariant;

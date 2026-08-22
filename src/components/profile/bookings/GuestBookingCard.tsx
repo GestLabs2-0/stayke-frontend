@@ -1,14 +1,19 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { address } from "@solana/kit";
+import { useCallback, useEffect, useState } from "react";
 import { sileo } from "sileo";
 
-import { BookingStatus } from "@GestLabs2-0/stayke-escrow";
+import { BookingStatus, fetchMaybeBooking } from "@GestLabs2-0/stayke-escrow";
+import { formatDate } from "@/helpers/formatDate";
 import { formatPrice } from "@/helpers/formatPrice";
 import { propertyImageUrl } from "@/helpers/propertyImageUrl";
 import { useGuestBookingAction } from "@/hooks/contracts/useGuestBookingAction";
+import { useGuestReviewAction } from "@/hooks/contracts/useGuestReviewAction";
+import useNetwork from "@/hooks/useNetwork";
 import { useWalletContext } from "@/hooks/useWallet";
 import { staykeApi } from "@/lib/staykeApi";
+import type { OnChainReviewResult } from "@/types/profile/bookingReview";
 import type {
   GuestBookingAction,
   GuestBookingActionId,
@@ -16,26 +21,18 @@ import type {
 } from "@/types/profile/bookings";
 import { BookingHeader } from "./BookingHeader";
 import { BookingInfo } from "./BookingInfo";
+import { BookingReviewForm } from "./BookingReviewForm";
 import { BookingThumbnail } from "./BookingThumbnail";
 import {
   STATUS_BADGE_CLASSES,
   STATUS_DOT_CLASSES,
 } from "./bookingStatusStyles";
 import { GuestBookingActions } from "./GuestBookingActions";
-import { GuestReviewForm } from "./GuestReviewForm";
 import { actionsForGuest } from "./guestActions";
 
 function shortAddress(address: string) {
   if (address.length <= 12) return address;
   return `${address.slice(0, 4)}…${address.slice(-4)}`;
-}
-
-function formatDate(unixSeconds: number) {
-  return new Date(unixSeconds * 1000).toLocaleDateString("es", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  });
 }
 
 function fullName(name: string, lastName: string, fallback: string) {
@@ -51,6 +48,8 @@ export function GuestBookingCard({
   onChanged,
 }: GuestBookingCardProps) {
   const { run } = useGuestBookingAction();
+  const { run: runReview } = useGuestReviewAction();
+  const { client } = useNetwork();
   const { userWallet } = useWalletContext();
   const [busy, setBusy] = useState<GuestBookingActionId | null>(null);
   const [reviewOpen, setReviewOpen] = useState(false);
@@ -91,6 +90,21 @@ export function GuestBookingCard({
       mounted = false;
     };
   }, [booking.idPda, booking.status, userWallet]);
+
+  const onChainReview = useCallback(
+    async (score: number): Promise<OnChainReviewResult> => {
+      const account = await fetchMaybeBooking(
+        client.rpc,
+        address(booking.idPda),
+      );
+      if (account.exists && account.data.hostReview > 0) {
+        return { ok: false, already: true };
+      }
+      const result = await runReview(booking, score);
+      return result.status ? { ok: true } : { ok: false, already: false };
+    },
+    [booking, client.rpc, runReview],
+  );
 
   const imageSrc = propertyImageUrl(booking.propertyValues.imageKey);
   const location = [
@@ -178,9 +192,11 @@ export function GuestBookingCard({
         />
       </article>
 
-      <GuestReviewForm
+      <BookingReviewForm
         open={reviewOpen}
         booking={booking}
+        isHostReview
+        onChainReview={onChainReview}
         onClose={() => setReviewOpen(false)}
         onSubmitted={() => onChanged?.()}
       />
