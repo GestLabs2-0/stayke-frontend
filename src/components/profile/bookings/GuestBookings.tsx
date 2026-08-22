@@ -1,9 +1,10 @@
 "use client";
 
 import { CalendarDays } from "lucide-react";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 import { BookingStatus } from "@GestLabs2-0/stayke-escrow";
+import { dateToUnix } from "@/helpers/dateToUnix";
 import { useWalletContext } from "@/hooks/useWallet";
 import { BOOKING_STATUS_LABELS } from "@/types/api/booking";
 import type {
@@ -34,22 +35,17 @@ function sectionTitle(status: BookingStatus): string {
   );
 }
 
-/** Convierte "YYYY-MM-DD" a timestamp Unix (media noche local). */
-function dateToUnix(date: string): number | undefined {
-  if (!date) return undefined;
-  const ms = new Date(`${date}T00:00:00`).getTime();
-  return Number.isNaN(ms) ? undefined : Math.floor(ms / 1000);
-}
-
 export function GuestBookings() {
   const { userWallet } = useWalletContext();
   const [status, setStatus] = useState<BookingStatusFilter>(null);
   const [date, setDate] = useState("");
+  const [dateCheckout, setDateCheckout] = useState("");
   // Totales por estado reportados por cada sección, para el contador del filtro.
   const [counts, setCounts] = useState<Record<number, number>>({});
 
-  const filtersActive = status !== null || date !== "";
+  const filtersActive = status !== null || date !== "" || dateCheckout !== "";
   const checkIn = filtersActive ? dateToUnix(date) : undefined;
+  const checkOut = filtersActive ? dateToUnix(dateCheckout) : undefined;
 
   const sections: Pick<BookingSectionProps, "status" | "title">[] =
     filtersActive
@@ -67,12 +63,14 @@ export function GuestBookings() {
     0,
   );
 
-  const handleTotalChange =
-    (section: BookingStatus | null) => (count: number) =>
+  const handleTotalChange = useCallback(
+    (section: BookingStatus | null, count: number) =>
       setCounts((prev) => ({
         ...prev,
         [section ?? ALL_STATUSES_KEY]: count,
-      }));
+      })),
+    [],
+  );
 
   return (
     <div className="space-y-6">
@@ -101,6 +99,8 @@ export function GuestBookings() {
           setCounts({});
           setStatus(next);
         }}
+        dateCheckout={dateCheckout}
+        onChangeCheckout={setDateCheckout}
       />
 
       <div className="space-y-8">
@@ -112,7 +112,8 @@ export function GuestBookings() {
             wallet={userWallet}
             role={ROLE}
             checkIn={checkIn}
-            onTotalChange={handleTotalChange(section.status)}
+            checkOut={checkOut}
+            onTotalChange={handleTotalChange}
           />
         ))}
       </div>

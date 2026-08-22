@@ -45,9 +45,12 @@ export function BookingFilters({
   onChange,
   onChangeDate,
   dateValue = "",
+  dateCheckout = "",
+  onChangeCheckout,
 }: BookingFiltersProps) {
   const current = value === null ? ALL_VALUE : String(value);
   const hasDateFilter = Boolean(onChangeDate);
+  const hasCheckoutFilter = Boolean(onChangeCheckout);
 
   return (
     <div className="card-white space-y-5">
@@ -107,6 +110,23 @@ export function BookingFilters({
               type="date"
               value={dateValue}
               onChange={(e) => onChangeDate?.(e.target.value)}
+              className={`${dateBase} mt-1.5`}
+            />
+          </div>
+        )}
+        {hasCheckoutFilter && (
+          <div className="max-w-xs">
+            <label
+              htmlFor="filter-booking-date-checkout"
+              className="font-plus-jakarta text-[13px] font-semibold text-[#434654]"
+            >
+              Fecha de check-out hasta
+            </label>
+            <input
+              id="filter-booking-date-checkout"
+              type="date"
+              value={dateCheckout}
+              onChange={(e) => onChangeCheckout?.(e.target.value)}
               className={`${dateBase} mt-1.5`}
             />
           </div>

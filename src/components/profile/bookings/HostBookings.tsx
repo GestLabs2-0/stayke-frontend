@@ -1,9 +1,10 @@
 "use client";
 
 import { CalendarDays } from "lucide-react";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 import { BookingStatus } from "@GestLabs2-0/stayke-escrow";
+import { dateToUnix } from "@/helpers/dateToUnix";
 import { useWalletContext } from "@/hooks/useWallet";
 import {
   BOOKING_STATUS_LABELS,
@@ -30,6 +31,10 @@ export function HostBookings() {
   const [status, setStatus] = useState<BookingStatusFilter>(null);
   // Totales por estado reportados por cada sección, para el contador del filtro.
   const [counts, setCounts] = useState<Record<number, number>>({});
+  const [date, setDate] = useState("");
+
+  const filtersActive = status !== null || date !== "";
+  const checkIn = filtersActive ? dateToUnix(date) : undefined;
 
   const sections =
     status === null
@@ -40,12 +45,21 @@ export function HostBookings() {
       : [{ status, title: sectionTitle(status) }];
 
   const total = sections.reduce(
-    (sum, section) => sum + (counts[section.status] ?? 0),
+    (sum, section) => sum + (counts[section.status ?? -1] ?? 0),
     0,
   );
 
-  const handleTotalChange = (sectionStatus: BookingStatus) => (count: number) =>
-    setCounts((prev) => ({ ...prev, [sectionStatus]: count }));
+  // const handleTotalChange = (sectionStatus: BookingStatus) => (count: number) =>
+  //   setCounts((prev) => ({ ...prev, [sectionStatus]: count }));
+
+  const handleTotalChange = useCallback(
+    (section: BookingStatus | null, count: number) =>
+      setCounts((prev) => ({
+        ...prev,
+        [section ?? -1]: count,
+      })),
+    [],
+  );
 
   return (
     <div className="space-y-6">
@@ -68,6 +82,8 @@ export function HostBookings() {
       <BookingFilters
         value={status}
         total={total}
+        dateValue={date}
+        onChangeDate={setDate}
         onChange={(next) => {
           setCounts({});
           setStatus(next);
@@ -79,9 +95,10 @@ export function HostBookings() {
           <BookingSection
             key={section.status}
             status={section.status}
+            checkIn={checkIn}
             title={section.title}
             wallet={userWallet}
-            onTotalChange={handleTotalChange(section.status)}
+            onTotalChange={handleTotalChange}
           />
         ))}
       </div>

@@ -75,6 +75,8 @@ export interface BookingFiltersProps {
   /** Fecha seleccionada ("YYYY-MM-DD"). Solo se muestra el selector si se pasa el handler. */
   dateValue?: string;
   onChangeDate?: (date: string) => void;
+  dateCheckout?: string;
+  onChangeCheckout?: (date: string) => void;
 }
 
 // ── BookingSection ──
@@ -99,5 +101,5 @@ export interface BookingSectionProps {
   emptyMessage?: string;
   emptyDescription?: string;
   /** Reporta el total de reservas de la sección al padre. */
-  onTotalChange?: (total: number) => void;
+  onTotalChange?: (section: BookingStatus | null, total: number) => void;
 }

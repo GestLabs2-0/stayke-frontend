@@ -10,6 +10,7 @@ import { formatPrice } from "@/helpers/formatPrice";
 import { propertyImageUrl } from "@/helpers/propertyImageUrl";
 import { useHostBookingAction } from "@/hooks/contracts/useHostBookingAction";
 import { useHostReviewAction } from "@/hooks/contracts/useHostReviewAction";
+import { useOpenDisputeAction } from "@/hooks/contracts/useOpenDisputeAction";
 import useNetwork from "@/hooks/useNetwork";
 import { useWalletContext } from "@/hooks/useWallet";
 import type { HostBookingAction } from "@/lib/contracts/buildHostBookingAction";
@@ -63,6 +64,7 @@ function fullName(name: string, lastName: string, fallback: string) {
 export function HostBookingCard({ booking, onChanged }: HostBookingCardProps) {
   const { run, getEligibility } = useHostBookingAction();
   const { run: runReview } = useHostReviewAction();
+  const { run: openDispute } = useOpenDisputeAction();
   const { client } = useNetwork();
   const { userWallet } = useWalletContext();
   const [releaseReady, setReleaseReady] = useState(false);
@@ -159,10 +161,20 @@ export function HostBookingCard({ booking, onChanged }: HostBookingCardProps) {
     }
 
     if (action.id === "dispute") {
-      sileo.info({
-        title: "Disponible próximamente",
-        description:
-          "La apertura de disputas se habilita en una próxima versión.",
+      sileo.action({
+        title: "¿Iniciar disputa?",
+        description: "La disputa se resolverá entre las partes.",
+        position: "top-center",
+        button: {
+          title: "Iniciar disputa",
+          onClick: async () => {
+            const result = await openDispute(
+              booking,
+              booking.hostValues.userProfile,
+            );
+            if (result.status) onChanged?.();
+          },
+        },
       });
       return;
     }

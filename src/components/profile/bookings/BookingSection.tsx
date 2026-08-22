@@ -64,8 +64,8 @@ export function BookingSection({
   });
 
   useEffect(() => {
-    onTotalChange?.(total);
-  }, [total, onTotalChange]);
+    onTotalChange?.(status, total);
+  }, [total, onTotalChange, status]);
 
   return (
     <section className="space-y-3">

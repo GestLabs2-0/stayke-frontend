@@ -217,6 +217,7 @@ export async function buildHostBookingAction({
         payer: signer,
         booking: bookingPda,
         guest: guestProfile,
+        hostProfile,
         cpiAuthority,
         globalConfig,
         staykeCore: STAYKE_CORE_PROGRAM_ADDRESS,
