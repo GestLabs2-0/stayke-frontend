@@ -1,4 +1,3 @@
-
 /** Convierte "YYYY-MM-DD" a timestamp Unix (media noche local). */
 export function dateToUnix(date: string): number | undefined {
   if (!date) return undefined;
