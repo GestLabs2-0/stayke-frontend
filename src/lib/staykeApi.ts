@@ -7,6 +7,11 @@ import { API_URL, LOCAL_STORAGE_KEYS } from "@/shared/constants";
 import type { RegisterUser, UserProfileResponse } from "@/types/api/auth";
 import type { BookingListResult, GetBookingsParams } from "@/types/api/booking";
 import type {
+  ApiConversation,
+  ApiMessage,
+  CreateConversationResult,
+} from "@/types/api/chat";
+import type {
   DiditProgressResponse,
   DiditSessionResponse,
 } from "@/types/api/didit";
@@ -26,6 +31,7 @@ import type {
 } from "@/types/api/review";
 import type { ApiBookedDateRange, GetBookedDatesParams } from "@/types/booking";
 import type {
+  ApiPaginatedResponse,
   ApiResponse,
   HttpClientInterface,
   LoginResponse,
@@ -479,6 +485,134 @@ export class StaykeApi {
       return result;
     } catch (error) {
       return handleApiError(error, result);
+    }
+  }
+
+  // ── Chat ──
+
+  /**
+   * GET /chat/conversations — lista de conversaciones del usuario autenticado.
+   * Paginada, default limit 10. El backend resuelve el participante según el
+   * token del llamador.
+   */
+  async listConversations(
+    limit = 10,
+    offset = 0,
+  ): Promise<ApiPaginatedResponse<ApiConversation>> {
+    const result: ApiPaginatedResponse<ApiConversation> = {
+      data: null,
+      meta: null,
+      status: false,
+      message: "",
+    };
+
+    try {
+      const { data } = await this.httpClient.get({
+        url: `/chat/conversations?limit=${limit}&offset=${offset}`,
+      });
+
+      const rawResponse = data as ApiPaginatedResponse<ApiConversation>;
+      result.status = rawResponse?.status === true;
+      result.data = rawResponse?.data ?? null;
+      result.meta = rawResponse?.meta ?? null;
+      result.message = rawResponse?.message ?? "";
+      return result;
+    } catch (error) {
+      const axiosError = error as {
+        response?: { data?: { message?: string; errors?: string[] } };
+      };
+      result.message =
+        axiosError.response?.data?.message || "Ocurrió un error inesperado.";
+      result.errors = axiosError.response?.data?.errors || [];
+      return result;
+    }
+  }
+
+  /**
+   * GET /chat/conversations/:id/messages — mensajes de una conversación.
+   * Paginada, default limit 20.
+   */
+  async listMessages(
+    conversationId: number,
+    limit = 20,
+    offset = 0,
+  ): Promise<ApiPaginatedResponse<ApiMessage>> {
+    const result: ApiPaginatedResponse<ApiMessage> = {
+      data: null,
+      meta: null,
+      status: false,
+      message: "",
+    };
+
+    try {
+      const { data } = await this.httpClient.get({
+        url: `/chat/conversations/${conversationId}/messages?limit=${limit}&offset=${offset}`,
+      });
+
+      const rawResponse = data as ApiPaginatedResponse<ApiMessage>;
+      result.status = rawResponse?.status === true;
+      result.data = rawResponse?.data ?? null;
+      result.meta = rawResponse?.meta ?? null;
+      result.message = rawResponse?.message ?? "";
+      return result;
+    } catch (error) {
+      const axiosError = error as {
+        response?: { data?: { message?: string; errors?: string[] } };
+      };
+      result.message =
+        axiosError.response?.data?.message || "Ocurrió un error inesperado.";
+      result.errors = axiosError.response?.data?.errors || [];
+      return result;
+    }
+  }
+
+  /**
+   * POST /chat/conversations — crea una conversación guest→host.
+   * Si el backend responde 409 (la conversación guest-host ya existe) NO es un
+   * fallo irreparable: el resultado devuelve `conflict: true` y el caller debe
+   * recuperar la conversación existente vía `listConversations` en lugar de
+   * mostrar un error al usuario.
+   */
+  async createConversation(
+    hostId: string,
+    propertyId?: number,
+  ): Promise<CreateConversationResult> {
+    const result: CreateConversationResult = {
+      data: null,
+      status: false,
+      message: "",
+    };
+
+    try {
+      const { data } = await this.httpClient.post({
+        url: "/chat/conversations",
+        body: propertyId !== undefined ? { hostId, propertyId } : { hostId },
+      });
+
+      const rawResponse = data as ApiResponse<ApiConversation>;
+      result.status = rawResponse?.status === true;
+      result.data = rawResponse?.data ?? null;
+      result.message = rawResponse?.message ?? "";
+      return result;
+    } catch (error) {
+      const axiosError = error as {
+        response?: {
+          status?: number;
+          data?: { message?: string; errors?: string[] };
+        };
+      };
+
+      if (axiosError.response?.status === 409) {
+        // La conversación guest-host ya existe: distinguible para el caller.
+        result.conflict = true;
+        result.message =
+          axiosError.response.data?.message || "La conversación ya existe.";
+      } else {
+        result.message =
+          axiosError.response?.data?.message || "Ocurrió un error inesperado.";
+      }
+      result.errors = axiosError.response?.data?.errors || [];
+      return result;
     }
   }
 }
