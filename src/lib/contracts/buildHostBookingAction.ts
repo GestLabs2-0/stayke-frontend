@@ -104,9 +104,9 @@ export async function buildHostBookingAction({
 }: BuildHostBookingActionParams): Promise<BuiltHostBookingTx> {
   const signer = createNoopSigner(wallet);
   const bookingPda = address(booking.idPda);
-  const property = address(booking.propertyValues.pda);
-  const hostProfile = address(booking.hostValues.userProfile);
-  const guestProfile = address(booking.guestValues.userProfile);
+  const property = address(booking.property.pda);
+  const hostProfile = address(booking.host.userProfile);
+  const guestProfile = address(booking.guest.userProfile);
   const crossYear = isCrossYear(booking.checkIn, booking.checkOut);
 
   const [globalConfig] = await findEscrowConfigPda();
@@ -169,7 +169,7 @@ export async function buildHostBookingAction({
     case "cancel": {
       const guestWallet = await profileAuthority(client, guestProfile);
       const guestTokenAccount = associatedTokenAccount(guestWallet);
-      const hostReputation = address(booking.hostValues.reputation);
+      const hostReputation = address(booking.host.reputation);
       const [cpiAuthority] = await findCpiAuthorityPda();
       const [treasuryConfig] = await findTreasuryConfigPda();
       const [treasuryVault] = await findTreasuryVaultPda();

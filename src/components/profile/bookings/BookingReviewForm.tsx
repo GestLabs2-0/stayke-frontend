@@ -110,7 +110,7 @@ export function BookingReviewForm({
           const created = await staykeApi.createReview({
             userPda: reviewedWallet,
             bookingPda: booking.idPda,
-            propertyPda: booking.propertyValues.pda,
+            propertyPda: booking.property.pda,
             isHostReview,
             score: formValues.score,
             comment: formValues.comment.trim(),
@@ -165,7 +165,7 @@ export function BookingReviewForm({
               Reseñar tu estadía
             </h3>
             <p className="mt-1 font-sans text-[13px] text-[#434654]">
-              {booking.propertyValues.title}
+              {booking.property.title}
             </p>
           </div>
           <button

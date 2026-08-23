@@ -86,10 +86,10 @@ export async function buildGuestBookingAction({
 }: BuildGuestBookingActionParams): Promise<BuiltGuestBookingTx> {
   const signer = createNoopSigner(wallet);
   const bookingPda = address(booking.idPda);
-  const property = address(booking.propertyValues.pda);
-  const hostProfile = address(booking.hostValues.userProfile);
-  const guestProfile = address(booking.guestValues.userProfile);
-  const guestReputation = address(booking.guestValues.reputation);
+  const property = address(booking.property.pda);
+  const hostProfile = address(booking.host.userProfile);
+  const guestProfile = address(booking.guest.userProfile);
+  const guestReputation = address(booking.guest.reputation);
   const crossYear = isCrossYear(booking.checkIn, booking.checkOut);
 
   const [globalConfig] = await findEscrowConfigPda();

@@ -43,10 +43,10 @@ export async function buildGuestReviewAction({
 }: BuildGuestReviewParams): Promise<BuiltGuestReviewTx> {
   const guest = createNoopSigner(wallet);
   const bookingPda = address(booking.idPda);
-  const guestProfile = address(booking.guestValues.userProfile);
-  const hostProfile = address(booking.hostValues.userProfile);
-  const hostReputation = address(booking.hostValues.reputation);
-  const listing = address(booking.propertyValues.pda);
+  const guestProfile = address(booking.guest.userProfile);
+  const hostProfile = address(booking.host.userProfile);
+  const hostReputation = address(booking.host.reputation);
+  const listing = address(booking.property.pda);
 
   const [globalConfig] = await findEscrowConfigPda();
   const [cpiAuthority] = await findCpiAuthorityPda();

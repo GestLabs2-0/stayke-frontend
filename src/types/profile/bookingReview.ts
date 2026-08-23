@@ -48,7 +48,5 @@ export function reviewedProfilePda(
   booking: Booking,
   isHostReview: boolean,
 ): string {
-  return isHostReview
-    ? booking.hostValues.userProfile
-    : booking.guestValues.userProfile;
+  return isHostReview ? booking.host.userProfile : booking.guest.userProfile;
 }

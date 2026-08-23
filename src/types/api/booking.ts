@@ -8,7 +8,7 @@ export interface Booking {
   /** PDA on-chain de la reserva (44 caracteres base58). */
   idPda: string;
   /** Datos embebidos de la propiedad (sin consulta adicional). */
-  propertyValues: {
+  property: {
     title: string;
     price: number;
     /** PDA on-chain de la propiedad. */
@@ -20,7 +20,7 @@ export interface Booking {
     countryCode: string;
   };
   /** Datos embebidos del huésped. */
-  guestValues: {
+  guest: {
     name: string;
     lastName: string;
     /** PDA on-chain del perfil. */
@@ -30,7 +30,7 @@ export interface Booking {
     deposited: number;
   };
   /** Datos embebidos del anfitrión. */
-  hostValues: {
+  host: {
     name: string;
     lastName: string;
     userProfile: string;

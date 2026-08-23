@@ -99,6 +99,7 @@ export function HostBookingCard({ booking, onChanged }: HostBookingCardProps) {
     let mounted = true;
     setHostHasReviewed(null);
 
+    // TODO: create an endpoint to check instead of fetching a review
     staykeApi
       .getReviews({
         bookingPda: booking.idPda,
@@ -136,20 +137,17 @@ export function HostBookingCard({ booking, onChanged }: HostBookingCardProps) {
     [booking, client.rpc, runReview],
   );
 
-  const imageSrc = propertyImageUrl(booking.propertyValues.imageKey);
-  const location = [
-    booking.propertyValues.city,
-    booking.propertyValues.countryCode,
-  ]
+  const imageSrc = propertyImageUrl(booking.property.imageKey);
+  const location = [booking.property.city, booking.property.countryCode]
     .filter(Boolean)
     .join(", ");
   const rangeLabel = `${formatDate(booking.checkIn)} – ${formatDate(
     booking.checkOut,
   )}`;
   const guestName = fullName(
-    booking.guestValues.name,
-    booking.guestValues.lastName,
-    booking.guestValues.userProfile,
+    booking.guest.name,
+    booking.guest.lastName,
+    booking.guest.userProfile,
   );
 
   const handleAction = async (action: BookingAction) => {
@@ -168,10 +166,7 @@ export function HostBookingCard({ booking, onChanged }: HostBookingCardProps) {
         button: {
           title: "Iniciar disputa",
           onClick: async () => {
-            const result = await openDispute(
-              booking,
-              booking.hostValues.userProfile,
-            );
+            const result = await openDispute(booking, booking.host.userProfile);
             if (result.status) onChanged?.();
           },
         },
@@ -210,14 +205,11 @@ export function HostBookingCard({ booking, onChanged }: HostBookingCardProps) {
   return (
     <>
       <article className="card-white flex flex-col gap-4 p-4 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md sm:flex-row sm:items-center">
-        <BookingThumbnail
-          imageSrc={imageSrc}
-          title={booking.propertyValues.title}
-        />
+        <BookingThumbnail imageSrc={imageSrc} title={booking.property.title} />
 
         <div className="min-w-0 flex-1 space-y-2">
           <BookingHeader
-            title={booking.propertyValues.title}
+            title={booking.property.title}
             status={booking.status}
             statusDotClass={STATUS_DOT_CLASSES[booking.status]}
             statusBadgeClass={STATUS_BADGE_CLASSES[booking.status]}

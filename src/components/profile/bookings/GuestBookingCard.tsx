@@ -71,6 +71,7 @@ export function GuestBookingCard({
     let mounted = true;
     setGuestHasReviewed(null);
 
+    // TODO: create an endpoint to check this instead of fetching data
     staykeApi
       .getReviews({
         bookingPda: booking.idPda,
@@ -108,20 +109,17 @@ export function GuestBookingCard({
     [booking, client.rpc, runReview],
   );
 
-  const imageSrc = propertyImageUrl(booking.propertyValues.imageKey);
-  const location = [
-    booking.propertyValues.city,
-    booking.propertyValues.countryCode,
-  ]
+  const imageSrc = propertyImageUrl(booking.property.imageKey);
+  const location = [booking.property.city, booking.property.countryCode]
     .filter(Boolean)
     .join(", ");
   const rangeLabel = `${formatDate(booking.checkIn)} – ${formatDate(
     booking.checkOut,
   )}`;
   const hostName = fullName(
-    booking.hostValues.name,
-    booking.hostValues.lastName,
-    booking.hostValues.userProfile,
+    booking.host.name,
+    booking.host.lastName,
+    booking.host.userProfile,
   );
 
   const handleAction = async (action: GuestBookingAction) => {
@@ -142,7 +140,7 @@ export function GuestBookingCard({
           onClick: async () => {
             const result = await openDispute(
               booking,
-              booking.guestValues.userProfile,
+              booking.guest.userProfile,
             );
             if (result.status) onChanged?.();
           },
@@ -175,14 +173,11 @@ export function GuestBookingCard({
   return (
     <>
       <article className="card-white flex flex-col gap-4 p-4 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md sm:flex-row sm:items-center">
-        <BookingThumbnail
-          imageSrc={imageSrc}
-          title={booking.propertyValues.title}
-        />
+        <BookingThumbnail imageSrc={imageSrc} title={booking.property.title} />
 
         <div className="min-w-0 flex-1 space-y-2">
           <BookingHeader
-            title={booking.propertyValues.title}
+            title={booking.property.title}
             status={booking.status}
             statusDotClass={STATUS_DOT_CLASSES[booking.status]}
             statusBadgeClass={STATUS_BADGE_CLASSES[booking.status]}
