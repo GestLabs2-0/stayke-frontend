@@ -34,6 +34,10 @@ import { HostBookingActions } from "./HostBookingActions";
 const CONFIRM_MESSAGES: Partial<
   Record<HostBookingAction, { title: string; description: string }>
 > = {
+  accept: {
+    title: "¿Aceptas la reserva?",
+    description: "Si aceptas y luego cancelas puedes ser penalizado",
+  },
   reject: {
     title: "¿Rechazar la reserva?",
     description: "Esta acción no se puede deshacer.",

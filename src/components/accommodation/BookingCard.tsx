@@ -11,9 +11,15 @@ interface BookingCardProps {
   id: string;
   price: number;
   maxGuest?: number;
+  property?: string;
 }
 
-export function BookingCard({ id, price, maxGuest }: BookingCardProps) {
+export function BookingCard({
+  id,
+  price,
+  maxGuest,
+  property,
+}: BookingCardProps) {
   const router = useRouter();
   const [checkIn, setCheckIn] = useState<Date | null>(null);
   const [checkOut, setCheckOut] = useState<Date | null>(null);
@@ -60,6 +66,7 @@ export function BookingCard({ id, price, maxGuest }: BookingCardProps) {
           setCheckIn(inDate);
           setCheckOut(outDate);
         }}
+        property={property}
       />
 
       <div className="mt-4 flex items-center justify-between gap-2 rounded-xl bg-surface/60 px-3 py-2">

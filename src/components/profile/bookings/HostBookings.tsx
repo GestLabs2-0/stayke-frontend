@@ -27,7 +27,7 @@ function sectionTitle(status: BookingStatus): string {
 }
 
 export function HostBookings() {
-  const { userWallet } = useWalletContext();
+  const { userProfile } = useWalletContext();
   const [status, setStatus] = useState<BookingStatusFilter>(null);
   // Totales por estado reportados por cada sección, para el contador del filtro.
   const [counts, setCounts] = useState<Record<number, number>>({});
@@ -97,7 +97,7 @@ export function HostBookings() {
             status={section.status}
             checkIn={checkIn}
             title={section.title}
-            wallet={userWallet}
+            userProfile={userProfile?.address}
             onTotalChange={handleTotalChange}
           />
         ))}

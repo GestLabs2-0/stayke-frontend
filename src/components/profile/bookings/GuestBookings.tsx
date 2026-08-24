@@ -36,7 +36,7 @@ function sectionTitle(status: BookingStatus): string {
 }
 
 export function GuestBookings() {
-  const { userWallet } = useWalletContext();
+  const { userProfile } = useWalletContext();
   const [status, setStatus] = useState<BookingStatusFilter>(null);
   const [date, setDate] = useState("");
   const [dateCheckout, setDateCheckout] = useState("");
@@ -109,7 +109,7 @@ export function GuestBookings() {
             key={section.status ?? ALL_STATUSES_KEY}
             status={section.status}
             title={section.title}
-            wallet={userWallet}
+            userProfile={userProfile?.address}
             role={ROLE}
             checkIn={checkIn}
             checkOut={checkOut}

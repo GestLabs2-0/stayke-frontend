@@ -107,8 +107,8 @@ export function CreatePropertyForm() {
           client,
         });
 
-        const { status } = await handleSignAndSend(tx);
-        if (!status) {
+        const { status, simulationFailed } = await handleSignAndSend(tx);
+        if (!status && !simulationFailed) {
           sileo.error({
             title: "No se pudo crear la propiedad en blockchain",
           });

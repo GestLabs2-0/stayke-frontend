@@ -10,15 +10,16 @@ import {
   VersionedTransaction,
 } from "@solana/web3.js";
 
-import { findPlatformVaultPda } from "@GestLabs2-0/stayke-config";
+import {
+  findGlobalConfigPda,
+  findPlatformVaultPda,
+} from "@GestLabs2-0/stayke-config";
 import {
   fetchMaybeUserProfile,
   STAYKE_CORE_PROGRAM_ADDRESS,
 } from "@GestLabs2-0/stayke-core";
 import {
-  findBookingDaysPda,
   findCpiAuthorityPda,
-  findEscrowConfigPda,
   findEscrowTokenAccountPda,
   getBookingCompletesInstruction,
   getBookingStartsInstructionAsync,
@@ -39,6 +40,8 @@ import type { SolanaClient } from "@/context/NetworkContext";
 import { fromSolanaKitIns } from "@/helpers/web3Parsers";
 import { USDC_MINT } from "@/lib/contracts/constants";
 import type { Booking } from "@/types/api/booking";
+import { getYears, isCrossYear } from "./bookingDaysUtils";
+import { findBookingDaysPda } from "./findBookingDaysPda";
 
 /** On-chain host transition performed from the card. "dispute" is not here (pending). */
 export type HostBookingAction =
@@ -63,14 +66,6 @@ export interface BuiltHostBookingTx {
 }
 
 const TOKEN_PROGRAM: Address = address(TOKEN_PROGRAM_ID.toBase58());
-
-/** Mirrors useCreateBooking: a booking spanning two adjacent years is cross-year. */
-function isCrossYear(checkIn: number, checkOut: number): boolean {
-  return (
-    new Date(checkIn * 1000).getFullYear() + 1 ===
-    new Date(checkOut * 1000).getFullYear()
-  );
-}
 
 function associatedTokenAccount(owner: Address): Address {
   return address(
@@ -108,11 +103,15 @@ export async function buildHostBookingAction({
   const hostProfile = address(booking.host.userProfile);
   const guestProfile = address(booking.guest.userProfile);
   const crossYear = isCrossYear(booking.checkIn, booking.checkOut);
+  const { checkInYear, checkOutYear } = getYears(
+    booking.checkIn,
+    booking.checkOut,
+  );
 
-  const [globalConfig] = await findEscrowConfigPda();
+  const [globalConfig] = await findGlobalConfigPda();
   const [bookingDays] = await findBookingDaysPda({
     property,
-    checkIn: BigInt(booking.checkIn),
+    year: checkInYear,
   });
   const [escrowTokenAccount] = await findEscrowTokenAccountPda({
     booking: bookingPda,
@@ -122,6 +121,7 @@ export async function buildHostBookingAction({
 
   switch (action) {
     case "accept": {
+      console.log("what up");
       instruction = await getHostAcceptBookingInstructionAsync({
         payer: signer,
         host: signer,
@@ -150,7 +150,7 @@ export async function buildHostBookingAction({
       if (crossYear) {
         const [bookingDaysNext] = await findBookingDaysPda({
           property,
-          checkIn: BigInt(booking.checkOut),
+          year: checkOutYear,
         });
         instruction = await getHostRejectBookingCrossYearInstructionAsync({
           ...base,
@@ -195,7 +195,7 @@ export async function buildHostBookingAction({
       if (crossYear) {
         const [bookingDaysNext] = await findBookingDaysPda({
           property,
-          checkIn: BigInt(booking.checkOut),
+          year: checkOutYear,
         });
         instruction = await getHostCancelBookingCrossYearInstructionAsync({
           ...base,

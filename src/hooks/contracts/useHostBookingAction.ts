@@ -93,7 +93,7 @@ export function useHostBookingAction() {
         const result = await handleSignAndSend(tx);
         if (result.status) {
           sileo.success({ title: HOST_ACTION_MESSAGES[action] });
-        } else {
+        } else if (!result.simulationFailed) {
           sileo.error({
             title:
               getBookingErrorMessage(result.error) ?? DEFAULT_BOOKING_ERROR,

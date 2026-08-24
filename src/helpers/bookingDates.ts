@@ -37,7 +37,7 @@ export function bookingRangesToNightTimestamps(
     const end = parseDateParam(range.checkOut);
     if (!start || !end) continue;
     if (end <= start) continue;
-    for (let day = start.getTime(); day < end.getTime(); day += DAY_MS) {
+    for (let day = start.getTime(); day <= end.getTime(); day += DAY_MS) {
       nights.add(startOfDay(new Date(day)));
     }
   }

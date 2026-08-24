@@ -6,6 +6,7 @@ import {
   ChevronRight,
   House,
   LogOut,
+  Scale,
   Settings,
   User,
 } from "lucide-react";
@@ -38,6 +39,13 @@ const NAV_ITEMS: NavItem[] = [
     icon: CalendarDays,
     role: "all",
     action: { type: "navigate", link: routes.Profile.bookings.index },
+  },
+  {
+    id: routes.Profile.disputes.index,
+    label: "Disputas",
+    icon: Scale,
+    role: "all",
+    action: { type: "navigate", link: routes.Profile.disputes.index },
   },
   { id: "settings", label: "Configuración", icon: Settings, role: "all" },
   {

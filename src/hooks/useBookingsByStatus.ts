@@ -23,7 +23,7 @@ export interface UseBookingsByStatusOptions {
  * on-chain).
  */
 export function useBookingsByStatus(
-  wallet: string | null | undefined,
+  userProfile: string | null | undefined,
   status: BookingStatus | null,
   {
     pageSize = 8,
@@ -57,7 +57,7 @@ export function useBookingsByStatus(
     // refreshKey fuer un re-run tras una mutación on-chain.
     void refreshKey;
 
-    if (!wallet) {
+    if (!userProfile) {
       setBookings([]);
       setTotal(0);
       setLoading(false);
@@ -69,7 +69,7 @@ export function useBookingsByStatus(
 
     staykeApi
       .getBookings({
-        ...(role === "host" ? { host: wallet } : { guest: wallet }),
+        ...(role === "host" ? { host: userProfile } : { guest: userProfile }),
         status: status ?? undefined,
         checkIn,
         checkOut,
@@ -94,7 +94,16 @@ export function useBookingsByStatus(
     return () => {
       cancelled = true;
     };
-  }, [wallet, status, pageSize, page, refreshKey, role, checkIn, checkOut]);
+  }, [
+    userProfile,
+    status,
+    pageSize,
+    page,
+    refreshKey,
+    role,
+    checkIn,
+    checkOut,
+  ]);
 
   // Si la navegación quedó fuera de rango (p. ej. tras un refresh), se corrige.
   useEffect(() => {

@@ -10,15 +10,16 @@ import {
   VersionedTransaction,
 } from "@solana/web3.js";
 
-import { findPlatformVaultPda } from "@GestLabs2-0/stayke-config";
+import {
+  findGlobalConfigPda,
+  findPlatformVaultPda,
+} from "@GestLabs2-0/stayke-config";
 import {
   fetchMaybeUserProfile,
   STAYKE_CORE_PROGRAM_ADDRESS,
 } from "@GestLabs2-0/stayke-core";
 import {
-  findBookingDaysPda,
   findCpiAuthorityPda,
-  findEscrowConfigPda,
   findEscrowTokenAccountPda,
   getGuestCancelBookingCrossYearInstructionAsync,
   getGuestCancelBookingInstructionAsync,
@@ -27,6 +28,8 @@ import type { SolanaClient } from "@/context/NetworkContext";
 import { fromSolanaKitIns } from "@/helpers/web3Parsers";
 import { USDC_MINT } from "@/lib/contracts/constants";
 import type { Booking } from "@/types/api/booking";
+import { getYears, isCrossYear } from "./bookingDaysUtils";
+import { findBookingDaysPda } from "./findBookingDaysPda";
 
 /** Transición on-chain de huésped realizada desde la tarjeta. */
 export type GuestBookingActionTx = "cancel";
@@ -45,14 +48,6 @@ export interface BuiltGuestBookingTx {
 }
 
 const TOKEN_PROGRAM: Address = address(TOKEN_PROGRAM_ID.toBase58());
-
-/** Una reserva que cruza dos años consecutivos es cross-year. */
-function isCrossYear(checkIn: number, checkOut: number): boolean {
-  return (
-    new Date(checkIn * 1000).getFullYear() + 1 ===
-    new Date(checkOut * 1000).getFullYear()
-  );
-}
 
 function associatedTokenAccount(owner: Address): Address {
   return address(
@@ -91,11 +86,15 @@ export async function buildGuestBookingAction({
   const guestProfile = address(booking.guest.userProfile);
   const guestReputation = address(booking.guest.reputation);
   const crossYear = isCrossYear(booking.checkIn, booking.checkOut);
+  const { checkInYear, checkOutYear } = getYears(
+    booking.checkIn,
+    booking.checkOut,
+  );
 
-  const [globalConfig] = await findEscrowConfigPda();
+  const [globalConfig] = await findGlobalConfigPda();
   const [bookingDays] = await findBookingDaysPda({
     property,
-    checkIn: BigInt(booking.checkIn),
+    year: checkInYear,
   });
   const [escrowTokenAccount] = await findEscrowTokenAccountPda({
     booking: bookingPda,
@@ -129,7 +128,7 @@ export async function buildGuestBookingAction({
       if (crossYear) {
         const [bookingDaysNext] = await findBookingDaysPda({
           property,
-          checkIn: BigInt(booking.checkOut),
+          year: checkOutYear,
         });
         instruction = await getGuestCancelBookingCrossYearInstructionAsync({
           ...base,

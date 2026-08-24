@@ -56,28 +56,32 @@ export function useCreateBooking({
       try {
         const checkInYear = dates.checkIn.getFullYear();
         const checkOutYear = dates.checkOut.getFullYear();
-        let crossYear = false;
 
-        if (checkInYear + 1 === checkOutYear) {
-          crossYear = true;
-        } else if (checkInYear + 1 < checkOutYear) {
+        if (checkInYear + 1 < checkOutYear) {
           throw new Error(
             "No se permiten bookings que incluyan 3 años diferentes",
           );
         }
 
+        // Random offset en segundos (0..86399) para que el seed del PDA de Booking
+        // siempre sea único y no choque, manteniendo el mismo día de calendario.
+        const randomOffset = Math.floor(Math.random() * 86400);
+        const checkIn =
+          Math.floor(dates.checkIn.getTime() / 1000) + randomOffset;
+        const checkOut =
+          Math.floor(dates.checkOut.getTime() / 1000) + randomOffset;
+
         const { tx } = await buildCreateBookingInstruction({
           wallet: userWallet,
           hostWallet,
           property,
-          checkIn: Math.floor(dates.checkIn.getTime() / 1000),
-          checkOut: Math.floor(dates.checkOut.getTime() / 1000),
+          checkIn,
+          checkOut,
           client,
-          crossYear,
         });
 
         const txResult = await handleSignAndSend(tx);
-        if (!txResult.status) {
+        if (!txResult.status && !txResult.simulationFailed) {
           sileo.error({
             title:
               getBookingErrorMessage(txResult.error) ?? DEFAULT_BOOKING_ERROR,

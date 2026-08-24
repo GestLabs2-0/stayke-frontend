@@ -90,7 +90,7 @@ export default function BookPage() {
   if (loading) {
     return (
       <div className="mx-auto w-full max-w-6xl px-4 py-12 md:px-6">
-        <div className="aspect-[4/3] w-full animate-skeleton-pulse rounded-2xl bg-surface md:aspect-video" />
+        <div className="aspect-4/3 w-full animate-skeleton-pulse rounded-2xl bg-surface md:aspect-video" />
         <div className="mt-8 space-y-4">
           <div className="h-8 w-2/3 animate-skeleton-pulse rounded-lg bg-surface" />
           <div className="h-32 w-full animate-skeleton-pulse rounded-2xl bg-surface" />
@@ -178,7 +178,7 @@ export default function BookPage() {
               });
               if (result.status) {
                 sileo.success({ title: "Reserva enviada a la cadena" });
-                router.push(routes.Accommodation);
+                router.push(routes.Profile.bookings.index);
               }
             }}
           />

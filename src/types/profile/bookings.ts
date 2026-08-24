@@ -88,7 +88,7 @@ export interface BookingSectionProps {
   /** Título de la sección (ej: "Pendientes por aceptar"). */
   title: string;
   /** Wallet del actor autenticado (anfitrión en la vista host, huésped en la guest). */
-  wallet: string | null | undefined;
+  userProfile: string | null | undefined;
   /** Qué actor se consulta: "host" (default) o "guest". */
   role?: BookingRole;
   /** Tamaño de página del fetch paginado. */

@@ -37,7 +37,7 @@ function cardForRole(
 export function BookingSection({
   status,
   title,
-  wallet,
+  userProfile,
   role = "host",
   pageSize = 8,
   checkIn,
@@ -56,7 +56,7 @@ export function BookingSection({
     hasNext,
     goToPage,
     refresh,
-  } = useBookingsByStatus(wallet, status, {
+  } = useBookingsByStatus(userProfile, status, {
     pageSize,
     role,
     checkIn,

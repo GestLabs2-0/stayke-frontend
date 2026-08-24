@@ -48,7 +48,7 @@ export function useHostReviewAction() {
         const result = await handleSignAndSend(tx);
         if (result.status) {
           sileo.success({ title: "¡Reseña guardada on-chain!" });
-        } else {
+        } else if (!result.simulationFailed) {
           sileo.error({
             title:
               getBookingErrorMessage(result.error) ?? DEFAULT_BOOKING_ERROR,

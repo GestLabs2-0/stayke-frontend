@@ -60,7 +60,7 @@ export default function PropertyDetailPage() {
   if (loading) {
     return (
       <div className="mx-auto w-full max-w-6xl px-4 py-12 md:px-6">
-        <div className="aspect-[4/3] w-full animate-skeleton-pulse rounded-2xl bg-surface md:aspect-video" />
+        <div className="aspect-4/3 w-full animate-skeleton-pulse rounded-2xl bg-surface md:aspect-video" />
         <div className="mt-8 space-y-4">
           <div className="h-8 w-2/3 animate-skeleton-pulse rounded-lg bg-surface" />
           <div className="h-4 w-1/3 animate-skeleton-pulse rounded-lg bg-surface" />
@@ -106,6 +106,7 @@ export default function PropertyDetailPage() {
     latitude,
     longitude,
     price,
+    pda,
   } = property;
 
   const location = [city, state, countryCode].filter(Boolean).join(", ");
@@ -191,12 +192,17 @@ export default function PropertyDetailPage() {
             id="booking-card"
             className="lg:sticky lg:top-24 lg:self-start"
           >
-            <BookingCard id={id} price={price} maxGuest={maxGuest} />
+            <BookingCard
+              id={id}
+              price={price}
+              maxGuest={maxGuest}
+              property={pda}
+            />
           </aside>
         </div>
       </div>
 
-      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border z-1001 bg-white px-4 py-3 shadow-[0_-4px_12px_rgba(0,0,0,0.06)] lg:hidden">
+      <div className="fixed inset-x-0 bottom-0 border-t border-border z-1001 bg-white px-4 py-3 shadow-[0_-4px_12px_rgba(0,0,0,0.06)] lg:hidden">
         <div className="flex items-center justify-between gap-4">
           <div>
             <p className="font-montserrat text-lg font-bold text-zinc-900">

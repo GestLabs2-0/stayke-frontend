@@ -1,6 +1,7 @@
 import type { Address, Signature } from "@solana/kit";
 import axios from "axios";
 
+import { PenaltySeverity } from "@GestLabs2-0/stayke-disputes";
 import { BookingStatus } from "@GestLabs2-0/stayke-escrow";
 import { objectToFormData } from "@/helpers/formData";
 import { API_URL, LOCAL_STORAGE_KEYS } from "@/shared/constants";
@@ -15,6 +16,11 @@ import type {
   DiditProgressResponse,
   DiditSessionResponse,
 } from "@/types/api/didit";
+import type {
+  DisputeListResult,
+  GetDisputesParams,
+} from "@/types/api/disputes";
+import { DisputeJudgement, DisputeState } from "@/types/api/disputes";
 import type {
   CreatePropertyRequest,
   EditPropertyRequest,
@@ -443,6 +449,63 @@ export class StaykeApi {
       });
 
       const rawResponse = data as ReviewListResult;
+      result.status = rawResponse?.status === true;
+      result.data = rawResponse?.data ?? null;
+      result.meta = rawResponse?.meta ?? null;
+      result.message = rawResponse?.message ?? "";
+      return result;
+    } catch (error) {
+      const axiosError = error as {
+        response?: { data?: { message?: string; errors?: string[] } };
+      };
+      result.message =
+        axiosError.response?.data?.message || "Ocurrió un error inesperado.";
+      result.errors = axiosError.response?.data?.errors || [];
+      return result;
+    }
+  }
+
+  /**
+   * GET /disputes - lista de disputas con filtros opcionales (protegido con JWT
+   * dynamic). Los enums se envian por nombre ('Low', 'GuestFavored', 'OpenP2P'),
+   * que es lo que espera el backend; la respuesta llega con valores numericos.
+   */
+  async getDisputes(params: GetDisputesParams): Promise<DisputeListResult> {
+    const result: DisputeListResult = {
+      data: null,
+      meta: null,
+      status: false,
+      message: "",
+    };
+
+    try {
+      const queryParams = new URLSearchParams();
+
+      if (params.severity !== undefined) {
+        queryParams.append("severity", PenaltySeverity[params.severity]);
+      }
+      if (params.judgement !== undefined) {
+        queryParams.append("judgement", DisputeJudgement[params.judgement]);
+      }
+      if (params.state !== undefined) {
+        queryParams.append("state", DisputeState[params.state]);
+      }
+      if (params.initiator) queryParams.append("initiator", params.initiator);
+      if (params.accused) queryParams.append("accused", params.accused);
+      if (params.initiatedAtDate) {
+        queryParams.append("initiatedAtDate", params.initiatedAtDate);
+      }
+      if (params.limit !== undefined)
+        queryParams.append("limit", String(params.limit));
+      if (params.offset !== undefined)
+        queryParams.append("offset", String(params.offset));
+
+      const query = queryParams.toString();
+      const url = query ? `/disputes?${query}` : "/disputes";
+
+      const { data } = await this.httpClient.get({ url });
+
+      const rawResponse = data as DisputeListResult;
       result.status = rawResponse?.status === true;
       result.data = rawResponse?.data ?? null;
       result.meta = rawResponse?.meta ?? null;

@@ -10,11 +10,10 @@ import {
   VersionedTransaction,
 } from "@solana/web3.js";
 
+import { findGlobalConfigPda } from "@GestLabs2-0/stayke-config";
 import { findUserProfilePda } from "@GestLabs2-0/stayke-core";
 import {
-  findBookingDaysPda,
   findBookingPda,
-  findEscrowConfigPda,
   findEscrowTokenAccountPda,
   getCreateBookingCrossYearInstructionAsync,
   getCreateBookingInstructionAsync,
@@ -23,6 +22,8 @@ import type { SolanaClient } from "@/context/NetworkContext";
 import { fromSolanaKitIns } from "@/helpers/web3Parsers";
 import { USDC_MINT } from "@/lib/contracts/constants";
 import type { CreateBookingTx } from "@/types/booking";
+import { getYears, isCrossYear } from "./bookingDaysUtils";
+import { findBookingDaysPda } from "./findBookingDaysPda";
 
 export interface BuildCreateBookingTxParams {
   /** The guest's wallet, used both as payer and client signer. */
@@ -41,8 +42,6 @@ export interface BuildCreateBookingTxParams {
   /** Unix timestamp (seconds) of the check-out day. */
   checkOut: number;
   client: SolanaClient;
-
-  crossYear: boolean;
 }
 
 /**
@@ -58,7 +57,6 @@ export async function buildCreateBookingInstruction({
   checkIn,
   checkOut,
   client,
-  crossYear,
 }: BuildCreateBookingTxParams): Promise<CreateBookingTx> {
   const authority = createNoopSigner(wallet);
 
@@ -66,10 +64,16 @@ export async function buildCreateBookingInstruction({
   const [clientProfile] = await findUserProfilePda({ authority: wallet });
   const [hostProfile] = await findUserProfilePda({ authority: hostWallet });
 
+  const crossYear = isCrossYear(checkIn, checkOut);
+  const { checkInYear, checkOutYear } = getYears(checkIn, checkOut);
+
   // Derive the escrow accounts required by createBooking.
-  const [globalConfig] = await findEscrowConfigPda();
+  const [globalConfig] = await findGlobalConfigPda();
   const [booking] = await findBookingPda({ property, clientProfile, checkIn });
-  const [bookingDays] = await findBookingDaysPda({ property, checkIn });
+  const [bookingDays] = await findBookingDaysPda({
+    property,
+    year: checkInYear,
+  });
   const [escrowTokenAccount] = await findEscrowTokenAccountPda({ booking });
 
   // Client's associated token account for the payment mint.
@@ -87,7 +91,7 @@ export async function buildCreateBookingInstruction({
   if (crossYear) {
     const [bookingDaysNext] = await findBookingDaysPda({
       property,
-      checkIn: checkOut,
+      year: checkOutYear,
     });
 
     instruction = await getCreateBookingCrossYearInstructionAsync({
@@ -123,7 +127,6 @@ export async function buildCreateBookingInstruction({
       checkOut,
     });
   }
-
   const web3Instruction = fromSolanaKitIns(instruction);
 
   const { value: latestBlockhash } = await client.rpc

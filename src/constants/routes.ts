@@ -6,6 +6,9 @@ export const routes = {
     bookings: {
       index: "/profile/bookings",
     },
+    disputes: {
+      index: "/profile/disputes",
+    },
     properties: {
       index: "/profile/properties",
       create: "/profile/properties/create",
