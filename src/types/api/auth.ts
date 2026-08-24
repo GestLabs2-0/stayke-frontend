@@ -24,4 +24,6 @@ export type UserProfileResponse = {
   lastName: string;
   email?: string;
   isVerified: boolean;
+  avatarUrl?: string | null;
+  dateOfBirth?: string;
 };

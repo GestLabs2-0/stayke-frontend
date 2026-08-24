@@ -55,9 +55,6 @@ export const Navbar = () => {
             <Link
               key={nav.link}
               href={nav.link}
-              onClick={() => {
-                setMode("host");
-              }}
               className="
                 text-xs
                 md:text-xs

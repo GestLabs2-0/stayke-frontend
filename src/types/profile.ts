@@ -9,7 +9,7 @@ export interface ProfileData {
   name: string;
   lastName: string;
   email: string;
-  avatar: string;
+  avatar: string | null;
   isVerified: boolean;
   reputation: {
     host: number;
@@ -95,6 +95,13 @@ export interface TreasuryCardProps {
 }
 
 // ── ProfileHeader ──
+
+export interface ProfileAvatarProps {
+  avatar: string | null;
+  name: string;
+  lastName: string;
+  editable?: boolean;
+}
 
 export interface ProfileHeaderProps {
   profile: ProfileData;

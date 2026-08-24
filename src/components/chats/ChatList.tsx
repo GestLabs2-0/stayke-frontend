@@ -31,13 +31,15 @@ export const ChatList = ({ conversations, onSelect }: ChatListProps) => {
             className="flex w-full items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-surface/60 focus:outline-none focus-visible:bg-surface/60"
           >
             <span className="relative shrink-0">
-              <Image
-                src={conversation.contact.avatarUrl}
-                alt={conversation.contact.name}
-                width={44}
-                height={44}
-                className="size-11 rounded-full bg-surface"
-              />
+              <div className="size-11 rounded-full overflow-hidden">
+                <Image
+                  src={conversation.contact.avatarUrl}
+                  alt={conversation.contact.name}
+                  width={44}
+                  height={44}
+                  className="size-full bg-surface object-cover"
+                />
+              </div>
               {conversation.contact.online && (
                 <span className="absolute -right-0.5 -bottom-0.5 size-3 rounded-full border-2 border-white bg-emerald-500" />
               )}

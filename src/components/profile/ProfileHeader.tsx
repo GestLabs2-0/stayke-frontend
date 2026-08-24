@@ -1,10 +1,10 @@
 "use client";
 
 import { Menu, Star } from "lucide-react";
-import Image from "next/image";
 
 import type { ProfileHeaderProps } from "@/types/profile";
 import { ModeSwitch } from "./ModeSwitch";
+import { ProfileAvatar } from "./ProfileAvatar";
 import { VerifiedBadge } from "./VerifiedBadge";
 
 export function ProfileHeader({
@@ -35,16 +35,11 @@ export function ProfileHeader({
       </div>
 
       <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-start">
-        <div className="size-20 shrink-0 overflow-hidden rounded-full border-2 border-[#ebe7e7] sm:size-24">
-          <Image
-            src={profile.avatar}
-            alt={`${profile.name} ${profile.lastName}`}
-            width={96}
-            height={96}
-            className="size-full object-cover"
-            unoptimized
-          />
-        </div>
+        <ProfileAvatar
+          avatar={profile.avatar}
+          name={profile.name}
+          lastName={profile.lastName}
+        />
 
         <div className="flex-1 text-center sm:text-left">
           <div className="flex flex-col items-center gap-2 sm:flex-row sm:flex-wrap">

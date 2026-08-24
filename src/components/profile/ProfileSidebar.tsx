@@ -14,6 +14,7 @@ import Image from "next/image";
 
 import { routes } from "@/constants/routes";
 import type { NavItem, ProfileSidebarProps } from "@/types/profile";
+import { ImagePlaceholder } from "../shared/ImagePlaceholder";
 import { SidebarMobile } from "./SidebarMobile";
 import { SidebarModeFooter } from "./SidebarModeFooter";
 import { SidebarNav } from "./SidebarNav";
@@ -88,16 +89,25 @@ export function ProfileSidebar({
       >
         <div className="flex h-full flex-col bg-white/80 backdrop-blur-md">
           <div className="flex items-center gap-3 px-4 py-4">
-            {expanded && profile && (
-              <Image
-                src={profile.avatar}
-                alt={profile.name}
-                width={32}
-                height={32}
-                className="size-8 shrink-0 rounded-full"
-                unoptimized
-              />
-            )}
+            {expanded &&
+              profile &&
+              (profile.avatar !== null ? (
+                <Image
+                  src={profile.avatar}
+                  alt={profile.name}
+                  width={32}
+                  height={32}
+                  className="size-8 shrink-0 rounded-full"
+                  unoptimized
+                />
+              ) : (
+                <div className="size-12">
+                  <ImagePlaceholder
+                    name={profile.name}
+                    lastName={profile.lastName}
+                  />
+                </div>
+              ))}
             {expanded && profile && (
               <span className="font-montserrat text-sm font-semibold text-foreground">
                 ¡Hola, {profile.name}!

@@ -135,6 +135,62 @@ export class StaykeApi {
     }
   }
 
+  async verifyIdentity(): Promise<ApiResponse<UserProfileResponse>> {
+    const result: ApiResponse<UserProfileResponse> = {
+      data: null,
+      status: false,
+      message: "",
+    };
+
+    try {
+      const { data } = await this.httpClient.post({
+        url: "/Users/verify-identity",
+      });
+
+      const rawResponse = data as ApiResponse<UserProfileResponse>;
+
+      if (rawResponse?.status) {
+        result.status = true;
+      }
+      result.data = rawResponse.data;
+      result.message = rawResponse.message;
+      result.errors = rawResponse.errors;
+      return result;
+    } catch (error) {
+      return handleApiError(error, result);
+    }
+  }
+
+  async uploadAvatar(file: File): Promise<ApiResponse<UserProfileResponse>> {
+    const result: ApiResponse<UserProfileResponse> = {
+      data: null,
+      status: false,
+      message: "",
+    };
+
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const { data } = await this.httpClient.put({
+        url: "/Users/avatar",
+        body: formData,
+      });
+
+      const rawResponse = data as ApiResponse<UserProfileResponse>;
+
+      if (rawResponse?.status) {
+        result.status = true;
+      }
+      result.data = rawResponse.data;
+      result.message = rawResponse.message;
+      result.errors = rawResponse.errors;
+      return result;
+    } catch (error) {
+      return handleApiError(error, result);
+    }
+  }
+
   async createDiditSession() {
     const result: ApiResponse<DiditSessionResponse> = {
       data: null,

@@ -205,6 +205,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
           }
           if (response.data !== null && response.status) {
             const c = response.data;
+            console.log(c);
             setConversations((prev) => {
               return [...prev, mapConversationToFrontend(c, wallet)];
             });

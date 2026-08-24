@@ -53,13 +53,15 @@ export const ChatDetail = ({
           <ChevronLeftIcon className="size-5" />
         </button>
 
-        <Image
-          src={contact.avatarUrl}
-          alt={contact.name}
-          width={40}
-          height={40}
-          className="size-10 rounded-full bg-surface"
-        />
+        <div className="size-10 rounded-full overflow-hidden">
+          <Image
+            src={contact.avatarUrl}
+            alt={contact.name}
+            width={40}
+            height={40}
+            className="size-full bg-surface object-cover"
+          />
+        </div>
 
         <div className="min-w-0 flex-1">
           <p className="truncate font-plus-jakarta text-sm font-semibold text-foreground">

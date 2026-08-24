@@ -66,3 +66,8 @@ export const LOCAL_STORAGE_KEYS = {
   refreshToken: "rf_token_stayke",
   dynamicSession: `dynamic_${DYNAMIC_CLIENT_ID}_session`,
 };
+
+export const IS_MVP =
+  process.env.NEXT_PUBLIC_MVP === "true" || process.env.NEXT_PUBLIC_MVP === "1";
+
+export const MINT_DECIMALS = Number(process.env.NEXT_PUBLIC_MINT_DECIMALS) ?? 6;

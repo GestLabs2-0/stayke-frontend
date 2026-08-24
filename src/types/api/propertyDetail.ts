@@ -15,6 +15,7 @@ export interface PropertyHost {
   reputation?: number;
   // Fecha ISO desde la que el anfitrión hospeda.
   hostedSince?: string;
+  avatarUrl?: string;
 }
 
 // Placeholder: FE-08 will define the real review shape.

@@ -1,23 +1,23 @@
 "use client";
 
 import { address } from "@solana/kit";
+import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 
 import { AuthModal } from "@/components/auth/AuthModal";
 import { useChat } from "@/context/ChatContext";
+import { buildImageUrl } from "@/helpers/buildImageUrl";
 import { useGetUser } from "@/hooks/contracts/useGetUser";
 import { useWalletContext } from "@/hooks/useWallet";
 import { CheckIcon, ClockIcon, MessageIcon, StarIcon } from "@/icons";
 import type { PropertyHost } from "@/types/api/propertyDetail";
+import { ImagePlaceholder } from "../shared/ImagePlaceholder";
 
 interface HostInfoProps {
   host: PropertyHost;
   city?: string;
   property?: number | string;
 }
-
-const getInitials = (name: string, lastName: string) =>
-  `${name.trim().charAt(0)}${lastName.trim().charAt(0)}`.toUpperCase();
 
 export function HostInfo({ host, city, property }: HostInfoProps) {
   const hasReputation = host.reputation != null;
@@ -78,6 +78,7 @@ export function HostInfo({ host, city, property }: HostInfoProps) {
     }
     return 0;
   }, [reputationProfile]);
+  const avatar = buildImageUrl(host.avatarUrl);
 
   return (
     <>
@@ -87,12 +88,19 @@ export function HostInfo({ host, city, property }: HostInfoProps) {
         </h2>
 
         <div className="mt-5 flex items-center gap-4">
-          <span
-            aria-hidden="true"
-            className="flex size-16 shrink-0 items-center justify-center rounded-full bg-primary font-montserrat text-xl font-bold text-white"
-          >
-            {getInitials(host.name, host.lastName)}
-          </span>
+          <div className="w-25 h-25 overflow-hidden rounded-full border-2 border-[#ebe7e7] bg-[#f8f9fa]">
+            {avatar ? (
+              <Image
+                src={avatar}
+                width={100}
+                height={100}
+                className="size-full object-cover rounded-full"
+                alt={host.name}
+              />
+            ) : (
+              <ImagePlaceholder name={host.name} lastName={host.lastName} />
+            )}
+          </div>
 
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2">

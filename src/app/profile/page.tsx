@@ -30,16 +30,11 @@ export default function ProfilePage() {
 
       <div className="animate-fade-in-up space-y-8">
         {!profile.isVerified && <VerificationBanner />}
+        <TreasuryCard balanceUsd={profile.treasuryUsd} />
         {mode === "host" ? (
-          <>
-            <TreasuryCard balanceUsd={profile.treasuryUsd} />
-            <HostView hostings={hostings} properties={properties} />
-          </>
+          <HostView hostings={hostings} properties={properties} />
         ) : (
-          <>
-            <TreasuryCard balanceUsd={profile.treasuryUsd} />
-            <GuestView reservations={reservations} />
-          </>
+          <GuestView reservations={reservations} />
         )}
       </div>
     </>

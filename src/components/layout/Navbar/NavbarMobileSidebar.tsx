@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef } from "react";
 
+import { ImagePlaceholder } from "@/components/shared/ImagePlaceholder";
 import { linkNavegation } from "../../../constants/constants";
 import { routes } from "../../../constants/routes";
 import type { NavbarMobileSidebarProps } from "../../../types/Navbar";
@@ -84,13 +85,24 @@ export const NavbarMobileSidebar = ({
         {isFullyRegistered && profile ? (
           <div className="border-b border-white/15 px-5 py-4">
             <div className="flex items-center gap-3">
-              <Image
-                src={profile.avatar}
-                alt={profile.name}
-                width={40}
-                height={40}
-                className="size-10 rounded-full bg-white/20"
-              />
+              {profile &&
+                (profile.avatar !== null ? (
+                  <Image
+                    src={profile.avatar}
+                    alt={profile.name}
+                    width={40}
+                    height={40}
+                    className="size-10 rounded-full bg-white/20"
+                  />
+                ) : (
+                  <div className="size-12">
+                    <ImagePlaceholder
+                      name={profile.name}
+                      lastName={profile.lastName}
+                    />
+                  </div>
+                ))}
+
               <div className="min-w-0 flex-1">
                 <p className="truncate font-montserrat text-sm font-semibold text-white">
                   {profile.name}

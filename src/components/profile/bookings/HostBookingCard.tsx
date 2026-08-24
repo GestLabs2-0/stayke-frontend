@@ -6,10 +6,10 @@ import { sileo } from "sileo";
 
 import { BookingStatus, fetchMaybeBooking } from "@GestLabs2-0/stayke-escrow";
 import { isBookingExpiredSync } from "@/helpers/bookingExpiration";
+import { buildImageUrl } from "@/helpers/buildImageUrl";
 import { formatDate } from "@/helpers/formatDate";
 import { formatPrice } from "@/helpers/formatPrice";
 import { fullName } from "@/helpers/profileNames";
-import { propertyImageUrl } from "@/helpers/propertyImageUrl";
 import { useHostBookingAction } from "@/hooks/contracts/useHostBookingAction";
 import { useHostReviewAction } from "@/hooks/contracts/useHostReviewAction";
 import { useOpenDisputeAction } from "@/hooks/contracts/useOpenDisputeAction";
@@ -133,7 +133,7 @@ export function HostBookingCard({ booking, onChanged }: HostBookingCardProps) {
     <>
       <article className="card-white flex flex-col gap-4 p-4 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md sm:flex-row sm:items-center">
         <BookingThumbnail
-          imageSrc={propertyImageUrl(booking.property.imageKey)}
+          imageSrc={buildImageUrl(booking.property.imageKey)}
           title={booking.property.title}
         />
         <div className="min-w-0 flex-1 space-y-2">

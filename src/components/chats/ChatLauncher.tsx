@@ -38,7 +38,7 @@ export const ChatLauncher = () => {
       {isOpen && (
         <section
           aria-label="Chats"
-          className="flex h-[520px] w-[calc(100vw-2rem)] max-w-[380px] flex-col overflow-hidden rounded-2xl border border-border bg-white shadow-lg sm:h-[540px]"
+          className="flex h-130 w-[calc(100vw-2rem)] max-w-95 flex-col overflow-hidden rounded-2xl border border-border bg-white shadow-lg sm:h-135"
         >
           <div className="flex items-center justify-between border-b border-border px-4 py-3">
             <h3 className="font-montserrat text-base font-semibold text-neutral-text">
