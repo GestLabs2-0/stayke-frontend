@@ -5,6 +5,13 @@ export type MapMarker = {
   lng: number;
 };
 
+export type MapBounds = {
+  north: number;
+  south: number;
+  west: number;
+  east: number;
+};
+
 export type DestinyPlace = {
   id: string;
   name: string;
@@ -19,6 +26,9 @@ export type DestinyPlace = {
   bedrooms: number;
   guests: number;
   nearby: DestinyNearbyPlace[];
+  pda?: string;
+  propertyType?: string;
+  bathrooms?: number;
 };
 
 export type DestinyMapProps = {
@@ -26,5 +36,7 @@ export type DestinyMapProps = {
   zoom?: number;
   markers?: MapMarker[];
   places?: DestinyPlace[];
+  selectedPlaceId?: string | null;
   onPlaceSelect: (place: DestinyPlace) => void;
+  onBoundsChange?: (bounds: MapBounds) => void;
 };

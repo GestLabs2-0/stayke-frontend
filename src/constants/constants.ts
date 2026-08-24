@@ -2,8 +2,8 @@ import type { FooterLink, FooterLinkGroup } from "../types/FooterTypes";
 import { routes } from "./routes";
 
 export const linkNavegation = [
-  // { link: routes.Home, name: "Inicio" },
-  { link: routes.Accommodation, name: "Alojamientos" },
+  { link: routes.Home, name: "Inicio" },
+  { link: routes.Destinys, name: "Destinos" },
   { link: routes.Experiences, name: "Experiencias" },
   // { link: routes.AboutUs, name: "Sobre Nosotros" },
   // { link: routes.Contact, name: "Contacto" },

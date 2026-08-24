@@ -1,6 +1,7 @@
 export type {
   DestinyMapProps,
   DestinyPlace,
+  MapBounds,
   MapMarker,
 } from "./DestinyMap";
 export type {
