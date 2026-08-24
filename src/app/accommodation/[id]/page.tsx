@@ -107,6 +107,7 @@ export default function PropertyDetailPage() {
     longitude,
     price,
     pda,
+    id: idNumber,
   } = property;
 
   const location = [city, state, countryCode].filter(Boolean).join(", ");
@@ -151,7 +152,7 @@ export default function PropertyDetailPage() {
               </div>
             </header>
 
-            <HostInfo host={property.host} city={city} />
+            <HostInfo host={property.host} city={city} property={Number(idNumber) ?? undefined} />
 
             {description && (
               <section className="card-white">

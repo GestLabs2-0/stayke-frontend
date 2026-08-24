@@ -13,12 +13,13 @@ import type { PropertyHost } from "@/types/api/propertyDetail";
 interface HostInfoProps {
   host: PropertyHost;
   city?: string;
+  property?: number | string;
 }
 
 const getInitials = (name: string, lastName: string) =>
   `${name.trim().charAt(0)}${lastName.trim().charAt(0)}`.toUpperCase();
 
-export function HostInfo({ host, city }: HostInfoProps) {
+export function HostInfo({ host, city, property }: HostInfoProps) {
   const hasReputation = host.reputation != null;
   const hostAddress = (() => {
     try {
@@ -30,7 +31,7 @@ export function HostInfo({ host, city }: HostInfoProps) {
   })();
 
   const { isAuthenticated } = useWalletContext();
-  const { openChat } = useChat();
+  const { openChat, createChat } = useChat();
   const [isAuthOpen, setIsAuthOpen] = useState(false);
 
   const { reputationProfile, fetchUserData } = useGetUser(hostAddress);
@@ -49,11 +50,18 @@ export function HostInfo({ host, city }: HostInfoProps) {
     host.listings === 1 ? "1 publicación" : `${host.listings} publicaciones`,
   ].filter(Boolean);
 
-  const handleChat = () => {
+  const handleChat = async () => {
     if (!isAuthenticated) {
       setIsAuthOpen(true);
       return;
     }
+    const propId =
+      typeof property === "number"
+        ? property
+        : property
+          ? Number(property) || undefined
+          : undefined;
+    await createChat(host.owner, propId);
     openChat();
   };
 

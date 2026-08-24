@@ -28,6 +28,7 @@ interface ChatContextValue {
   selectConversation: (conversation: ChatConversation | null) => void;
   sendMessage: (content: string) => void;
   closeChat: () => void;
+  createChat: (hostId: string, propertyId?: number) => Promise<void>;
 }
 
 const ChatContext = createContext<ChatContextValue | null>(null);
@@ -190,6 +191,33 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
 
   const closeChat = useCallback(() => setIsOpen(false), []);
 
+  const createChat = useCallback(
+    async (hostId: string, propertyId?: number) => {
+      staykeApi
+        .createConversation(hostId, propertyId)
+        .then((response) => {
+          console.log(response);
+          if (response?.conflict) {
+            const lookedUp = conversations.find(
+              (conversation) => conversation.contact.id === hostId,
+            );
+            setSelected(lookedUp ?? null);
+          }
+          if (response.data !== null && response.status) {
+            const c = response.data;
+            setConversations((prev) => {
+              return [...prev, mapConversationToFrontend(c, wallet)];
+            });
+          }
+        })
+        .catch((err) => {
+          // We already selected chat
+          console.log(err);
+        });
+    },
+    [conversations, wallet],
+  );
+
   return (
     <ChatContext.Provider
       value={{
@@ -202,6 +230,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
         selectConversation,
         sendMessage,
         closeChat,
+        createChat,
       }}
     >
       {children}
