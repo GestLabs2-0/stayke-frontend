@@ -14,4 +14,5 @@ export type SearchPanelProps = {
   }) => void;
   guestCounts?: GuestCounts;
   onAdjustGuest?: (key: keyof GuestCounts, delta: number) => void;
+  onClose?: () => void;
 };

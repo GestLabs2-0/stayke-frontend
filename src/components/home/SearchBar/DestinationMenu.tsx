@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { LocationIcon, SearchIcon } from "@/icons";
 import type { Locations } from "@/lib/locationsApi";
 import { searchByLocation } from "@/lib/locationsApi";
+import type { DestinationMenuProps } from "@/types/header";
 import { destinosData } from "./mocks";
 
 const DESTINO_COORDS: Record<string, { lat: number; long: number }> = {
@@ -14,14 +15,6 @@ const DESTINO_COORDS: Record<string, { lat: number; long: number }> = {
   Lecherías: { lat: 10.1884, long: -64.6908 },
   "Barquisimeto, Lara": { lat: 10.0647, long: -69.357 },
 };
-
-interface DestinationMenuProps {
-  onSelectDestination?: (dest: {
-    name: string;
-    lat: number;
-    long: number;
-  }) => void;
-}
 
 export const DestinationMenu = ({
   onSelectDestination,

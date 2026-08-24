@@ -1,13 +1,8 @@
 "use client";
 
 import { MinusIcon, PlusIcon } from "@/icons";
-import type { GuestCounts } from "@/types/header";
+import type { GuestCounts, GuestMenuProps } from "@/types/header";
 import { categorias } from "./mocks";
-
-interface GuestMenuProps {
-  guestCounts?: GuestCounts;
-  onAdjustGuest?: (key: keyof GuestCounts, delta: number) => void;
-}
 
 export const GuestMenu = ({ guestCounts, onAdjustGuest }: GuestMenuProps) => {
   const counts: GuestCounts = guestCounts ?? {
