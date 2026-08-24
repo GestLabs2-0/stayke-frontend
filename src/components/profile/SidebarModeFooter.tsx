@@ -1,5 +1,6 @@
 "use client";
 
+import { routes } from "@/constants/routes";
 import type { SidebarModeFooterProps } from "@/types/profile";
 import { ModeSwitch } from "./ModeSwitch";
 
@@ -17,7 +18,7 @@ export function SidebarModeFooter({
             isHost={mode === "host"}
             changeMode={(m) => {
               onChangeMode(m);
-              onNavigate("profile");
+              onNavigate(routes.Profile.index, routes.Profile.index);
             }}
           />
         </div>

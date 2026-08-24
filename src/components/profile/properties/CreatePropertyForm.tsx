@@ -1,9 +1,10 @@
 "use client";
 
 import { useFormik } from "formik";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { sileo } from "sileo";
 
+import { findListingPda } from "@GestLabs2-0/stayke-core";
 import { ChipSelector } from "@/components/profile/properties/ChipSelector";
 import { FormInput } from "@/components/profile/properties/FormInput";
 import { FormTextarea } from "@/components/profile/properties/FormTextarea";
@@ -12,12 +13,20 @@ import { LocationMap } from "@/components/profile/properties/LocationMap";
 import { PropertyPreview } from "@/components/profile/properties/PropertyPreview";
 import { SectionCard } from "@/components/profile/properties/SectionCard";
 import { parseDraft, serializeDraft } from "@/helpers/draft";
+import { hexToUint8Array } from "@/helpers/hexToUint8Array";
+import useNetwork from "@/hooks/useNetwork";
+import { useSignAndSendTx } from "@/hooks/useSignAndSendTx";
+import { useWalletContext } from "@/hooks/useWallet";
+import { buildInitPropertyTx } from "@/lib/contracts/buildInitPropertyTx";
+import { staykeApi } from "@/lib/staykeApi";
 import type { CreatePropertyFormValues } from "@/types/property/createProperty";
 import {
   CREATE_PROPERTY_INITIAL_VALUES,
   MAX_IMAGES,
   PREDEFINED_AMENITIES,
   PREDEFINED_RULES,
+  PROPERTY_TYPE_OPTIONS,
+  toCreatePropertyRequest,
 } from "@/types/property/createProperty";
 import { formValidationSchema } from "@/types/property/validation";
 
@@ -31,6 +40,11 @@ const AUTO_SAVE_INTERVAL = 30_000;
 export function CreatePropertyForm() {
   const [showDraftBanner, setShowDraftBanner] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
+
+  const { userProfile, userWallet, refetchAccounts } = useWalletContext();
+  const { client } = useNetwork();
+  const { handleSignAndSend, loading: loadingSignAndSend } =
+    useSignAndSendTx(userWallet);
 
   const latestRef = useRef(CREATE_PROPERTY_INITIAL_VALUES);
 
@@ -48,13 +62,66 @@ export function CreatePropertyForm() {
     validationSchema: formValidationSchema,
     validateOnBlur: true,
     validateOnChange: true,
-    onSubmit: async (_values, _helpers) => {
-      // API call — currently mocked
-      console.log("Property values:", _values);
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      sileo.success({ title: "Propiedad creada con éxito!" });
-      localStorage.removeItem(DRAFT_KEY);
-      _helpers.resetForm();
+    onSubmit: async (formValues, helpers) => {
+      if (!userProfile) {
+        sileo.error({ title: "Tu perfil on-chain no está disponible aún" });
+        return;
+      }
+      if (!userWallet) {
+        sileo.error({ title: "No se pudo obtener tu billetera" });
+        return;
+      }
+
+      try {
+        const listingId = userProfile.data.listings;
+        const [listingPda] = await findListingPda({
+          userProfile: userProfile.address,
+          listingId,
+        });
+
+        // 1. Create the property off-chain (backend), using the listing PDA.
+        const payload = toCreatePropertyRequest(formValues, listingPda);
+        const result = await staykeApi.createProperty(
+          payload,
+          formValues.images[0],
+        );
+
+        if (!result.status || !result.data) {
+          const msg = Array.isArray(result.message)
+            ? result.message.join(", ")
+            : result.message;
+          sileo.error({ title: msg || "Error al crear la propiedad" });
+          return;
+        }
+
+        // 2. Initialize the property on-chain (stayke-core initializeListing).
+        const stateHash = hexToUint8Array(result.data.hashedValue);
+        const contentRef = new Uint8Array(32); // TODO: Arweave/IPFS content ref
+        const { tx } = await buildInitPropertyTx({
+          wallet: userWallet,
+          userProfile: userProfile.address,
+          listingId,
+          price: formValues.price,
+          stateHash,
+          contentRef,
+          client,
+        });
+
+        const { status, simulationFailed } = await handleSignAndSend(tx);
+        if (!status && !simulationFailed) {
+          sileo.error({
+            title: "No se pudo crear la propiedad en blockchain",
+          });
+          return;
+        }
+
+        await refetchAccounts();
+        sileo.success({ title: "Propiedad creada con éxito" });
+        localStorage.removeItem(DRAFT_KEY);
+        helpers.resetForm();
+      } catch {
+        sileo.error({ title: "Error al conectar con el servidor" });
+      }
     },
   });
 
@@ -66,7 +133,7 @@ export function CreatePropertyForm() {
     const raw = localStorage.getItem(DRAFT_KEY);
     if (!raw) return;
     const draft = parseDraft(raw);
-    if (draft?.name) {
+    if (draft?.title) {
       setShowDraftBanner(true);
     }
   }, []);
@@ -92,7 +159,7 @@ export function CreatePropertyForm() {
   useEffect(() => {
     const interval = setInterval(() => {
       const cur = latestRef.current;
-      if (!cur.name && !cur.description && !cur.address) return;
+      if (!cur.title && !cur.description && !cur.address) return;
       localStorage.setItem(DRAFT_KEY, serializeDraft(cur));
       sileo.info({ title: "Borrador guardado" });
     }, AUTO_SAVE_INTERVAL);
@@ -139,6 +206,27 @@ export function CreatePropertyForm() {
     [setFieldValue, setFieldTouched],
   );
 
+  // ── Memoized property type options to avoid inline object creation ──
+
+  const propertyTypeOptions = useMemo(
+    () =>
+      PROPERTY_TYPE_OPTIONS.map((opt) => (
+        <option key={opt.value} value={opt.value}>
+          {opt.label}
+        </option>
+      )),
+    [],
+  );
+
+  const submitLabel = useMemo(() => {
+    if (!userProfile) return "Cargando perfil...";
+    if (loadingSignAndSend) return "Creando en blockchain...";
+    if (isSubmitting) return "Guardando...";
+    return "Guardar";
+  }, [userProfile, loadingSignAndSend, isSubmitting]);
+
+  const disableSubmit = isSubmitting || loadingSignAndSend || !userProfile;
+
   // ── Render ──
 
   return (
@@ -174,19 +262,35 @@ export function CreatePropertyForm() {
           <SectionCard title="Información básica">
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <FormInput
-                label="Nombre de la propiedad"
+                label="Título de la propiedad"
                 placeholder="Ej: Casa boutique con piscina"
-                value={values.name}
-                onChange={setField("name")}
-                error={fieldError("name")}
+                value={values.title}
+                onChange={setField("title")}
+                error={fieldError("title")}
               />
-              <FormInput
-                label="Dirección"
-                placeholder="Calle 123 #45-67, Medellín"
-                value={values.address}
-                onChange={setField("address")}
-                error={fieldError("address")}
-              />
+              <div className="flex flex-col gap-1">
+                <label
+                  htmlFor="propertyType"
+                  className="font-plus-jakarta text-[14px] font-medium text-[#434654]"
+                >
+                  Tipo de propiedad
+                </label>
+                <select
+                  id="propertyType"
+                  value={values.propertyType}
+                  onChange={(e) =>
+                    setFieldValue("propertyType", e.target.value)
+                  }
+                  className="rounded-xl border border-[#c3c6d6] bg-white px-4 py-3 font-plus-jakarta text-[15px] text-[#171717] outline-none transition-colors focus:border-[#3b007f]"
+                >
+                  {propertyTypeOptions}
+                </select>
+                {fieldError("propertyType") && (
+                  <p className="font-plus-jakarta text-[13px] font-medium text-red-400">
+                    {fieldError("propertyType")}
+                  </p>
+                )}
+              </div>
             </div>
             <FormTextarea
               label="Descripción"
@@ -194,7 +298,36 @@ export function CreatePropertyForm() {
               value={values.description}
               onChange={setField("description")}
               rows={4}
-              error={fieldError("description")}
+            />
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+              <FormInput
+                label="País (código ISO)"
+                placeholder="Ej: CO"
+                value={values.countryCode}
+                onChange={setField("countryCode")}
+                error={fieldError("countryCode")}
+                maxLength={2}
+              />
+              <FormInput
+                label="Ciudad"
+                placeholder="Ej: Medellín"
+                value={values.city}
+                onChange={setField("city")}
+                error={fieldError("city")}
+              />
+              <FormInput
+                label="Departamento / Estado"
+                placeholder="Ej: Antioquia"
+                value={values.state}
+                onChange={setField("state")}
+                error={fieldError("state")}
+              />
+            </div>
+            <FormInput
+              label="Dirección"
+              placeholder="Calle 123 #45-67"
+              value={values.address}
+              onChange={setField("address")}
             />
           </SectionCard>
 
@@ -219,8 +352,8 @@ export function CreatePropertyForm() {
               <FormTextarea
                 label="Guía para llegar"
                 placeholder="Indicaciones adicionales para encontrar la propiedad..."
-                value={values.addressGuide}
-                onChange={setField("addressGuide")}
+                value={values.addressHint}
+                onChange={setField("addressHint")}
                 rows={3}
               />
             </div>
@@ -233,6 +366,11 @@ export function CreatePropertyForm() {
               onChange={(files) => setFieldValue("images", files)}
               maxImages={MAX_IMAGES}
             />
+            {fieldError("images") && (
+              <p className="font-plus-jakarta text-[14px] font-medium text-red-400">
+                {fieldError("images")}
+              </p>
+            )}
           </SectionCard>
 
           {/* ── Comodidades ── */}
@@ -247,12 +385,12 @@ export function CreatePropertyForm() {
           </SectionCard>
 
           {/* ── Reglas ── */}
-          <SectionCard title="Reglas">
+          <SectionCard title="Reglas de la casa">
             <ChipSelector
-              label="Reglas de la casa"
+              label="Reglas"
               options={PREDEFINED_RULES}
-              selected={values.rules}
-              onChange={(rules) => setFieldValue("rules", rules)}
+              selected={values.houseRules}
+              onChange={(rules) => setFieldValue("houseRules", rules)}
               allowCustom
             />
           </SectionCard>
@@ -263,33 +401,68 @@ export function CreatePropertyForm() {
               <FormInput
                 label="Check-in"
                 type="time"
-                value={values.checkIn}
-                onChange={setField("checkIn")}
+                value={values.checkinTime}
+                onChange={setField("checkinTime")}
               />
               <FormInput
                 label="Check-out"
                 type="time"
-                value={values.checkOut}
-                onChange={setField("checkOut")}
+                value={values.checkoutTime}
+                onChange={setField("checkoutTime")}
               />
               <FormInput
                 label="Huéspedes máx."
                 type="number"
                 min={1}
                 step={1}
-                value={values.maxGuests}
-                onChange={setField("maxGuests")}
-                error={fieldError("maxGuests")}
+                value={values.maxGuest}
+                onChange={setField("maxGuest")}
+                error={fieldError("maxGuest")}
               />
               <FormInput
                 label="Precio por noche"
                 type="number"
                 min={0}
-                step={1000}
-                value={values.pricePerNight}
-                onChange={setField("pricePerNight")}
+                value={values.price}
+                onChange={setField("price")}
                 prefix="$"
-                error={fieldError("pricePerNight")}
+                error={fieldError("price")}
+              />
+              <FormInput
+                label="Habitaciones"
+                type="number"
+                min={0}
+                step={1}
+                value={values.bedrooms}
+                onChange={setField("bedrooms")}
+                error={fieldError("bedrooms")}
+              />
+              <FormInput
+                label="Baños"
+                type="number"
+                min={0}
+                step={1}
+                value={values.bathrooms}
+                onChange={setField("bathrooms")}
+                error={fieldError("bathrooms")}
+              />
+              <FormInput
+                label="Mínimo de noches"
+                type="number"
+                min={1}
+                step={1}
+                value={values.minNights}
+                onChange={setField("minNights")}
+                error={fieldError("minNights")}
+              />
+              <FormInput
+                label="Máximo de noches"
+                type="number"
+                min={1}
+                step={1}
+                value={values.maxNights}
+                onChange={setField("maxNights")}
+                error={fieldError("maxNights")}
               />
             </div>
           </SectionCard>
@@ -300,10 +473,10 @@ export function CreatePropertyForm() {
           <div className="mx-auto flex max-w-3xl items-center gap-3">
             <button
               type="submit"
-              disabled={isSubmitting}
+              disabled={disableSubmit}
               className="flex-1 rounded-full bg-[#3b007f] px-8 py-3 font-plus-jakarta font-semibold text-white transition-colors hover:bg-[#5307ad] disabled:opacity-50 md:flex-none"
             >
-              {isSubmitting ? "Guardando..." : "Guardar"}
+              {submitLabel}
             </button>
             <button
               type="button"

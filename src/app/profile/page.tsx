@@ -10,7 +10,7 @@ import {
 import { ProfileHeader } from "@/components/profile/ProfileHeader";
 import { TreasuryCard } from "@/components/profile/TreasuryCard";
 import { VerificationBanner } from "@/components/profile/VerificationBanner";
-import { useProfile } from "@/context/ProfileContext";
+import { useProfile } from "@/hooks/useProfile";
 
 export default function ProfilePage() {
   const { profile, mode, setMode, setMobileOpen } = useProfile();
@@ -30,16 +30,11 @@ export default function ProfilePage() {
 
       <div className="animate-fade-in-up space-y-8">
         {!profile.isVerified && <VerificationBanner />}
+        <TreasuryCard balanceUsd={profile.treasuryUsd} />
         {mode === "host" ? (
-          <>
-            <TreasuryCard balanceUsd={profile.treasuryUsd} />
-            <HostView hostings={hostings} properties={properties} />
-          </>
+          <HostView hostings={hostings} properties={properties} />
         ) : (
-          <>
-            <TreasuryCard balanceUsd={profile.treasuryUsd} />
-            <GuestView reservations={reservations} />
-          </>
+          <GuestView reservations={reservations} />
         )}
       </div>
     </>

@@ -1,34 +1,66 @@
 "use client";
 
 import {
+  CalendarDays,
   ChevronLeft,
   ChevronRight,
+  House,
   LogOut,
+  Scale,
   Settings,
   User,
 } from "lucide-react";
 import Image from "next/image";
 
+import { routes } from "@/constants/routes";
 import type { NavItem, ProfileSidebarProps } from "@/types/profile";
+import { ImagePlaceholder } from "../shared/ImagePlaceholder";
 import { SidebarMobile } from "./SidebarMobile";
 import { SidebarModeFooter } from "./SidebarModeFooter";
 import { SidebarNav } from "./SidebarNav";
 
 const NAV_ITEMS: NavItem[] = [
-  { id: "profile", label: "Perfil", icon: User },
-  { id: "settings", label: "Configuración", icon: Settings },
+  {
+    id: routes.Profile.index,
+    label: "Perfil",
+    icon: User,
+    role: "all",
+    action: { type: "navigate", link: routes.Profile.index },
+  },
+  {
+    id: routes.Profile.properties.index,
+    label: "Propiedades",
+    icon: House,
+    role: "host",
+    action: { type: "navigate", link: routes.Profile.properties.index },
+  },
+  {
+    id: routes.Profile.bookings.index,
+    label: "Reservas",
+    icon: CalendarDays,
+    role: "all",
+    action: { type: "navigate", link: routes.Profile.bookings.index },
+  },
+  {
+    id: routes.Profile.disputes.index,
+    label: "Disputas",
+    icon: Scale,
+    role: "all",
+    action: { type: "navigate", link: routes.Profile.disputes.index },
+  },
+  { id: "settings", label: "Configuración", icon: Settings, role: "all" },
   {
     id: "logout",
     label: "Cerrar sesión",
     icon: LogOut,
-    action: "logout",
+    action: { type: "logout" },
+    role: "all",
   },
 ];
 
 export function ProfileSidebar({
   expanded,
   onToggleExpand,
-  activeItem,
   onNavigate,
   mode,
   onChangeMode,
@@ -40,10 +72,12 @@ export function ProfileSidebar({
   const baseWidth = minimized ? "w-16" : expanded ? "w-64" : "w-16";
 
   const handleSelect = (item: NavItem) => {
-    if (item.action === "logout") {
-      onNavigate("logout");
-    } else {
-      onNavigate(item.id);
+    if (item.action) {
+      if (item.action.type === "navigate") {
+        onNavigate(item.id, item.action.link);
+      } else {
+        onNavigate(item.id, "");
+      }
     }
     onMobileClose();
   };
@@ -55,16 +89,25 @@ export function ProfileSidebar({
       >
         <div className="flex h-full flex-col bg-white/80 backdrop-blur-md">
           <div className="flex items-center gap-3 px-4 py-4">
-            {expanded && profile && (
-              <Image
-                src={profile.avatar}
-                alt={profile.name}
-                width={32}
-                height={32}
-                className="size-8 shrink-0 rounded-full"
-                unoptimized
-              />
-            )}
+            {expanded &&
+              profile &&
+              (profile.avatar !== null ? (
+                <Image
+                  src={profile.avatar}
+                  alt={profile.name}
+                  width={32}
+                  height={32}
+                  className="size-8 shrink-0 rounded-full"
+                  unoptimized
+                />
+              ) : (
+                <div className="size-12">
+                  <ImagePlaceholder
+                    name={profile.name}
+                    lastName={profile.lastName}
+                  />
+                </div>
+              ))}
             {expanded && profile && (
               <span className="font-montserrat text-sm font-semibold text-foreground">
                 ¡Hola, {profile.name}!
@@ -85,8 +128,8 @@ export function ProfileSidebar({
           </div>
 
           <SidebarNav
+            mode={mode}
             items={NAV_ITEMS}
-            activeItem={activeItem}
             onSelect={handleSelect}
             expanded={expanded}
           />
@@ -104,7 +147,6 @@ export function ProfileSidebar({
         open={mobileOpen}
         onClose={onMobileClose}
         items={NAV_ITEMS}
-        activeItem={activeItem}
         onSelect={handleSelect}
         profile={profile}
         mode={mode}

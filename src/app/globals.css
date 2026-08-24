@@ -78,6 +78,20 @@ body {
   }
 }
 
+@keyframes skeleton-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.55;
+  }
+}
+
+.animate-skeleton-pulse {
+  animation: skeleton-pulse 1.6s ease-in-out infinite;
+}
+
 .animate-fade-in-up {
   animation: fade-in-up 250ms cubic-bezier(0.25, 1, 0.5, 1) both;
 }
@@ -93,7 +107,8 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .animate-fade-in-up,
   .list-stagger > *,
-  .float-icon {
+  .float-icon,
+  .animate-skeleton-pulse {
     animation: none;
   }
 }
@@ -110,7 +125,7 @@ body {
   .bg-accent-warm\/15 {
     background-color: rgb(232 96 76 / 0.15);
   }
-  .bg-accent-warm-hover {
+  .bg-accent-warm-hover:hover {
     background-color: #d44a38;
   }
   .fill-accent-warm {
@@ -119,4 +134,9 @@ body {
   .border-accent-warm {
     border-color: #e8604c;
   }
+}
+
+[data-sileo-viewport] {
+  /* biome-ignore lint/complexity/noImportantStyles: i need to override sileo */
+  z-index: 1002 !important;
 }

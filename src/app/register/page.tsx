@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-import { RegisterCard } from "@/components/auth/RegisterCard";
+import { RegisterLayout } from "@/components/register/RegisterLayout";
 
 export default function RegisterPage() {
   return (
@@ -29,7 +29,7 @@ export default function RegisterPage() {
 
       {/* Content - positioned in the left half on desktop */}
       <div className="w-full max-w-150 xl:max-w-168.75 relative z-10 flex min-h-[calc(100vh-2.5rem)] items-center max-lg:mx-auto px-4 py-16 sm:px-8 lg:w-1/2 lg:pl-32.5 lg:pr-16 lg:min-w-200 xl:pl-45 2xl:pl-50">
-        <RegisterCard />
+        <RegisterLayout />
       </div>
     </section>
   );
