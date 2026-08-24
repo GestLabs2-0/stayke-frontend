@@ -7,6 +7,7 @@ import {
   DEFAULT_BOOKING_ERROR,
   getBookingErrorMessage,
 } from "@/helpers/bookingErrors";
+import { checkBookingExpired } from "@/helpers/bookingExpiration";
 import useNetwork from "@/hooks/useNetwork";
 import { useSignAndSendTx } from "@/hooks/useSignAndSendTx";
 import { useWalletContext } from "@/hooks/useWallet";
@@ -16,6 +17,7 @@ import type { Booking } from "@/types/api/booking";
 
 const GUEST_ACTION_MESSAGES: Record<GuestBookingActionTx, string> = {
   cancel: "Reserva cancelada",
+  expire: "Reserva expirada",
 };
 
 export interface GuestBookingActionResult {
@@ -38,6 +40,18 @@ export function useGuestBookingAction() {
       if (!userWallet || !booking.idPda) {
         sileo.error({ title: "Conecta tu wallet para continuar" });
         return { status: false };
+      }
+
+      if (action === "expire") {
+        const ready = await checkBookingExpired(client, booking);
+        if (!ready) {
+          sileo.info({
+            title: "Aún no disponible",
+            description:
+              "Esta acción estará disponible una vez transcurridas las 24 horas.",
+          });
+          return { status: false };
+        }
       }
 
       try {
@@ -66,5 +80,12 @@ export function useGuestBookingAction() {
     [client, handleSignAndSend, userWallet],
   );
 
-  return { run, loading };
+  const getExpirationEligibility = useCallback(
+    async (booking: Booking): Promise<boolean> => {
+      return await checkBookingExpired(client, booking);
+    },
+    [client],
+  );
+
+  return { run, loading, getExpirationEligibility };
 }

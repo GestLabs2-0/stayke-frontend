@@ -9,6 +9,7 @@ import {
   DEFAULT_BOOKING_ERROR,
   getBookingErrorMessage,
 } from "@/helpers/bookingErrors";
+import { checkBookingExpired } from "@/helpers/bookingExpiration";
 import useNetwork from "@/hooks/useNetwork";
 import { useSignAndSendTx } from "@/hooks/useSignAndSendTx";
 import { useWalletContext } from "@/hooks/useWallet";
@@ -26,6 +27,7 @@ const HOST_ACTION_MESSAGES: Record<HostBookingAction, string> = {
   starts: "La estadía comenzó",
   completes: "Reserva completada",
   release: "Fondos liberados",
+  expire: "Reserva expirada",
 };
 
 export interface HostBookingActionResult {
@@ -83,6 +85,18 @@ export function useHostBookingAction() {
         }
       }
 
+      if (action === "expire") {
+        const ready = await checkBookingExpired(client, booking);
+        if (!ready) {
+          sileo.info({
+            title: "Aún no disponible",
+            description:
+              "Esta acción estará disponible una vez transcurridas las 24 horas.",
+          });
+          return { status: false };
+        }
+      }
+
       try {
         const { tx } = await buildHostBookingAction({
           action,
@@ -109,5 +123,12 @@ export function useHostBookingAction() {
     [client, getEligibility, handleSignAndSend, userWallet],
   );
 
-  return { run, loading, getEligibility };
+  const getExpirationEligibility = useCallback(
+    async (booking: Booking): Promise<boolean> => {
+      return await checkBookingExpired(client, booking);
+    },
+    [client],
+  );
+
+  return { run, loading, getEligibility, getExpirationEligibility };
 }

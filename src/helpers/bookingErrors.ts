@@ -27,6 +27,10 @@ const BOOKING_ERROR_MESSAGES: Record<string, string> = {
   WRONG_GUEST_PASSED: "No pudimos validar la cuenta de huésped.",
   INVALID_BOOKING_PROPERTY: "El alojamiento no está disponible para reserva.",
   CHECK_IN_PASSED: "La fecha de entrada ya pasó. Selecciona una fecha futura.",
+  NOT_OVER_24_HOURS:
+    "Aún no han transcurrido las 24 horas requeridas para expirar la reserva.",
+  EXCEEDED_ACCEPT_TIME:
+    "El plazo de 24 horas para aceptar la reserva ya expiró.",
 };
 
 /** normalized token (alphanumeric-uppercase) → message key */
@@ -43,6 +47,8 @@ const ERROR_ALIASES: Record<string, string> = {
   WRONGGUESTPASSED: "WRONG_GUEST_PASSED",
   INVALIDBOOKINGPROPERTY: "INVALID_BOOKING_PROPERTY",
   CHECKINPASSED: "CHECK_IN_PASSED",
+  NOTOVER24HOURS: "NOT_OVER_24_HOURS",
+  EXCEEDEDACCEPTTIME: "EXCEEDED_ACCEPT_TIME",
 };
 
 const extractErrorText = (error: unknown): string => {

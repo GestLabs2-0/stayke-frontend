@@ -152,7 +152,11 @@ export default function PropertyDetailPage() {
               </div>
             </header>
 
-            <HostInfo host={property.host} city={city} property={Number(idNumber) ?? undefined} />
+            <HostInfo
+              host={property.host}
+              city={city}
+              property={Number(idNumber) ?? undefined}
+            />
 
             {description && (
               <section className="card-white">

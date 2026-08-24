@@ -21,6 +21,8 @@ import {
 import {
   findCpiAuthorityPda,
   findEscrowTokenAccountPda,
+  getExpireBookingCrossYearInstructionAsync,
+  getExpireBookingInstructionAsync,
   getGuestCancelBookingCrossYearInstructionAsync,
   getGuestCancelBookingInstructionAsync,
 } from "@GestLabs2-0/stayke-escrow";
@@ -28,11 +30,11 @@ import type { SolanaClient } from "@/context/NetworkContext";
 import { fromSolanaKitIns } from "@/helpers/web3Parsers";
 import { USDC_MINT } from "@/lib/contracts/constants";
 import type { Booking } from "@/types/api/booking";
+import type { GuestBookingActionTx } from "@/types/profile/bookings";
 import { getYears, isCrossYear } from "./bookingDaysUtils";
 import { findBookingDaysPda } from "./findBookingDaysPda";
 
-/** Transición on-chain de huésped realizada desde la tarjeta. */
-export type GuestBookingActionTx = "cancel";
+export type { GuestBookingActionTx };
 
 export interface BuildGuestBookingActionParams {
   action: GuestBookingActionTx;
@@ -69,9 +71,8 @@ async function profileAuthority(
 }
 
 /**
- * Construye la transacción on-chain de cancelación del huésped y la envuelve en
- * una VersionedTransaction lista para firmar y enviar. Espeja el cancel del
- * anfitrión (misma configuración de escrow, mint y wrapper de transacción).
+ * Construye la transacción on-chain de cancelación o expiración del huésped y la
+ * envuelve en una VersionedTransaction lista para firmar y enviar.
  */
 export async function buildGuestBookingAction({
   action,
@@ -82,9 +83,7 @@ export async function buildGuestBookingAction({
   const signer = createNoopSigner(wallet);
   const bookingPda = address(booking.idPda);
   const property = address(booking.property.pda);
-  const hostProfile = address(booking.host.userProfile);
   const guestProfile = address(booking.guest.userProfile);
-  const guestReputation = address(booking.guest.reputation);
   const crossYear = isCrossYear(booking.checkIn, booking.checkOut);
   const { checkInYear, checkOutYear } = getYears(
     booking.checkIn,
@@ -99,16 +98,19 @@ export async function buildGuestBookingAction({
   const [escrowTokenAccount] = await findEscrowTokenAccountPda({
     booking: bookingPda,
   });
-  const hostWallet = await profileAuthority(client, hostProfile);
-  const guestTokenAccount = associatedTokenAccount(wallet);
-  const hostTokenAccount = associatedTokenAccount(hostWallet);
-  const [cpiAuthority] = await findCpiAuthorityPda();
-  const [platformVault] = await findPlatformVaultPda();
 
   let instruction: Instruction;
 
   switch (action) {
     case "cancel": {
+      const hostProfile = address(booking.host.userProfile);
+      const guestReputation = address(booking.guest.reputation);
+      const hostWallet = await profileAuthority(client, hostProfile);
+      const guestTokenAccount = associatedTokenAccount(wallet);
+      const hostTokenAccount = associatedTokenAccount(hostWallet);
+      const [cpiAuthority] = await findCpiAuthorityPda();
+      const [platformVault] = await findPlatformVaultPda();
+
       const base = {
         caller: signer,
         guestProfile,
@@ -137,6 +139,39 @@ export async function buildGuestBookingAction({
         });
       } else {
         instruction = await getGuestCancelBookingInstructionAsync({
+          ...base,
+          bookingDays,
+        });
+      }
+      break;
+    }
+
+    case "expire": {
+      const guestWallet = await profileAuthority(client, guestProfile);
+      const guestTokenAccount = associatedTokenAccount(guestWallet);
+
+      const base = {
+        payer: signer,
+        guest: guestProfile,
+        booking: bookingPda,
+        globalConfig,
+        escrowTokenAccount,
+        guestTokenAccount,
+        mint: USDC_MINT,
+        tokenProgram: TOKEN_PROGRAM,
+      };
+      if (crossYear) {
+        const [bookingDaysNext] = await findBookingDaysPda({
+          property,
+          year: checkOutYear,
+        });
+        instruction = await getExpireBookingCrossYearInstructionAsync({
+          ...base,
+          bookingDays,
+          bookingDaysNext,
+        });
+      } else {
+        instruction = await getExpireBookingInstructionAsync({
           ...base,
           bookingDays,
         });

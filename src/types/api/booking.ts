@@ -49,6 +49,10 @@ export interface Booking {
   status: BookingStatus;
   /** El huésped ya reseñó al anfitrión si booking.hostReview > 0 (on-chain). */
   resellable: boolean;
+  /** Timestamp o fecha de creación del registro. */
+  createdAt?: string | number | Date;
+  /** Alias snake_case de fecha de creación del backend. */
+  created_at?: string | number | Date;
 }
 
 /** Query params de GET /api/v1.0/bookings. */

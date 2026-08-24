@@ -1,9 +1,5 @@
 import type { Address, Instruction } from "@solana/kit";
-import { address, createNoopSigner } from "@solana/kit";
-import {
-  getAssociatedTokenAddressSync,
-  TOKEN_PROGRAM_ID,
-} from "@solana/spl-token";
+import { createNoopSigner } from "@solana/kit";
 import {
   PublicKey,
   TransactionMessage,
@@ -24,6 +20,7 @@ import { USDC_MINT } from "@/lib/contracts/constants";
 import type { CreateBookingTx } from "@/types/booking";
 import { getYears, isCrossYear } from "./bookingDaysUtils";
 import { findBookingDaysPda } from "./findBookingDaysPda";
+import { associatedTokenAccount } from "./utils/deriveATA";
 
 export interface BuildCreateBookingTxParams {
   /** The guest's wallet, used both as payer and client signer. */
@@ -77,14 +74,7 @@ export async function buildCreateBookingInstruction({
   const [escrowTokenAccount] = await findEscrowTokenAccountPda({ booking });
 
   // Client's associated token account for the payment mint.
-  const clientTokenAccount = address(
-    getAssociatedTokenAddressSync(
-      new PublicKey(mint),
-      new PublicKey(wallet),
-      false,
-      TOKEN_PROGRAM_ID,
-    ).toBase58(),
-  );
+  const clientTokenAccount = associatedTokenAccount(wallet);
 
   let instruction: Instruction;
 

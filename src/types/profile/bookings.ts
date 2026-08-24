@@ -1,12 +1,24 @@
 import type { LucideIcon } from "lucide-react";
 
-import type { HostBookingAction } from "@/lib/contracts/buildHostBookingAction";
 import type { Booking, BookingStatus } from "@/types/api/booking";
 
 // ── Roles ──
 
 /** Actor propietario de la vista de reservas: anfitrión o huésped. */
 export type BookingRole = "host" | "guest";
+
+/** On-chain host transition performed from the card. */
+export type HostBookingAction =
+  | "accept"
+  | "reject"
+  | "cancel"
+  | "starts"
+  | "completes"
+  | "release"
+  | "expire";
+
+/** Transición on-chain de huésped realizada desde la tarjeta. */
+export type GuestBookingActionTx = "cancel" | "expire";
 
 // ── GuestBookingCard ──
 
@@ -17,7 +29,7 @@ export interface GuestBookingCardProps {
 }
 
 /** Acción de la tarjeta de huésped; `dispute` queda como placeholder. */
-export type GuestBookingActionId = "cancel" | "review" | "dispute";
+export type GuestBookingActionId = "cancel" | "review" | "dispute" | "expire";
 
 export interface GuestBookingAction {
   id: GuestBookingActionId;

@@ -1,6 +1,7 @@
 import {
   CalendarCheck,
   Check,
+  Clock,
   Flag,
   Play,
   RefreshCw,
@@ -28,15 +29,26 @@ const REVIEW_ACTION: BookingAction = {
 
 /**
  * Acciones disponibles según el estado de la reserva.
- * `releaseReady` y `hostHasReviewed` provienen de lecturas off/on-chain.
+ * `releaseReady`, `hostHasReviewed` e `isExpired` provienen de lecturas off/on-chain.
  */
 export function actionsFor(
   booking: Booking,
   releaseReady: boolean,
   hostHasReviewed: boolean | null,
+  isExpired?: boolean,
 ): BookingAction[] {
   switch (booking.status) {
     case BookingStatus.Pending:
+      if (isExpired) {
+        return [
+          {
+            id: "expire",
+            label: "Expirar reserva",
+            icon: Clock,
+            variant: "danger",
+          },
+        ];
+      }
       return [
         {
           id: "accept",

@@ -5,16 +5,18 @@ import { useCallback, useEffect, useState } from "react";
 import { sileo } from "sileo";
 
 import { BookingStatus, fetchMaybeBooking } from "@GestLabs2-0/stayke-escrow";
+import { isBookingExpiredSync } from "@/helpers/bookingExpiration";
 import { formatDate } from "@/helpers/formatDate";
 import { formatPrice } from "@/helpers/formatPrice";
+import { fullName } from "@/helpers/profileNames";
 import { propertyImageUrl } from "@/helpers/propertyImageUrl";
 import { useHostBookingAction } from "@/hooks/contracts/useHostBookingAction";
 import { useHostReviewAction } from "@/hooks/contracts/useHostReviewAction";
 import { useOpenDisputeAction } from "@/hooks/contracts/useOpenDisputeAction";
+import { useBookingReviewCheck } from "@/hooks/useBookingReviewCheck";
 import useNetwork from "@/hooks/useNetwork";
 import { useWalletContext } from "@/hooks/useWallet";
 import type { HostBookingAction } from "@/lib/contracts/buildHostBookingAction";
-import { staykeApi } from "@/lib/staykeApi";
 import type { OnChainReviewResult } from "@/types/profile/bookingReview";
 import type {
   BookingAction,
@@ -24,6 +26,7 @@ import { BookingHeader } from "./BookingHeader";
 import { BookingInfo } from "./BookingInfo";
 import { BookingReviewForm } from "./BookingReviewForm";
 import { BookingThumbnail } from "./BookingThumbnail";
+import { HOST_CONFIRM_MESSAGES } from "./bookingActionMessages";
 import { actionsFor } from "./bookingActions";
 import {
   STATUS_BADGE_CLASSES,
@@ -31,56 +34,32 @@ import {
 } from "./bookingStatusStyles";
 import { HostBookingActions } from "./HostBookingActions";
 
-const CONFIRM_MESSAGES: Partial<
-  Record<HostBookingAction, { title: string; description: string }>
-> = {
-  accept: {
-    title: "¿Aceptas la reserva?",
-    description: "Si aceptas y luego cancelas puedes ser penalizado",
-  },
-  reject: {
-    title: "¿Rechazar la reserva?",
-    description: "Esta acción no se puede deshacer.",
-  },
-  cancel: {
-    title: "¿Cancelar la reserva?",
-    description: "Esta acción no se puede deshacer",
-  },
-  release: {
-    title: "¿Liberar los fondos al anfitrión?",
-    description: "Solo acepta si la plataforma no ha liberado los fondos",
-  },
-};
-
-/** Estados en los que el anfitrión puede reseñar al huésped. */
-const REVIEWABLE_STATUSES = [BookingStatus.Completed, BookingStatus.Released];
-
-function shortAddress(address: string) {
-  if (address.length <= 12) return address;
-  return `${address.slice(0, 4)}…${address.slice(-4)}`;
-}
-
-function fullName(name: string, lastName: string, fallback: string) {
-  const full = `${name} ${lastName}`.trim();
-  return full.length > 0 ? full : shortAddress(fallback);
-}
-
 export function HostBookingCard({ booking, onChanged }: HostBookingCardProps) {
-  const { run, getEligibility } = useHostBookingAction();
+  const { run, getEligibility, getExpirationEligibility } =
+    useHostBookingAction();
   const { run: runReview } = useHostReviewAction();
   const { run: openDispute } = useOpenDisputeAction();
   const { client } = useNetwork();
   const { userWallet } = useWalletContext();
   const [releaseReady, setReleaseReady] = useState(false);
+  const [isExpired, setIsExpired] = useState(() =>
+    isBookingExpiredSync(booking),
+  );
   const [busy, setBusy] = useState<HostBookingAction | null>(null);
   const [reviewOpen, setReviewOpen] = useState(false);
-  // Chequeo off-chain: si el backend ya tiene la reseña del anfitrión se oculta.
-  const [hostHasReviewed, setHostHasReviewed] = useState<boolean | null>(null);
+  const hostHasReviewed = useBookingReviewCheck(booking, userWallet);
 
   useEffect(() => {
     let mounted = true;
-    setReleaseReady(false);
-    if (
+    if (booking.status === BookingStatus.Pending) {
+      if (isBookingExpiredSync(booking)) {
+        setIsExpired(true);
+      } else {
+        getExpirationEligibility(booking).then((exp) => {
+          if (mounted) setIsExpired(exp);
+        });
+      }
+    } else if (
       booking.status === BookingStatus.HostAccepted ||
       booking.status === BookingStatus.Completed
     ) {
@@ -91,111 +70,50 @@ export function HostBookingCard({ booking, onChanged }: HostBookingCardProps) {
     return () => {
       mounted = false;
     };
-  }, [booking, getEligibility]);
-
-  useEffect(() => {
-    if (!REVIEWABLE_STATUSES.includes(booking.status)) return;
-    if (!userWallet) {
-      setHostHasReviewed(null);
-      return;
-    }
-
-    let mounted = true;
-    setHostHasReviewed(null);
-
-    // TODO: create an endpoint to check instead of fetching a review
-    staykeApi
-      .getReviews({
-        bookingPda: booking.idPda,
-        reviewerPda: userWallet,
-        limit: 1,
-      })
-      .then((result) => {
-        if (!mounted) return;
-        const exists = Array.isArray(result.data)
-          ? result.data.length > 0
-          : false;
-        setHostHasReviewed(exists);
-      })
-      .catch(() => {
-        if (mounted) setHostHasReviewed(false);
-      });
-
-    return () => {
-      mounted = false;
-    };
-  }, [booking.idPda, booking.status, userWallet]);
+  }, [booking, getEligibility, getExpirationEligibility]);
 
   const onChainReview = useCallback(
     async (score: number): Promise<OnChainReviewResult> => {
-      const account = await fetchMaybeBooking(
-        client.rpc,
-        address(booking.idPda),
-      );
-      if (account.exists && account.data.guestReview > 0) {
+      const acc = await fetchMaybeBooking(client.rpc, address(booking.idPda));
+      if (acc.exists && acc.data.guestReview > 0)
         return { ok: false, already: true };
-      }
-      const result = await runReview(booking, score);
-      return result.status ? { ok: true } : { ok: false, already: false };
+      const res = await runReview(booking, score);
+      return res.status ? { ok: true } : { ok: false, already: false };
     },
     [booking, client.rpc, runReview],
   );
 
-  const imageSrc = propertyImageUrl(booking.property.imageKey);
-  const location = [booking.property.city, booking.property.countryCode]
-    .filter(Boolean)
-    .join(", ");
-  const rangeLabel = `${formatDate(booking.checkIn)} – ${formatDate(
-    booking.checkOut,
-  )}`;
-  const guestName = fullName(
-    booking.guest.name,
-    booking.guest.lastName,
-    booking.guest.userProfile,
-  );
-
   const handleAction = async (action: BookingAction) => {
     if (action.disabled) return;
-
-    if (action.id === "review") {
-      setReviewOpen(true);
-      return;
-    }
-
+    if (action.id === "review") return setReviewOpen(true);
     if (action.id === "dispute") {
-      sileo.action({
+      return sileo.action({
         title: "¿Iniciar disputa?",
         description: "La disputa se resolverá entre las partes.",
         position: "top-center",
         button: {
           title: "Iniciar disputa",
           onClick: async () => {
-            const result = await openDispute(booking, booking.host.userProfile);
-            if (result.status) onChanged?.();
+            const res = await openDispute(booking, booking.host.userProfile);
+            if (res.status) onChanged?.();
           },
         },
       });
-      return;
     }
-
-    // Tras descartar review/dispute, `action.id` ya es una acción de anfitrión.
     const hostAction = action.id;
-    const confirm = CONFIRM_MESSAGES[hostAction];
-
+    const confirm = HOST_CONFIRM_MESSAGES[hostAction];
     if (!confirm) return;
-
-    const { title, description } = confirm;
     sileo.action({
-      title,
-      description,
+      title: confirm.title,
+      description: confirm.description,
       position: "top-center",
       button: {
-        title,
+        title: confirm.title,
         onClick: async () => {
           setBusy(hostAction);
           try {
-            const result = await run(booking, hostAction);
-            if (result.status) onChanged?.();
+            const res = await run(booking, hostAction);
+            if (res.status) onChanged?.();
           } finally {
             setBusy(null);
           }
@@ -204,13 +122,20 @@ export function HostBookingCard({ booking, onChanged }: HostBookingCardProps) {
     });
   };
 
-  const actions = actionsFor(booking, releaseReady, hostHasReviewed);
+  const guestName = fullName(
+    booking.guest.name,
+    booking.guest.lastName,
+    booking.guest.userProfile,
+  );
+  const actions = actionsFor(booking, releaseReady, hostHasReviewed, isExpired);
 
   return (
     <>
       <article className="card-white flex flex-col gap-4 p-4 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md sm:flex-row sm:items-center">
-        <BookingThumbnail imageSrc={imageSrc} title={booking.property.title} />
-
+        <BookingThumbnail
+          imageSrc={propertyImageUrl(booking.property.imageKey)}
+          title={booking.property.title}
+        />
         <div className="min-w-0 flex-1 space-y-2">
           <BookingHeader
             title={booking.property.title}
@@ -218,23 +143,22 @@ export function HostBookingCard({ booking, onChanged }: HostBookingCardProps) {
             statusDotClass={STATUS_DOT_CLASSES[booking.status]}
             statusBadgeClass={STATUS_BADGE_CLASSES[booking.status]}
           />
-
           <BookingInfo
-            location={location}
-            rangeLabel={rangeLabel}
+            location={[booking.property.city, booking.property.countryCode]
+              .filter(Boolean)
+              .join(", ")}
+            rangeLabel={`${formatDate(booking.checkIn)} – ${formatDate(booking.checkOut)}`}
             personName={guestName}
             personLabel="Huésped"
             price={formatPrice(booking.totalPrice)}
           />
         </div>
-
         <HostBookingActions
           actions={actions}
           busy={busy}
           onAction={handleAction}
         />
       </article>
-
       <BookingReviewForm
         open={reviewOpen}
         booking={booking}

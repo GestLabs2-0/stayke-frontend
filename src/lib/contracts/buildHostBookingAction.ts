@@ -23,6 +23,8 @@ import {
   findEscrowTokenAccountPda,
   getBookingCompletesInstruction,
   getBookingStartsInstructionAsync,
+  getExpireBookingCrossYearInstructionAsync,
+  getExpireBookingInstructionAsync,
   getHostAcceptBookingInstructionAsync,
   getHostCancelBookingCrossYearInstructionAsync,
   getHostCancelBookingInstructionAsync,
@@ -40,17 +42,11 @@ import type { SolanaClient } from "@/context/NetworkContext";
 import { fromSolanaKitIns } from "@/helpers/web3Parsers";
 import { USDC_MINT } from "@/lib/contracts/constants";
 import type { Booking } from "@/types/api/booking";
+import type { HostBookingAction } from "@/types/profile/bookings";
 import { getYears, isCrossYear } from "./bookingDaysUtils";
 import { findBookingDaysPda } from "./findBookingDaysPda";
 
-/** On-chain host transition performed from the card. "dispute" is not here (pending). */
-export type HostBookingAction =
-  | "accept"
-  | "reject"
-  | "cancel"
-  | "starts"
-  | "completes"
-  | "release";
+export type { HostBookingAction };
 
 export interface BuildHostBookingActionParams {
   action: HostBookingAction;
@@ -121,7 +117,6 @@ export async function buildHostBookingAction({
 
   switch (action) {
     case "accept": {
-      console.log("what up");
       instruction = await getHostAcceptBookingInstructionAsync({
         payer: signer,
         host: signer,
@@ -159,6 +154,38 @@ export async function buildHostBookingAction({
         });
       } else {
         instruction = await getHostRejectBookingInstructionAsync({
+          ...base,
+          bookingDays,
+        });
+      }
+      break;
+    }
+
+    case "expire": {
+      const guestWallet = await profileAuthority(client, guestProfile);
+      const guestTokenAccount = associatedTokenAccount(guestWallet);
+      const base = {
+        payer: signer,
+        guest: guestProfile,
+        booking: bookingPda,
+        globalConfig,
+        escrowTokenAccount,
+        guestTokenAccount,
+        mint: USDC_MINT,
+        tokenProgram: TOKEN_PROGRAM,
+      };
+      if (crossYear) {
+        const [bookingDaysNext] = await findBookingDaysPda({
+          property,
+          year: checkOutYear,
+        });
+        instruction = await getExpireBookingCrossYearInstructionAsync({
+          ...base,
+          bookingDays,
+          bookingDaysNext,
+        });
+      } else {
+        instruction = await getExpireBookingInstructionAsync({
           ...base,
           bookingDays,
         });
@@ -234,8 +261,7 @@ export async function buildHostBookingAction({
     }
 
     case "release": {
-      const hostWallet = await profileAuthority(client, hostProfile);
-      const hostTokenAccount = associatedTokenAccount(hostWallet);
+      const hostTokenAccount = associatedTokenAccount(wallet);
       const [cpiAuthority] = await findCpiAuthorityPda();
       const [platformVault] = await findPlatformVaultPda();
       instruction = await getReleaseFundsInstructionAsync({

@@ -5,15 +5,17 @@ import { useCallback, useEffect, useState } from "react";
 import { sileo } from "sileo";
 
 import { BookingStatus, fetchMaybeBooking } from "@GestLabs2-0/stayke-escrow";
+import { isBookingExpiredSync } from "@/helpers/bookingExpiration";
 import { formatDate } from "@/helpers/formatDate";
 import { formatPrice } from "@/helpers/formatPrice";
+import { fullName } from "@/helpers/profileNames";
 import { propertyImageUrl } from "@/helpers/propertyImageUrl";
 import { useGuestBookingAction } from "@/hooks/contracts/useGuestBookingAction";
 import { useGuestReviewAction } from "@/hooks/contracts/useGuestReviewAction";
 import { useOpenDisputeAction } from "@/hooks/contracts/useOpenDisputeAction";
+import { useBookingReviewCheck } from "@/hooks/useBookingReviewCheck";
 import useNetwork from "@/hooks/useNetwork";
 import { useWalletContext } from "@/hooks/useWallet";
-import { staykeApi } from "@/lib/staykeApi";
 import type { OnChainReviewResult } from "@/types/profile/bookingReview";
 import type {
   GuestBookingAction,
@@ -31,122 +33,86 @@ import {
 import { GuestBookingActions } from "./GuestBookingActions";
 import { actionsForGuest } from "./guestActions";
 
-function shortAddress(address: string) {
-  if (address.length <= 12) return address;
-  return `${address.slice(0, 4)}…${address.slice(-4)}`;
-}
-
-function fullName(name: string, lastName: string, fallback: string) {
-  const full = `${name} ${lastName}`.trim();
-  return full.length > 0 ? full : shortAddress(fallback);
-}
-
-/** Estados en los que el huésped puede reseñar al anfitrión. */
-const REVIEWABLE_STATUSES = [BookingStatus.Completed, BookingStatus.Released];
-
 export function GuestBookingCard({
   booking,
   onChanged,
 }: GuestBookingCardProps) {
-  const { run } = useGuestBookingAction();
+  const { run, getExpirationEligibility } = useGuestBookingAction();
   const { run: runReview } = useGuestReviewAction();
   const { run: openDispute } = useOpenDisputeAction();
   const { client } = useNetwork();
   const { userWallet } = useWalletContext();
   const [busy, setBusy] = useState<GuestBookingActionId | null>(null);
   const [reviewOpen, setReviewOpen] = useState(false);
-  // Chequeo off-chain: si el backend ya tiene la reseña del huésped se oculta.
-  // null = aún no consultado (no se muestra la reseña hasta conocerlo).
-  const [guestHasReviewed, setGuestHasReviewed] = useState<boolean | null>(
-    null,
+  const [isExpired, setIsExpired] = useState(() =>
+    isBookingExpiredSync(booking),
   );
+  const guestHasReviewed = useBookingReviewCheck(booking, userWallet);
 
   useEffect(() => {
-    if (!REVIEWABLE_STATUSES.includes(booking.status)) return;
-    if (!userWallet) {
-      setGuestHasReviewed(null);
-      return;
-    }
-
     let mounted = true;
-    setGuestHasReviewed(null);
-
-    // TODO: create an endpoint to check this instead of fetching data
-    staykeApi
-      .getReviews({
-        bookingPda: booking.idPda,
-        reviewerPda: userWallet,
-        limit: 1,
-      })
-      .then((result) => {
-        if (!mounted) return;
-        const exists = Array.isArray(result.data)
-          ? result.data.length > 0
-          : false;
-        setGuestHasReviewed(exists);
-      })
-      .catch(() => {
-        if (mounted) setGuestHasReviewed(false);
-      });
-
+    if (booking.status === BookingStatus.Pending) {
+      if (isBookingExpiredSync(booking)) {
+        setIsExpired(true);
+      } else {
+        getExpirationEligibility(booking).then((exp) => {
+          if (mounted) setIsExpired(exp);
+        });
+      }
+    }
     return () => {
       mounted = false;
     };
-  }, [booking.idPda, booking.status, userWallet]);
+  }, [booking, getExpirationEligibility]);
 
   const onChainReview = useCallback(
     async (score: number): Promise<OnChainReviewResult> => {
-      const account = await fetchMaybeBooking(
-        client.rpc,
-        address(booking.idPda),
-      );
-      if (account.exists && account.data.hostReview > 0) {
+      const acc = await fetchMaybeBooking(client.rpc, address(booking.idPda));
+      if (acc.exists && acc.data.hostReview > 0)
         return { ok: false, already: true };
-      }
-      const result = await runReview(booking, score);
-      return result.status ? { ok: true } : { ok: false, already: false };
+      const res = await runReview(booking, score);
+      return res.status ? { ok: true } : { ok: false, already: false };
     },
     [booking, client.rpc, runReview],
   );
 
-  const imageSrc = propertyImageUrl(booking.property.imageKey);
-  const location = [booking.property.city, booking.property.countryCode]
-    .filter(Boolean)
-    .join(", ");
-  const rangeLabel = `${formatDate(booking.checkIn)} – ${formatDate(
-    booking.checkOut,
-  )}`;
-  const hostName = fullName(
-    booking.host.name,
-    booking.host.lastName,
-    booking.host.userProfile,
-  );
-
   const handleAction = async (action: GuestBookingAction) => {
     if (action.disabled) return;
-
-    if (action.id === "review") {
-      setReviewOpen(true);
-      return;
-    }
-
+    if (action.id === "review") return setReviewOpen(true);
     if (action.id === "dispute") {
-      sileo.action({
+      return sileo.action({
         title: "¿Iniciar disputa?",
         description: "La disputa se resolverá entre las partes.",
         position: "top-center",
         button: {
           title: "Iniciar disputa",
           onClick: async () => {
-            const result = await openDispute(
-              booking,
-              booking.guest.userProfile,
-            );
-            if (result.status) onChanged?.();
+            const res = await openDispute(booking, booking.guest.userProfile);
+            if (res.status) onChanged?.();
           },
         },
       });
-      return;
+    }
+
+    if (action.id === "expire") {
+      return sileo.action({
+        title: "¿Expirar la reserva?",
+        description:
+          "Han transcurrido más de 24 horas sin respuesta. Se te reembolsarán los fondos.",
+        position: "top-center",
+        button: {
+          title: "Expirar reserva",
+          onClick: async () => {
+            setBusy("expire");
+            try {
+              const res = await run(booking, "expire");
+              if (res.status) onChanged?.();
+            } finally {
+              setBusy(null);
+            }
+          },
+        },
+      });
     }
 
     sileo.action({
@@ -158,8 +124,8 @@ export function GuestBookingCard({
         onClick: async () => {
           setBusy("cancel");
           try {
-            const result = await run(booking, "cancel");
-            if (result.status) onChanged?.();
+            const res = await run(booking, "cancel");
+            if (res.status) onChanged?.();
           } finally {
             setBusy(null);
           }
@@ -168,13 +134,20 @@ export function GuestBookingCard({
     });
   };
 
-  const actions = actionsForGuest(booking, guestHasReviewed);
+  const hostName = fullName(
+    booking.host.name,
+    booking.host.lastName,
+    booking.host.userProfile,
+  );
+  const actions = actionsForGuest(booking, guestHasReviewed, isExpired);
 
   return (
     <>
       <article className="card-white flex flex-col gap-4 p-4 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md sm:flex-row sm:items-center">
-        <BookingThumbnail imageSrc={imageSrc} title={booking.property.title} />
-
+        <BookingThumbnail
+          imageSrc={propertyImageUrl(booking.property.imageKey)}
+          title={booking.property.title}
+        />
         <div className="min-w-0 flex-1 space-y-2">
           <BookingHeader
             title={booking.property.title}
@@ -182,23 +155,22 @@ export function GuestBookingCard({
             statusDotClass={STATUS_DOT_CLASSES[booking.status]}
             statusBadgeClass={STATUS_BADGE_CLASSES[booking.status]}
           />
-
           <BookingInfo
-            location={location}
-            rangeLabel={rangeLabel}
+            location={[booking.property.city, booking.property.countryCode]
+              .filter(Boolean)
+              .join(", ")}
+            rangeLabel={`${formatDate(booking.checkIn)} – ${formatDate(booking.checkOut)}`}
             personName={hostName}
             personLabel="Anfitrión"
             price={formatPrice(booking.totalPrice)}
           />
         </div>
-
         <GuestBookingActions
           actions={actions}
           busy={busy}
           onAction={handleAction}
         />
       </article>
-
       <BookingReviewForm
         open={reviewOpen}
         booking={booking}
