@@ -22,7 +22,7 @@ export default function DisputesPage() {
     EMPTY_DISPUTES_FILTERS,
   );
 
-  const { disputes, loading } = useUserDisputes(userWallet, {
+  const { disputes, loading, refresh } = useUserDisputes(userWallet, {
     severity: filters.severity,
     judgement: filters.judgement,
     role: filters.role,
@@ -81,6 +81,7 @@ export default function DisputesPage() {
           loading={loading}
           emptyMessage="No se encontraron disputas con estos filtros."
           emptyDescription="Probá ajustar o limpiar los filtros para ver más resultados."
+          onRefresh={refresh}
         />
       ) : (
         <div className="space-y-8">
@@ -93,6 +94,7 @@ export default function DisputesPage() {
             loading={loading}
             emptyMessage="No tenés disputas escaladas."
             emptyDescription="Cuando las partes no llegan a un acuerdo, la disputa sube a Stayke y se resuelve con un fallo."
+            onRefresh={refresh}
           />
           <DisputeSection
             kind="p2p"
@@ -103,6 +105,7 @@ export default function DisputesPage() {
             loading={loading}
             emptyMessage="No tenés disputas P2P."
             emptyDescription="Las disputas P2P se resuelven entre las partes, como acordaron al iniciarlas."
+            onRefresh={refresh}
           />
         </div>
       )}

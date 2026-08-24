@@ -193,28 +193,27 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
 
   const createChat = useCallback(
     async (hostId: string, propertyId?: number) => {
-      staykeApi
-        .createConversation(hostId, propertyId)
-        .then((response) => {
-          console.log(response);
-          if (response?.conflict) {
-            const lookedUp = conversations.find(
-              (conversation) => conversation.contact.id === hostId,
-            );
-            setSelected(lookedUp ?? null);
+      try {
+        const response = await staykeApi.createConversation(hostId, propertyId);
+        if (response?.conflict) {
+          const lookedUp = conversations.find(
+            (conversation) => conversation.contact.id === hostId,
+          );
+          if (lookedUp) {
+            setSelected(lookedUp);
           }
-          if (response.data !== null && response.status) {
-            const c = response.data;
-            console.log(c);
-            setConversations((prev) => {
-              return [...prev, mapConversationToFrontend(c, wallet)];
-            });
-          }
-        })
-        .catch((err) => {
-          // We already selected chat
-          console.log(err);
-        });
+        } else if (response.data !== null && response.status) {
+          const c = response.data;
+          const mapped = mapConversationToFrontend(c, wallet);
+          setConversations((prev) => {
+            const exists = prev.some((item) => item.apiId === mapped.apiId);
+            return exists ? prev : [...prev, mapped];
+          });
+          setSelected(mapped);
+        }
+      } catch (err) {
+        console.error("Error creating or selecting conversation:", err);
+      }
     },
     [conversations, wallet],
   );

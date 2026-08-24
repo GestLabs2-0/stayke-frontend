@@ -22,6 +22,7 @@ export function DisputeList({
   pageSize = 8,
   emptyMessage = "No hay disputas en esta sección.",
   emptyDescription,
+  onRefresh,
 }: DisputeListProps) {
   const [page, setPage] = useState(1);
 
@@ -56,7 +57,11 @@ export function DisputeList({
             key={dispute.disputePda}
             style={{ animationDelay: `${i * 40}ms` }}
           >
-            <DisputeCard dispute={dispute} userWallet={userWallet} />
+            <DisputeCard
+              dispute={dispute}
+              userWallet={userWallet}
+              onRefresh={onRefresh}
+            />
           </div>
         ))}
       </div>

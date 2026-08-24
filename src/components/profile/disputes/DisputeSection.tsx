@@ -17,6 +17,7 @@ export function DisputeSection({
   loading = false,
   emptyMessage,
   emptyDescription,
+  onRefresh,
 }: DisputeSectionProps) {
   return (
     <section className="space-y-3">
@@ -48,6 +49,7 @@ export function DisputeSection({
         loading={loading}
         emptyMessage={emptyMessage}
         emptyDescription={emptyDescription}
+        onRefresh={onRefresh}
       />
     </section>
   );

@@ -48,12 +48,40 @@ export interface DisputeFiltersProps {
   onClear: () => void;
 }
 
+// ── DisputeStatusChip ──
+
+export interface DisputeStatusChipProps {
+  dispute: Dispute;
+}
+
+// ── DisputeJudgementBadge ──
+
+export interface DisputeJudgementBadgeProps {
+  dispute: Dispute;
+}
+
+// ── DisputeRoleTag ──
+
+export interface DisputeRoleTagProps {
+  role: UserRoleInDispute;
+  openedAt: number;
+}
+
+// ── DisputeActions ──
+
+export interface DisputeActionsProps {
+  dispute: Dispute;
+  userRole: UserRoleInDispute;
+  onRefresh?: () => void;
+}
+
 // ── DisputeCard ──
 
 export interface DisputeCardProps {
   dispute: Dispute;
   /** Wallet del usuario autenticado, para derivar su rol en la disputa. */
   userWallet: string | null;
+  onRefresh?: () => void;
 }
 
 // ── DisputeList ──
@@ -67,6 +95,7 @@ export interface DisputeListProps {
   pageSize?: number;
   emptyMessage?: string;
   emptyDescription?: string;
+  onRefresh?: () => void;
 }
 
 // ── DisputeSection ──
@@ -81,6 +110,7 @@ export interface DisputeSectionProps {
   loading?: boolean;
   emptyMessage?: string;
   emptyDescription?: string;
+  onRefresh?: () => void;
 }
 
 // ── DisputeListSkeleton ──
