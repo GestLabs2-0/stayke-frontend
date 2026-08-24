@@ -1,4 +1,4 @@
-export type ClusterNames = "mainnet" | "devnet" | "testnet" | "custom";
+export type ClusterNames = "mainnet" | "devnet" | "testnet" | "localnet";
 
 export type NetworkConfig = {
   name: string;

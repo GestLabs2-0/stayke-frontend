@@ -1,20 +1,18 @@
 import type { Address } from "@solana/kit";
+import { createNoopSigner } from "@solana/kit";
 import {
-  appendTransactionMessageInstructions,
-  assertIsTransactionWithinSizeLimit,
-  compileTransaction,
-  createNoopSigner,
-  createTransactionMessage,
-  pipe,
-  setTransactionMessageFeePayerSigner,
-  setTransactionMessageLifetimeUsingBlockhash,
-} from "@solana/kit";
+  PublicKey,
+  TransactionMessage,
+  VersionedTransaction,
+} from "@solana/web3.js";
 
 import { getInitializeUserProfileInstructionAsync } from "@GestLabs2-0/stayke-core";
 import type { SolanaClient } from "@/context/NetworkContext";
+import { fromSolanaKitIns } from "@/helpers/web3Parsers";
 
 export async function buildInitUserTx(addr: Address, client: SolanaClient) {
   const authority = createNoopSigner(addr);
+  console.log(addr);
 
   const instruction = await getInitializeUserProfileInstructionAsync({
     authority: authority,
@@ -22,23 +20,23 @@ export async function buildInitUserTx(addr: Address, client: SolanaClient) {
     payer: authority,
   });
 
+  const web3Instruction = fromSolanaKitIns(instruction);
+
   const { value: latestBlockhash } = await client.rpc
     .getLatestBlockhash()
     .send();
-  const tx = pipe(
-    createTransactionMessage({ version: 0 }),
-    (tx) => setTransactionMessageFeePayerSigner(authority, tx),
-    (tx) => setTransactionMessageLifetimeUsingBlockhash(latestBlockhash, tx),
-    (tx) => appendTransactionMessageInstructions([instruction], tx),
-    (tx) => compileTransaction(tx),
-  );
 
-  // Required to avoid "Transaction too large" errors. This checks the transaction size before sending.
-  assertIsTransactionWithinSizeLimit(tx);
+  const tx = new VersionedTransaction(
+    new TransactionMessage({
+      instructions: [web3Instruction],
+      payerKey: new PublicKey(addr),
+      recentBlockhash: latestBlockhash.blockhash,
+    }).compileToV0Message(),
+  );
 
   return {
     userProfile: instruction.accounts[2].address,
     reputationProfile: instruction.accounts[3].address,
-    tx: tx,
+    tx,
   };
 }

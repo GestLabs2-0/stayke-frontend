@@ -11,7 +11,6 @@ export function SidebarMobile({
   open,
   onClose,
   items,
-  activeItem,
   onSelect,
   profile,
   mode,
@@ -63,8 +62,8 @@ export function SidebarMobile({
           </div>
 
           <SidebarNav
+            mode={mode}
             items={items}
-            activeItem={activeItem}
             onSelect={onSelect}
             expanded={true}
           />

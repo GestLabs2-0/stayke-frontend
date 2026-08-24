@@ -1,3 +1,4 @@
+import { getDefaultClient } from "@dynamic-labs-sdk/client";
 import type { Axios, AxiosError } from "axios";
 
 import type {
@@ -28,7 +29,29 @@ export class HttpClient implements HttpClientInterface {
    */
   getAuthorization() {
     return {
-      token: localStorage.getItem(this.localStorageKeys.accessToken),
+      token:
+        getDefaultClient().token ??
+        localStorage.getItem(this.localStorageKeys.accessToken),
+    };
+  }
+
+  /**
+   * Builds the request headers, omitting the JSON content-type when the body is
+   * a FormData instance so axios can set the multipart boundary on its own.
+   */
+  private composeHeaders(customHeaders: object = {}, omitContentType = false) {
+    const { token } = this.getAuthorization();
+
+    const headers: Record<string, unknown> = { ...this.default_headers };
+
+    if (omitContentType) {
+      delete headers["Content-Type"];
+    }
+
+    return {
+      ...headers,
+      ...customHeaders,
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
     };
   }
 
@@ -61,30 +84,20 @@ export class HttpClient implements HttpClientInterface {
   }
 
   async post({ url = "", body, headers = {}, options = {} }: PostParams) {
-    const { token } = this.getAuthorization();
-
     const { headers: headers_, ...restOptions } = options;
+    const isFormData = body instanceof FormData;
 
     return this.http.post(this.readUrl(url), body, {
-      headers: {
-        ...this.default_headers,
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        ...headers,
-        ...headers_,
-      },
+      headers: this.composeHeaders({ ...headers, ...headers_ }, isFormData),
       ...restOptions,
     });
   }
 
   async put({ url = "", body = {}, headers = {}, options = {} }: PutParams) {
-    const { token } = this.getAuthorization();
+    const isFormData = body instanceof FormData;
 
     return this.http.put(this.readUrl(url), body, {
-      headers: {
-        ...this.default_headers,
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        ...headers,
-      },
+      headers: this.composeHeaders(headers, isFormData),
       ...options,
     });
   }

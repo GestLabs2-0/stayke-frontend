@@ -14,7 +14,9 @@ export const PropertyCard = ({
   const [isLiked, setIsLiked] = useState(property.isLiked ?? false);
 
   return (
-    <article className={`group flex h-full flex-col gap-3 ${className}`}>
+    <article
+      className={`group shadow-sm hover:shadow-md duration-300 px-2 py-2 pb-4 rounded-lg flex h-full flex-col gap-3 cursor-pointer ${className}`}
+    >
       {/* Imagen de la card */}
       <div
         className={`relative w-full overflow-hidden rounded-2xl bg-zinc-100 ${
@@ -27,7 +29,7 @@ export const PropertyCard = ({
         <Image
           src={property.imageUrl}
           alt={property.title}
-          fill
+          fill={true}
           className="object-cover transition-transform duration-300 group-hover:scale-105"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />
@@ -48,20 +50,24 @@ export const PropertyCard = ({
         </button>
 
         {/* Badge de rating */}
-        <div className="absolute bottom-3 left-3 flex items-center gap-1.5 rounded-full bg-white/90 px-3 py-1 shadow-sm backdrop-blur-sm">
-          <div className="flex items-center">
-            <span className="text-xs font-semibold text-white bg-purple-600 px-2 py-0.5 rounded-sm">
-              {property.rating.toFixed(1).replace(".", ",")}
-            </span>
+        {property.rating != null && (
+          <div className="absolute bottom-3 left-3 flex items-center gap-1.5 rounded-full bg-white/90 px-3 py-1 shadow-sm backdrop-blur-sm">
+            <div className="flex items-center">
+              <span className="text-xs font-semibold text-white bg-purple-600 px-2 py-0.5 rounded-sm">
+                {property.rating.toFixed(1).replace(".", ",")}
+              </span>
+            </div>
+            {property.ratingLabel && (
+              <span className="text-xs font-semibold text-zinc-700">
+                {property.ratingLabel}
+              </span>
+            )}
           </div>
-          <span className="text-xs font-semibold text-zinc-700">
-            {property.ratingLabel}
-          </span>
-        </div>
+        )}
       </div>
 
       {/* Info de la propiedad */}
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col gap-1 flex-2 px-2 pt-2">
         <h4 className="text-xl font-semibold text-zinc-900 leading-tight">
           {property.title}
         </h4>

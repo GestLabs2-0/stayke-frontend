@@ -10,7 +10,7 @@ import {
 import { ProfileHeader } from "@/components/profile/ProfileHeader";
 import { TreasuryCard } from "@/components/profile/TreasuryCard";
 import { VerificationBanner } from "@/components/profile/VerificationBanner";
-import { useProfile } from "@/context/ProfileContext";
+import { useProfile } from "@/hooks/useProfile";
 
 export default function ProfilePage() {
   const { profile, mode, setMode, setMobileOpen } = useProfile();

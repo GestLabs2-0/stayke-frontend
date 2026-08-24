@@ -29,35 +29,47 @@ export function ImageUpload({
     [images],
   );
 
-  // useEffect(() => {
-  //   return () => {
-  //     imageUrls.forEach((url) => URL.revokeObjectURL(url));
-  //   };
-  // }, [imageUrls]);
-
   const validateAndAdd = useCallback(
     (files: FileList) => {
       setError(null);
-      const valid: File[] = [];
 
-      for (const file of Array.from(files)) {
-        if (!ACCEPTED_IMAGE_TYPES.includes(file.type)) {
-          setError(
-            `Formato no soportado: "${file.name}". Usá JPG, PNG o WebP.`,
-          );
-          return;
-        }
-        if (file.size > MAX_IMAGE_SIZE_MB * 1024 * 1024) {
-          setError(`"${file.name}" supera los ${MAX_IMAGE_SIZE_MB}MB.`);
-          return;
-        }
-        valid.push(file);
+      // ── Single-image mode ──
+      // Backend (propertyImageSchema) accepts ONE jpeg/png file ≤5MB, so only the
+      // first selected file is kept (selecting again replaces it). To re-enable
+      // multi-image support later: restore MAX_IMAGES to 8, re-add `multiple` to
+      // the <input>, and un-comment the block below.
+      const file = files[0];
+
+      if (!file) return;
+
+      if (!ACCEPTED_IMAGE_TYPES.includes(file.type)) {
+        setError(`Formato no soportado: "${file.name}". Usá JPG o PNG.`);
+        return;
+      }
+      if (file.size > MAX_IMAGE_SIZE_MB * 1024 * 1024) {
+        setError(`"${file.name}" supera los ${MAX_IMAGE_SIZE_MB}MB.`);
+        return;
       }
 
-      const combined = [...images, ...valid].slice(0, maxImages);
-      onChange(combined);
+      onChange([file]);
+
+      // // ── Multi-image mode (paused until the backend supports it) ──
+      // const valid: File[] = [];
+      // for (const file of Array.from(files)) {
+      //   if (!ACCEPTED_IMAGE_TYPES.includes(file.type)) {
+      //     setError(`Formato no soportado: "${file.name}". Usá JPG o PNG.`);
+      //     return;
+      //   }
+      //   if (file.size > MAX_IMAGE_SIZE_MB * 1024 * 1024) {
+      //     setError(`"${file.name}" supera los ${MAX_IMAGE_SIZE_MB}MB.`);
+      //     return;
+      //   }
+      //   valid.push(file);
+      // }
+      // const combined = [...images, ...valid].slice(0, maxImages);
+      // onChange(combined);
     },
-    [images, maxImages, onChange],
+    [onChange],
   );
 
   const handleDrop = useCallback(
@@ -66,10 +78,8 @@ export function ImageUpload({
       e.stopPropagation();
       if (!e.dataTransfer.files.length) return;
       setIsAdding(true);
-      setTimeout(() => {
-        validateAndAdd(e.dataTransfer.files);
-        setIsAdding(false);
-      }, 0);
+      validateAndAdd(e.dataTransfer.files);
+      setIsAdding(false);
     },
     [validateAndAdd],
   );
@@ -84,10 +94,8 @@ export function ImageUpload({
       const files = e.target.files;
       if (!files?.length) return;
       setIsAdding(true);
-      setTimeout(() => {
-        validateAndAdd(files);
-        setIsAdding(false);
-      }, 0);
+      validateAndAdd(files);
+      setIsAdding(false);
       if (inputRef.current) inputRef.current.value = "";
     },
     [validateAndAdd],
@@ -116,11 +124,11 @@ export function ImageUpload({
           onClick={() => inputRef.current?.click()}
           className="cursor-pointer rounded-2xl border-2 border-dashed border-[#c3c6d6] bg-white px-6 py-10 text-center transition-colors hover:border-[#3b007f] hover:bg-[#3b007f]/5"
         >
+          {/* Single-image mode: `multiple` removed (re-add for multi-image). */}
           <input
             ref={inputRef}
             type="file"
-            accept="image/jpeg,image/png,image/webp"
-            multiple
+            accept="image/jpeg,image/png"
             className="sr-only"
             onChange={handleInputChange}
           />
@@ -128,10 +136,10 @@ export function ImageUpload({
           <ImageIcon className="mx-auto mb-4" />
 
           <p className="font-plus-jakarta text-[14px] font-semibold text-[#434654]">
-            Arrastra tus fotos aquí o haz clic para subir (máx. {maxImages})
+            Arrastra tu foto aquí o haz clic para subir (máx. {maxImages})
           </p>
           <p className="mt-1 font-plus-jakarta text-[13px] text-[#a0a5b5]">
-            JPG, PNG o WebP &middot; hasta {MAX_IMAGE_SIZE_MB}MB c/u
+            JPG o PNG &middot; hasta {MAX_IMAGE_SIZE_MB}MB
           </p>
         </div>
       )}

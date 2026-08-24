@@ -27,3 +27,19 @@ export interface AuthModalShellProps {
   onClose: () => void;
   children: ReactNode;
 }
+
+export interface EmailVerificationStepProps {
+  onSuccess: () => void;
+}
+
+export interface DynamicSessionType {
+  value: {
+    captchaToken: null | string;
+    elevatedAccessTokens: string[];
+    legacyToken: string;
+    mfaToken: null | string;
+    sessionExpiration: number;
+    sessionKeys: string;
+    token: string;
+  };
+}

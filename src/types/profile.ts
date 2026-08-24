@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 
 // ── Domain types ──
 
-export type ProfileMode = "host" | "guest";
+export type ProfileMode = "host" | "guest" | "all";
 
 export interface ProfileData {
   name: string;
@@ -108,8 +108,7 @@ export interface ProfileHeaderProps {
 export interface ProfileSidebarProps {
   expanded: boolean;
   onToggleExpand: () => void;
-  activeItem: string;
-  onNavigate: (id: string) => void;
+  onNavigate: (id: string, link: string) => void;
   mode: ProfileMode;
   onChangeMode: (m: ProfileMode) => void;
   mobileOpen: boolean;
@@ -124,12 +123,11 @@ export interface SidebarMobileProps {
   open: boolean;
   onClose: () => void;
   items: NavItem[];
-  activeItem: string;
   onSelect: (item: NavItem) => void;
   profile?: ProfileData;
   mode: ProfileMode;
   onChangeMode: (m: ProfileMode) => void;
-  onNavigate: (id: string) => void;
+  onNavigate: (id: string, link: string) => void;
 }
 
 // ── SidebarModeFooter ──
@@ -138,7 +136,7 @@ export interface SidebarModeFooterProps {
   mode: ProfileMode;
   expanded: boolean;
   onChangeMode: (m: ProfileMode) => void;
-  onNavigate: (id: string) => void;
+  onNavigate: (id: string, link: string) => void;
 }
 
 // ── SidebarNav ──
@@ -146,15 +144,19 @@ export interface SidebarModeFooterProps {
 export interface NavItem {
   id: string;
   label: string;
+  role: ProfileMode;
   icon: LucideIcon;
-  action?: "navigate" | "switch-mode" | "logout";
+  action?:
+    | { type: "navigate"; link: string }
+    | { type: "switch-mode" }
+    | { type: "logout" };
 }
 
 export interface SidebarNavProps {
   items: NavItem[];
-  activeItem: string;
   onSelect: (item: NavItem) => void;
   expanded: boolean;
+  mode: ProfileMode;
 }
 
 // ── SectionCard ──

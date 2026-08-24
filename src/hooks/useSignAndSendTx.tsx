@@ -1,67 +1,56 @@
 import { getWalletAccountFromAddress } from "@dynamic-labs-sdk/client";
 import type { SolanaWalletAccount } from "@dynamic-labs-sdk/solana";
 import { signAndSendTransaction } from "@dynamic-labs-sdk/solana";
-import type {
-  Address,
-  Transaction,
-  TransactionWithBlockhashLifetime,
-} from "@solana/kit";
-import { getTransactionEncoder } from "@solana/kit";
-import { VersionedMessage, VersionedTransaction } from "@solana/web3.js";
-import { useState } from "react";
+import type { Address } from "@solana/kit";
+import type { VersionedTransaction } from "@solana/web3.js";
+import { SendTransactionError } from "@solana/web3.js";
+import { useMemo, useState } from "react";
 import { sileo } from "sileo";
 
-const encoder = getTransactionEncoder();
 export function useSignAndSendTx(wallet: Address | null) {
-  // TODO: expand hook to sign and send transactions depending on wallet type
   const [signature, setSignature] = useState("");
-
   const [loading, setLoading] = useState(false);
 
-  const handleSignAndSend = async <
-    T extends Transaction & TransactionWithBlockhashLifetime,
-  >(
+  const walletAccount = useMemo(() => {
+    if (!wallet) return null;
+    return getWalletAccountFromAddress({
+      address: wallet.toString(),
+      chain: "SOL",
+    }) as SolanaWalletAccount | null;
+  }, [wallet]);
+
+  const handleSignAndSend = async <T extends VersionedTransaction>(
     transaction: T,
   ) => {
     if (!wallet) return { status: false };
-
-    const walletAccount = getWalletAccountFromAddress({
-      address: wallet?.toString(),
-      chain: "SOL",
-    }) as SolanaWalletAccount | null;
     if (!walletAccount) return { status: false };
 
-    const wireBytes = new Uint8Array(encoder.encode(transaction));
-    const versionedMessage = VersionedMessage.deserialize(wireBytes);
-    const tx = new VersionedTransaction(versionedMessage);
     try {
       setLoading(true);
+
       const { signature } = await signAndSendTransaction({
         walletAccount,
-        transaction: tx,
+        transaction,
       });
 
       setSignature(signature);
       console.log("Transaction sent:", signature);
-      return {
-        status: true,
-      };
-    } catch (error) {
+      return { status: true, signature };
+    } catch (error: unknown) {
       sileo.error({
         title: "Error enviando la transacción. Por favor, inténtalo de nuevo.",
       });
+
+      if (error instanceof SendTransactionError) {
+        console.log("SendTransactionError:", error.logs);
+      }
+
       console.log(error);
     } finally {
       setLoading(false);
     }
-    return {
-      status: false,
-    };
+    return { status: false };
   };
 
-  return {
-    handleSignAndSend,
-    signature,
-    loading,
-  };
+  return { handleSignAndSend, signature, loading };
 }
