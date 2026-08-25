@@ -36,6 +36,26 @@ export class HttpClient implements HttpClientInterface {
   }
 
   /**
+   * Builds the request headers, omitting the JSON content-type when the body is
+   * a FormData instance so axios can set the multipart boundary on its own.
+   */
+  private composeHeaders(customHeaders: object = {}, omitContentType = false) {
+    const { token } = this.getAuthorization();
+
+    const headers: Record<string, unknown> = { ...this.default_headers };
+
+    if (omitContentType) {
+      delete headers["Content-Type"];
+    }
+
+    return {
+      ...headers,
+      ...customHeaders,
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    };
+  }
+
+  /**
    * @param {string}  uri Detecta si estamos usando una URI o es una nueva URL base
    * (comienza con http:// o https://). En caso de ser asi, retorna la url,
    * en caso contrario, se asume que es un fragmento
@@ -64,29 +84,20 @@ export class HttpClient implements HttpClientInterface {
   }
 
   async post({ url = "", body, headers = {}, options = {} }: PostParams) {
-    const { token } = this.getAuthorization();
-
     const { headers: headers_, ...restOptions } = options;
-    console.log(token);
+    const isFormData = body instanceof FormData;
+
     return this.http.post(this.readUrl(url), body, {
-      headers: {
-        ...this.default_headers,
-        ...headers,
-        ...headers_,
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      },
+      headers: this.composeHeaders({ ...headers, ...headers_ }, isFormData),
       ...restOptions,
     });
   }
 
   async put({ url = "", body = {}, headers = {}, options = {} }: PutParams) {
-    const { token } = this.getAuthorization();
+    const isFormData = body instanceof FormData;
+
     return this.http.put(this.readUrl(url), body, {
-      headers: {
-        ...this.default_headers,
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        ...headers,
-      },
+      headers: this.composeHeaders(headers, isFormData),
       ...options,
     });
   }

@@ -125,7 +125,7 @@ body {
   .bg-accent-warm\/15 {
     background-color: rgb(232 96 76 / 0.15);
   }
-  .bg-accent-warm-hover {
+  .bg-accent-warm-hover:hover {
     background-color: #d44a38;
   }
   .fill-accent-warm {
@@ -134,4 +134,9 @@ body {
   .border-accent-warm {
     border-color: #e8604c;
   }
+}
+
+[data-sileo-viewport] {
+  /* biome-ignore lint/complexity/noImportantStyles: i need to override sileo */
+  z-index: 1002 !important;
 }

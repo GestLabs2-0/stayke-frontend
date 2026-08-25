@@ -10,6 +10,8 @@ const routesTitle: { [key: string]: string } = {
   [routes.Profile.index]: "Perfil",
   [routes.Profile.properties.index]: "Propiedades",
   [routes.Profile.properties.create]: "Crear propiedad",
+  [routes.Profile.bookings.index]: "Reservas",
+  [routes.Profile.disputes.index]: "Disputas",
 };
 
 export function Breadcrumb() {
@@ -67,21 +69,6 @@ export function Breadcrumb() {
             </React.Fragment>
           );
         })}
-        {/*<li>
-        <Link
-          href={routes.Profile.index}
-          className="transition-colors hover:text-[#434654]"
-        >
-          Perfil
-        </Link>
-      </li>
-      <li aria-hidden="true" className="select-none">
-        /
-      </li>
-      <li className="text-[#434654]" aria-current="page">
-        Propiedades
-      </li>
-    */}
       </ol>
     </nav>
   );

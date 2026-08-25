@@ -22,7 +22,6 @@ import {
 import type { ClusterNames } from "@/types";
 
 const CLUSTER = DEFAULT_NETWORK as ClusterNames;
-
 export const client = createDynamicClient({
   // biome-ignore  lint/style/noNonNullAssertion: already checked
   environmentId: DYNAMIC_CLIENT_ID!,

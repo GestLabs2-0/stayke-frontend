@@ -1,23 +1,19 @@
 "use client";
 
-import { useState } from "react";
-
 import { MinusIcon, PlusIcon } from "@/icons";
+import type { GuestCounts, GuestMenuProps } from "@/types/header";
 import { categorias } from "./mocks";
 
-export const GuestMenu = () => {
-  const [guestCount, setGuestCount] = useState({
+export const GuestMenu = ({ guestCounts, onAdjustGuest }: GuestMenuProps) => {
+  const counts: GuestCounts = guestCounts ?? {
     adultos: 0,
     ninos: 0,
     bebes: 0,
     mascotas: 0,
-  });
+  };
 
-  const ajustar = (key: keyof typeof guestCount, delta: number) => {
-    setGuestCount((prev) => ({
-      ...prev,
-      [key]: Math.max(0, prev[key] + delta),
-    }));
+  const ajustar = (key: keyof GuestCounts, delta: number) => {
+    onAdjustGuest?.(key, delta);
   };
 
   return (
@@ -32,21 +28,22 @@ export const GuestMenu = () => {
             <button
               type="button"
               onClick={() => ajustar(cat.key, -1)}
+              disabled={counts[cat.key] === 0}
               className={`w-8 h-8 rounded-full border transition-colors flex items-center justify-center ${
-                guestCount[cat.key] === 0
+                counts[cat.key] === 0
                   ? "border-zinc-200 text-zinc-300 cursor-not-allowed"
-                  : "border-zinc-400 text-zinc-600 hover:border-zinc-800 hover:text-zinc-800"
+                  : "border-zinc-400 text-zinc-600 hover:border-zinc-800 hover:text-zinc-800 cursor-pointer"
               }`}
             >
               <MinusIcon />
             </button>
             <span className="w-6 text-center text-sm text-zinc-800">
-              {guestCount[cat.key]}
+              {counts[cat.key]}
             </span>
             <button
               type="button"
               onClick={() => ajustar(cat.key, 1)}
-              className="w-8 h-8 rounded-full border border-zinc-400 text-zinc-600 hover:border-zinc-800 hover:text-zinc-800 transition-colors flex items-center justify-center"
+              className="w-8 h-8 rounded-full border border-zinc-400 text-zinc-600 hover:border-zinc-800 hover:text-zinc-800 transition-colors flex items-center justify-center cursor-pointer"
             >
               <PlusIcon />
             </button>

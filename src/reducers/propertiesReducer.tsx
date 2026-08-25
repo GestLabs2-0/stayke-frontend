@@ -1,12 +1,17 @@
 import type { Dispatch } from "react";
 
-import { hostPropertiesMock } from "@/components/profile/properties/listProperties/mockHostProperties";
+import { staykeApi } from "@/lib/staykeApi";
 import type {
   PropertiesReducerActions,
   PropertiesStateI,
 } from "@/types/property/HostProperties";
 import type { HostProperty } from "@/types/property/hostProperty";
 import type { PropertyFilters } from "@/types/property/propertyFilters";
+
+/** Tamaño de página para la paginación en cliente. */
+export const PROPERTIES_PAGE_SIZE = 10;
+/** Máximo que el backend devuelve por request (límite de la API). */
+const PROPERTIES_FETCH_LIMIT = 100;
 
 export const INITIAL_STATE_PROPERTIES: PropertiesStateI = {
   filters: {
@@ -69,16 +74,18 @@ export function propertiesReducer(
   }
 }
 
-export function fetchProperties(
+/**
+ * Filtros que el backend no soporta (nombre, dirección y reseñas) se aplican
+ * en cliente sobre el set completo de propiedades del host.
+ */
+function applyClientFilters(
+  properties: HostProperty[],
   filters: PropertyFilters,
-  action: Dispatch<PropertiesReducerActions>,
-) {
-  action({ type: "set_loading", loading: true });
-
-  const filteredProperties = hostPropertiesMock.filter((item) => {
+): HostProperty[] {
+  return properties.filter((item) => {
     if (
       filters.name &&
-      !item.name.toLowerCase().includes(filters.name.toLowerCase())
+      !item.title.toLowerCase().includes(filters.name.toLowerCase())
     )
       return false;
     if (
@@ -86,29 +93,55 @@ export function fetchProperties(
       !item.address.toLowerCase().includes(filters.address.toLowerCase())
     )
       return false;
-    if (filters.reviewsFrom > item.reviews) return false;
-    if (filters.priceUpTo > item.pricePerNight) return false;
-    if (filters.status === "active" && !item.active) return false;
-    if (filters.status === "inactive" && item.active) return false;
-
+    if (filters.reviewsFrom > (item.reviews ?? 0)) return false;
     return true;
   });
+}
 
-  // Latencia simulada para el mock. Reemplazar por la llamada real al API.
-  return simulateLatency().then(() => {
-    const totalCount = filteredProperties.length;
-    const pages = Math.ceil(totalCount / 10);
-    action({ type: "set_loading", loading: false });
+export function fetchProperties(
+  filters: PropertyFilters,
+  hostId: string | null | undefined,
+  action: Dispatch<PropertiesReducerActions>,
+) {
+  action({ type: "set_loading", loading: true });
 
-    action({
-      type: "set_properties",
-      payload: {
-        properties: filteredProperties,
-        pages,
-        totalCount,
-      },
+  const maxPrice = filters.priceUpTo > 0 ? filters.priceUpTo : undefined;
+
+  // El backend devuelve TODAS las propiedades cuando isActive se omite.
+  // Solo se filtra por estado cuando se piden explícitamente activas o inactivas.
+  const isActive =
+    filters.status === "all" ? undefined : filters.status === "active";
+
+  staykeApi
+    .getProperties({
+      hostId: hostId ?? undefined,
+      isActive,
+      maxPrice,
+      limit: PROPERTIES_FETCH_LIMIT,
+    })
+    .then((result) => {
+      const properties = (
+        result.status && Array.isArray(result.data) ? result.data : []
+      ) as HostProperty[];
+
+      const filtered = applyClientFilters(properties, filters);
+
+      const totalCount = filtered.length;
+      const pages = Math.max(1, Math.ceil(totalCount / PROPERTIES_PAGE_SIZE));
+
+      action({ type: "set_loading", loading: false });
+      action({
+        type: "set_properties",
+        payload: { properties: filtered, totalCount, pages },
+      });
+    })
+    .catch(() => {
+      action({ type: "set_loading", loading: false });
+      action({
+        type: "set_properties",
+        payload: { properties: [], totalCount: 0, pages: 0 },
+      });
     });
-  });
 }
 
 export function updatePropertieStatus(
@@ -118,27 +151,37 @@ export function updatePropertieStatus(
 ) {
   action({ type: "set_loading", loading: true });
 
-  const updatedProperties = properties.map((p) =>
-    p.id === id ? { ...p, active: !p.active } : p,
-  );
-
-  // Latencia simulada para el mock. Reemplazar por la llamada real al API.
-  return simulateLatency().then(() => {
-    const totalCount = updatedProperties.length;
-    const pages = Math.ceil(totalCount / 10);
+  const property = properties.find((p) => p.id === id);
+  if (!property) {
     action({ type: "set_loading", loading: false });
+    return;
+  }
 
-    action({
-      type: "set_properties",
-      payload: {
-        properties: updatedProperties,
-        pages,
-        totalCount,
-      },
+  const newActive = !property.isActive;
+
+  staykeApi
+    .updateProperty(id, { isActive: newActive })
+    .then((result) => {
+      if (!result.status) {
+        action({ type: "set_loading", loading: false });
+        return;
+      }
+
+      const updated = properties.map((p) =>
+        p.id === id ? { ...p, isActive: newActive } : p,
+      );
+
+      action({ type: "set_loading", loading: false });
+      action({
+        type: "set_properties",
+        payload: {
+          properties: updated,
+          pages: Math.max(1, Math.ceil(updated.length / PROPERTIES_PAGE_SIZE)),
+          totalCount: updated.length,
+        },
+      });
+    })
+    .catch(() => {
+      action({ type: "set_loading", loading: false });
     });
-  });
-}
-
-function simulateLatency(ms = 600) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
 }

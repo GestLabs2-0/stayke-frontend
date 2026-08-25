@@ -48,6 +48,23 @@ export interface ApiResponse<T> {
   errors?: string[];
 }
 
+export interface ApiPaginatedResponse<T> {
+  status: boolean;
+  data: T[] | null;
+  meta: PaginationMeta | null;
+  message: string | string[];
+  errors?: string[];
+}
+
+export interface PaginationMeta {
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+  hasPreviousPage: boolean;
+  hasNextPage: boolean;
+}
+
 export interface LoginResponse {
   accessToken: string;
 }

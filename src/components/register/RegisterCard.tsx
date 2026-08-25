@@ -83,8 +83,8 @@ export const RegisterCard = () => {
 
       reputationProfileAddr = reputationProfileAd;
       userProfileAddr = userProfileAd;
-      const { status } = await handleSignAndSend(tx);
-      if (!status) {
+      const { status, simulationFailed } = await handleSignAndSend(tx);
+      if (!status && !simulationFailed) {
         sileo.error({
           title: "Error",
           description:

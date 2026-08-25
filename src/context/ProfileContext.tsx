@@ -3,7 +3,9 @@
 import type { ReactNode } from "react";
 import { createContext, useEffect, useMemo, useState } from "react";
 
+import { buildImageUrl } from "@/helpers/buildImageUrl";
 import { useWalletContext } from "@/hooks/useWallet";
+import { MINT_DECIMALS } from "@/shared/constants";
 import type { ProfileData, ProfileMode } from "@/types/profile";
 
 // ── Context shape ──
@@ -49,14 +51,17 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
     const hasIdentityPda = userProfile?.data.identity.__option === "Some";
     const isBanned = Boolean(userProfile?.data.banned);
 
+    const avatar = userBackend?.avatarUrl
+      ? (buildImageUrl(userBackend?.avatarUrl) ?? null)
+      : null;
+
     return {
       name: userBackend?.name ?? "",
       lastName: userBackend?.lastName ?? "",
       email: userBackend?.email ?? "",
-      avatar: `https://api.dicebear.com/9x/avataaars/svg?seed=${
-        userBackend?.owner ?? "stayke"
-      }`,
-      isVerified: hasIdentityPda && !isBanned,
+      avatar,
+      isVerified:
+        (hasIdentityPda && !isBanned) || Boolean(userBackend?.isVerified),
       reputation: {
         host: computeScore(
           reputationProfile?.data.totalScoreHost ?? 0n,
@@ -67,9 +72,10 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
           reputationProfile?.data.clientReviews ?? 0,
         ),
       },
-      // treasuryUsd has no direct source in WalletContext: deposited/lending/
-      // staked are on-chain lamports, not USD. Pending a treasury endpoint.
-      treasuryUsd: 0,
+      // Depósito on-chain en USD (convertido desde unidades mínimas de USDC con MINT_DECIMALS)
+      treasuryUsd: userProfile?.data?.deposited
+        ? Number(userProfile.data.deposited) / 10 ** MINT_DECIMALS
+        : 0,
     };
   }, [userProfile, userBackend, reputationProfile]);
 
@@ -87,5 +93,3 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
     </ProfileContext.Provider>
   );
 }
-
-// ── Hook ──

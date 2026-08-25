@@ -1,8 +1,9 @@
 import Image from "next/image";
+import Link from "next/link";
 
 import { SectionWrapper } from "@/components/shared/SectionWrapper";
+import { routes } from "@/constants/routes";
 
-// TODO: esto se refactorizara cuando se implemente una accion en el boton de Anunciar alojamiento
 const CONTENT = (
   <>
     <h3 className="text-xl sm:text-4xl lg:text-3xl font-bold text-zinc-900 leading-tight">
@@ -13,12 +14,13 @@ const CONTENT = (
       registrarte rápidamente, contar con asistencia en tiempo real y recibir
       huéspedes muy bien valorados. ¡Será como si estuvieras de vacaciones!
     </p>
-    <button
+    <Link
+      href={routes.Profile.properties.create}
       type="button"
       className="mt-6 inline-flex items-center rounded-full bg-[#3B007F] w-full justify-center lg:w-auto lg:justify-start px-6 py-3 text-sm lg:px-8 lg:py-4 lg:text-base font-semibold text-white transition-colors hover:bg-[#5307AD] cursor-pointer"
     >
       Anunciar alojamiento
-    </button>
+    </Link>
   </>
 );
 

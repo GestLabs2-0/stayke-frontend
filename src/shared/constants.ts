@@ -37,6 +37,15 @@ export const DYNAMIC_NETWORK_ID: Record<ClusterNames, string> = {
 export const API_URL =
   process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/api/v1.0";
 
+/**
+ * Base URL pública para las imágenes de propiedades. El backend entrega un
+ * `imageKey` por reserva; la URL final se arma concatenando el imageKey a
+ * esta base (NEXT_PUBLIC_PROPERTY_IMAGE_URL).
+ */
+export const PROPERTY_IMAGE_BASE_URL =
+  process.env.NEXT_PUBLIC_PROPERTY_IMAGE_URL ||
+  "https://pub-7dc2fed328d54420a60e3b6445a9d766.r2.dev";
+
 export const JWT_DURATION = Number(
   process.env.NEXT_PUBLIC_JWT_DURATION ?? "86400",
 );
@@ -57,3 +66,12 @@ export const LOCAL_STORAGE_KEYS = {
   refreshToken: "rf_token_stayke",
   dynamicSession: `dynamic_${DYNAMIC_CLIENT_ID}_session`,
 };
+
+export const IS_MVP =
+  process.env.NEXT_PUBLIC_MVP === "true" || process.env.NEXT_PUBLIC_MVP === "1";
+
+export const MINT_DECIMALS = Number.isNaN(
+  Number(process.env.NEXT_PUBLIC_MINT_DECIMALS),
+)
+  ? 6
+  : Number(process.env.NEXT_PUBLIC_MINT_DECIMALS);

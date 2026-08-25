@@ -12,14 +12,14 @@ import type { PropertyPreviewProps } from "@/types/property/PropertyPreview";
 
 function hasNoData(values: CreatePropertyFormValues): boolean {
   return (
-    !values.name &&
+    !values.title &&
     !values.description &&
     !values.address &&
     values.images.length === 0 &&
     values.amenities.length === 0 &&
-    values.rules.length === 0 &&
-    values.pricePerNight === 0 &&
-    values.maxGuests === 0
+    values.houseRules.length === 0 &&
+    values.price === 0 &&
+    values.maxGuest === 0
   );
 }
 
@@ -54,8 +54,8 @@ export function PropertyPreview({
 
   const visibleAmenities = values.amenities.slice(0, 4);
   const extraAmenities = values.amenities.length - 4;
-  const visibleRules = values.rules.slice(0, 4);
-  const extraRules = values.rules.length - 4;
+  const visibleRules = values.houseRules.slice(0, 4);
+  const extraRules = values.houseRules.length - 4;
 
   return (
     // biome-ignore lint/a11y/noStaticElementInteractions: is allowed
@@ -82,7 +82,7 @@ export function PropertyPreview({
             width={100}
             height={100}
             src={heroUrl}
-            alt={values.name}
+            alt={values.title}
             className="w-full aspect-video object-cover rounded-t-2xl"
           />
         ) : (
@@ -93,9 +93,9 @@ export function PropertyPreview({
         )}
 
         <div className="p-5 space-y-4">
-          {values.name && (
+          {values.title && (
             <h3 className="font-montserrat text-lg font-bold text-foreground">
-              {values.name}
+              {values.title}
             </h3>
           )}
 
@@ -116,22 +116,24 @@ export function PropertyPreview({
 
           <div>
             <span className="font-montserrat text-2xl font-bold text-foreground">
-              {formatPrice(values.pricePerNight)}
+              {formatPrice(values.price)}
             </span>
             <span className="font-sans text-sm text-muted"> /noche</span>
           </div>
 
-          {values.maxGuests > 0 && (
+          {values.maxGuest > 0 && (
             <p className="font-sans text-sm text-secondary">
-              {values.maxGuests}{" "}
-              {values.maxGuests === 1 ? "huésped" : "huéspedes"}
+              {values.maxGuest}{" "}
+              {values.maxGuest === 1 ? "huésped" : "huéspedes"}
             </p>
           )}
 
-          {(values.checkIn || values.checkOut) && (
+          {(values.checkinTime || values.checkoutTime) && (
             <p className="font-sans text-sm text-secondary">
-              Check-in: {values.checkIn || "—"}
-              {values.checkOut ? ` \u2022 Check-out: ${values.checkOut}` : ""}
+              Check-in: {values.checkinTime || "—"}
+              {values.checkoutTime
+                ? ` \u2022 Check-out: ${values.checkoutTime}`
+                : ""}
             </p>
           )}
 
@@ -153,7 +155,7 @@ export function PropertyPreview({
             </div>
           )}
 
-          {values.rules.length > 0 && (
+          {values.houseRules.length > 0 && (
             <div className="flex flex-wrap gap-2">
               {visibleRules.map((rule) => (
                 <span

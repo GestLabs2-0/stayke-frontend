@@ -1,31 +1,40 @@
-## Coding rules
+# RULES.md
+> Single source of truth for coding agents working in this repository.
+> Read this file in full before making any changes.
+
+## Development rules
+
 This repo follows strict rules when developing components:
-- Every component in most of the cases shouldn't be more that 200 lines long
+- Every component shouldn't be more that 200 lines long
 - Every interface and type must be in /src/types
 - Every component should have its own file
 - Naming component files follows CamelCase except for files in src/app
-- Components should be reusable 
+- Components must be reusable 
 - Components shouldn't tighly coupled
 - SVG elements should live in src/icons
-- image tags should always be Image component from next
+- Image tags should always be Image component from next
+- Use Link component from Next
 - Components names in English
 - Text should be in neutral Spanish
 - Forms and validations uses Formik and Yup
 - Use sileo for toasts
 - Label forms always has to use htmlFor
+- Do not use window.confirm or window.alert, use sileo.action instead.
 
-<!-- CODEGRAPH_START -->
-## CodeGraph
+---
+## Code quality checks
 
-In repositories indexed by CodeGraph (a `.codegraph/` directory exists at the repo root), reach for it BEFORE grep/find or reading files when you need to understand or locate code:
+Run in this exact order after every change. A failure in any step blocks the next.
+1. pnpm format 
+2. pnpm build
 
-- **MCP tool** (when available): `codegraph_explore` answers most code questions in one call — the relevant symbols' verbatim source plus the call paths between them, including dynamic-dispatch hops grep can't follow. Name a file or symbol in the query to read its current line-numbered source. If it's listed but deferred, load it by name via tool search.
-- **Shell** (always works): `codegraph explore "<symbol names or question>"` prints the same output.
+## Code exploration (CodeGraph)
 
-If there is no `.codegraph/` directory, skip CodeGraph entirely — indexing is the user's decision.
-<!-- CODEGRAPH_END -->
+**Use CodeGraph FIRST** before grep, find, or manual file reading when locating or understanding code.
 
+If a `.codegraph/` directory exists at repo root:
+- **MCP tool** (preferred): `codegraph_explore` — returns verbatim source + call paths, including dynamic dispatch.
+- **Shell fallback**: `codegraph explore "<symbol or question>"`
 
-## Check code
-To check code always use: 
-- pnpm format && pnpm build
+If no `.codegraph/` directory exists: init codegraph.
+If codegraph could not be initiated, skip it.
