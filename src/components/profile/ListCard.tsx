@@ -1,5 +1,6 @@
 "use client";
 
+import { motion } from "framer-motion";
 import Image from "next/image";
 
 import type { ListCardProps } from "@/types/profile";
@@ -12,11 +13,19 @@ export function ListCard({
   active = true,
 }: ListCardProps) {
   return (
-    <div
-      className={`flex gap-4 rounded-xl p-4 transition-colors ${
+    <motion.div
+      whileHover={
         active
-          ? "bg-white hover:bg-[#ebe7e7]/40 border border-[#c3c6d6]"
-          : "bg-[#ebe7e7] opacity-70 border border-[#ebe7e7]"
+          ? {
+              y: -2,
+              transition: { duration: 0.2, ease: [0.16, 1, 0.3, 1] },
+            }
+          : undefined
+      }
+      className={`group flex gap-4 rounded-xl p-4 transition-colors duration-200 ${
+        active
+          ? "border border-[#c3c6d6] bg-white hover:border-[#3b007f]/30 hover:bg-[#ebe7e7]/30 hover:shadow-sm"
+          : "border border-[#ebe7e7] bg-[#ebe7e7] opacity-75"
       }`}
     >
       <div className="size-20 shrink-0 overflow-hidden rounded-lg sm:size-24">
@@ -25,12 +34,12 @@ export function ListCard({
           alt={title}
           width={96}
           height={96}
-          className="size-full object-cover"
+          className="size-full object-cover transition-transform duration-300 group-hover:scale-105"
           unoptimized
         />
       </div>
       <div className="flex min-w-0 flex-1 flex-col justify-center">
-        <h3 className="truncate font-sans text-sm font-semibold text-[#171717]">
+        <h3 className="truncate font-sans text-sm font-semibold text-[#171717] transition-colors group-hover:text-[#3b007f]">
           {title}
         </h3>
         {subtitle && (
@@ -40,6 +49,6 @@ export function ListCard({
         )}
         {children && <div className="mt-2">{children}</div>}
       </div>
-    </div>
+    </motion.div>
   );
 }

@@ -94,6 +94,15 @@ export interface GetPropertiesParams {
   maxPrice?: number;
   page?: number;
   limit?: number;
+
+  lat?: number;
+  latEnd?: number;
+  long?: number;
+  longEnd?: number;
+  north?: number;
+  south?: number;
+  east?: number;
+  west?: number;
 }
 
 // ── Paginated response ──

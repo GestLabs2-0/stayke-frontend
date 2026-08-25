@@ -1,6 +1,9 @@
 import type { LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
 
+import type { Booking } from "./api/booking";
+import type { PropertyResponse } from "./api/property";
+
 // ── Domain types ──
 
 export type ProfileMode = "host" | "guest" | "all";
@@ -59,14 +62,48 @@ export interface ModeSwitchProps {
 // ── GuestView ──
 
 export interface GuestViewProps {
-  reservations: Reserva[];
+  reservations?: Reserva[];
 }
 
 // ── HostView ──
 
 export interface HostViewProps {
-  hostings: Hosting[];
-  properties: Propiedad[];
+  hostings?: Hosting[];
+  properties?: Propiedad[];
+}
+
+// ── HostView Subsections ──
+
+export interface HostActiveHostingsProps {
+  bookings: Booking[];
+  loading: boolean;
+  onCreateProperty?: () => void;
+}
+
+export interface HostPastHostingsProps {
+  bookings: Booking[];
+  loading: boolean;
+  onCreateProperty?: () => void;
+}
+
+export interface HostActivePropertiesProps {
+  properties: PropertyResponse[];
+  loading: boolean;
+  onCreateProperty?: () => void;
+}
+
+// ── GuestView Subsections ──
+
+export interface GuestActiveReservationProps {
+  booking: Booking | null;
+  loading: boolean;
+  onExplore?: () => void;
+}
+
+export interface GuestPastReservationsProps {
+  bookings: Booking[];
+  loading: boolean;
+  onExplore?: () => void;
 }
 
 // ── ListCard ──
@@ -77,6 +114,10 @@ export interface ListCardProps {
   subtitle?: string;
   children?: ReactNode;
   active?: boolean;
+}
+
+export interface ListCardSkeletonProps {
+  count?: number;
 }
 
 // ── EmptyState ──
@@ -90,9 +131,14 @@ export interface EmptyStateProps {
 
 // ── TreasuryCard ──
 
-export interface TreasuryCardProps {
-  balanceUsd: number;
-}
+export type {
+  TreasuryCardProps,
+  TreasuryDepositFormProps,
+  TreasuryFormValues,
+  TreasuryModalProps,
+  TreasuryTab,
+  TreasuryWithdrawFormProps,
+} from "./profile/treasury";
 
 // ── ProfileHeader ──
 

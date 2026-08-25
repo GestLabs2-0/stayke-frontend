@@ -12,11 +12,11 @@
     "prepare": "[ -f .husky/install.mjs ] && node .husky/install.mjs || true"
   },
   "dependencies": {
-    "@GestLabs2-0/stayke-config": "1.4.0",
-    "@GestLabs2-0/stayke-core": "1.4.0",
-    "@GestLabs2-0/stayke-disputes": "1.4.0",
-    "@GestLabs2-0/stayke-escrow": "1.4.0",
-    "@GestLabs2-0/stayke-treasury": "1.4.0",
+    "@GestLabs2-0/stayke-config": "1.5.0",
+    "@GestLabs2-0/stayke-core": "1.5.0",
+    "@GestLabs2-0/stayke-disputes": "1.5.0",
+    "@GestLabs2-0/stayke-escrow": "1.5.0",
+    "@GestLabs2-0/stayke-treasury": "1.5.0",
     "@blossom-carousel/react": "^1.5.2",
     "@didit-protocol/sdk-web": "^0.2.1",
     "@dynamic-labs-sdk/client": "^1.29.0",

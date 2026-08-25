@@ -303,6 +303,23 @@ export class StaykeApi {
       if (params?.page) queryParams.append("page", String(params.page));
       if (params?.limit) queryParams.append("limit", String(params.limit));
 
+      if (params?.lat !== undefined)
+        queryParams.append("lat", String(params.lat));
+      if (params?.latEnd !== undefined)
+        queryParams.append("latEnd", String(params.latEnd));
+      if (params?.longEnd !== undefined)
+        queryParams.append("longEnd", String(params.longEnd));
+      if (params?.long !== undefined)
+        queryParams.append("long", String(params.long));
+      if (params?.north !== undefined)
+        queryParams.append("north", String(params.north));
+      if (params?.south !== undefined)
+        queryParams.append("south", String(params.south));
+      if (params?.east !== undefined)
+        queryParams.append("east", String(params.east));
+      if (params?.west !== undefined)
+        queryParams.append("west", String(params.west));
+
       const query = queryParams.toString();
       const url = query ? `/properties?${query}` : "/properties";
 
