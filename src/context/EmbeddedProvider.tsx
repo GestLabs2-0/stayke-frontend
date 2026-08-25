@@ -11,10 +11,10 @@ import { addWaasSolanaExtension } from "@dynamic-labs-sdk/solana/waas";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import {
-  API_URL,
+  // API_URL,
   DEFAULT_NETWORK,
   DYNAMIC_CLIENT_ID,
-  ENVIRONMENT,
+  // ENVIRONMENT,
   FRONTEND_URL,
   GENESIS_HASH,
   RPC_URL,
@@ -25,9 +25,9 @@ const CLUSTER = DEFAULT_NETWORK as ClusterNames;
 export const client = createDynamicClient({
   // biome-ignore  lint/style/noNonNullAssertion: already checked
   environmentId: DYNAMIC_CLIENT_ID!,
-  coreConfig: {
-    ...(ENVIRONMENT === "production" && { apiBaseUrl: `${API_URL}/api/v0` }),
-  },
+  // coreConfig: {
+  //   ...(ENVIRONMENT === "production" && { apiBaseUrl: `${API_URL}/api/v0` }),
+  // },
   logLevel: "error",
   transformers: {
     networksData: (networks) => {
