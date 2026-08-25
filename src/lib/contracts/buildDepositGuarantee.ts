@@ -1,0 +1,79 @@
+import type { Address } from "@solana/kit";
+import { createNoopSigner } from "@solana/kit";
+import {
+  PublicKey,
+  TransactionMessage,
+  VersionedTransaction,
+} from "@solana/web3.js";
+
+import { findGlobalConfigPda } from "@GestLabs2-0/stayke-config";
+import {
+  findUserProfilePda,
+  STAYKE_CORE_PROGRAM_ADDRESS,
+} from "@GestLabs2-0/stayke-core";
+import {
+  findConfigPda,
+  findCpiAuthorityPda,
+  findTreasuryVaultPda,
+  getDepositGuaranteeInstructionAsync,
+} from "@GestLabs2-0/stayke-treasury";
+import type { SolanaClient } from "@/context/NetworkContext";
+import { fromSolanaKitIns } from "@/helpers/web3Parsers";
+import { USDC_MINT } from "./constants";
+import { associatedTokenAccount, TOKEN_PROGRAM } from "./utils/deriveATA";
+import { transformAmount } from "./utils/transformAmount";
+
+export interface BuildDepositTX {
+  wallet: Address;
+  rawAmount: number;
+  client: SolanaClient;
+}
+
+export async function buildDepositGuarantee({
+  wallet,
+  rawAmount,
+  client,
+}: BuildDepositTX) {
+  const signer = createNoopSigner(wallet);
+  const [cpiAuthority] = await findCpiAuthorityPda();
+  const [globalConfig] = await findGlobalConfigPda();
+  const [config] = await findConfigPda();
+  const [treasuryVault] = await findTreasuryVaultPda();
+  const [userProfile] = await findUserProfilePda({ authority: wallet });
+
+  const senderTokenAccount = associatedTokenAccount(wallet);
+
+  const amount = transformAmount(rawAmount);
+
+  const ix = await getDepositGuaranteeInstructionAsync({
+    amount,
+    senderTokenAccount,
+    signer,
+    treasuryVault,
+    usdcMint: USDC_MINT,
+    config,
+    cpiAuthority,
+    globalConfig,
+    staykeCoreProgram: STAYKE_CORE_PROGRAM_ADDRESS,
+    tokenProgram: TOKEN_PROGRAM,
+    userProfile,
+  });
+
+  const web3Ix = fromSolanaKitIns(ix);
+
+  const { value: latestBlockhash } = await client.rpc
+    .getLatestBlockhash()
+    .send();
+
+  const tx = new VersionedTransaction(
+    new TransactionMessage({
+      instructions: [web3Ix],
+      payerKey: new PublicKey(wallet),
+      recentBlockhash: latestBlockhash.blockhash,
+    }).compileToV0Message(),
+  );
+
+  return {
+    tx,
+  };
+}

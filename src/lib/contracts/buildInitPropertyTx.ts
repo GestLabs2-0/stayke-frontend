@@ -9,7 +9,7 @@ import {
 import { getInitializeListingInstructionAsync } from "@GestLabs2-0/stayke-core";
 import type { SolanaClient } from "@/context/NetworkContext";
 import { fromSolanaKitIns } from "@/helpers/web3Parsers";
-import { MINT_DECIMALS } from "@/shared/constants";
+import { transformAmount } from "./utils/transformAmount";
 
 export interface BuildInitPropertyTxParams {
   /** The user's wallet, used both as payer and authority signer. */
@@ -47,7 +47,7 @@ export async function buildInitPropertyTx({
     authority,
     userProfile,
     listingId,
-    price: BigInt(price * 10 ** MINT_DECIMALS),
+    price: transformAmount(price),
     stateHash,
     contentRef,
   });

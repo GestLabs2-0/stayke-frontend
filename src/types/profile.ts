@@ -90,9 +90,14 @@ export interface EmptyStateProps {
 
 // ── TreasuryCard ──
 
-export interface TreasuryCardProps {
-  balanceUsd: number;
-}
+export type {
+  TreasuryCardProps,
+  TreasuryDepositFormProps,
+  TreasuryFormValues,
+  TreasuryModalProps,
+  TreasuryTab,
+  TreasuryWithdrawFormProps,
+} from "./profile/treasury";
 
 // ── ProfileHeader ──
 

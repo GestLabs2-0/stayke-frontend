@@ -5,6 +5,7 @@ import { createContext, useEffect, useMemo, useState } from "react";
 
 import { buildImageUrl } from "@/helpers/buildImageUrl";
 import { useWalletContext } from "@/hooks/useWallet";
+import { MINT_DECIMALS } from "@/shared/constants";
 import type { ProfileData, ProfileMode } from "@/types/profile";
 
 // ── Context shape ──
@@ -71,9 +72,10 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
           reputationProfile?.data.clientReviews ?? 0,
         ),
       },
-      // treasuryUsd has no direct source in WalletContext: deposited/lending/
-      // staked are on-chain lamports, not USD. Pending a treasury endpoint.
-      treasuryUsd: 0,
+      // Depósito on-chain en USD (convertido desde unidades mínimas de USDC con MINT_DECIMALS)
+      treasuryUsd: userProfile?.data?.deposited
+        ? Number(userProfile.data.deposited) / 10 ** MINT_DECIMALS
+        : 0,
     };
   }, [userProfile, userBackend, reputationProfile]);
 
