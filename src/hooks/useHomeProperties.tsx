@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
 
-import { propertiesData } from "@/components/home/EscapadasCerca/mocks";
-import { popularStaysData } from "@/components/home/PopularStays/mocks";
 import { propertyToCard } from "@/helpers/propertyToCard";
 import { staykeApi } from "@/lib/staykeApi";
 import type { UseHomePropertiesReturn } from "@/types/home";
@@ -32,8 +30,6 @@ export function useHomeProperties(): UseHomePropertiesReturn {
         const list = result.data;
 
         if (!result.status || !Array.isArray(list)) {
-          setEscapadas(propertiesData);
-          setPopular(popularStaysData);
           setLoading(false);
           return;
         }
@@ -46,8 +42,6 @@ export function useHomeProperties(): UseHomePropertiesReturn {
       })
       .catch(() => {
         if (cancelled) return;
-        setEscapadas(propertiesData);
-        setPopular(popularStaysData);
         setLoading(false);
       });
 
