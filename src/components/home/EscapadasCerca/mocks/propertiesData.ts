@@ -11,6 +11,7 @@ export const propertiesData: PropertyCard[] = [
     price: 542,
     priceLabel: "por 2 noches y 1 casa",
     isFeatured: true,
+    href: "/accomodation/1",
   },
   {
     id: "apt-moderno-1",
@@ -21,6 +22,7 @@ export const propertiesData: PropertyCard[] = [
     ratingLabel: "Excepcional",
     price: 102,
     priceLabel: "por 2 noches y 1 apartamento",
+    href: "/accomodation/2",
   },
   {
     id: "apt-moderno-2",
@@ -31,5 +33,6 @@ export const propertiesData: PropertyCard[] = [
     ratingLabel: "Excepcional",
     price: 102,
     priceLabel: "por 2 noches y 1 apartamento",
+    href: "/accomodation/3",
   },
 ];

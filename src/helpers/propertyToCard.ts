@@ -1,3 +1,4 @@
+import { routes } from "@/constants/routes";
 import type { PropertyResponse } from "@/types/api/property";
 import type { PropertyCard } from "@/types/property-cards";
 
@@ -30,6 +31,6 @@ export function propertyToCard(property: PropertyResponse): PropertyCard {
     imageUrl: property.imageUrl,
     price: Number(property.price) || 0,
     priceLabel: "por noche",
-    href: "#",
+    href: `${routes.Accommodation}/${property.pda}`,
   };
 }

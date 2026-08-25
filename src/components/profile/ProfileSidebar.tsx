@@ -1,10 +1,12 @@
 "use client";
 
 import {
+  CalendarDays,
   ChevronLeft,
   ChevronRight,
   House,
   LogOut,
+  Scale,
   Settings,
   User,
 } from "lucide-react";
@@ -12,6 +14,7 @@ import Image from "next/image";
 
 import { routes } from "@/constants/routes";
 import type { NavItem, ProfileSidebarProps } from "@/types/profile";
+import { ImagePlaceholder } from "../shared/ImagePlaceholder";
 import { SidebarMobile } from "./SidebarMobile";
 import { SidebarModeFooter } from "./SidebarModeFooter";
 import { SidebarNav } from "./SidebarNav";
@@ -30,6 +33,20 @@ const NAV_ITEMS: NavItem[] = [
     icon: House,
     role: "host",
     action: { type: "navigate", link: routes.Profile.properties.index },
+  },
+  {
+    id: routes.Profile.bookings.index,
+    label: "Reservas",
+    icon: CalendarDays,
+    role: "all",
+    action: { type: "navigate", link: routes.Profile.bookings.index },
+  },
+  {
+    id: routes.Profile.disputes.index,
+    label: "Disputas",
+    icon: Scale,
+    role: "all",
+    action: { type: "navigate", link: routes.Profile.disputes.index },
   },
   { id: "settings", label: "Configuración", icon: Settings, role: "all" },
   {
@@ -72,16 +89,25 @@ export function ProfileSidebar({
       >
         <div className="flex h-full flex-col bg-white/80 backdrop-blur-md">
           <div className="flex items-center gap-3 px-4 py-4">
-            {expanded && profile && (
-              <Image
-                src={profile.avatar}
-                alt={profile.name}
-                width={32}
-                height={32}
-                className="size-8 shrink-0 rounded-full"
-                unoptimized
-              />
-            )}
+            {expanded &&
+              profile &&
+              (profile.avatar !== null ? (
+                <Image
+                  src={profile.avatar}
+                  alt={profile.name}
+                  width={32}
+                  height={32}
+                  className="size-8 shrink-0 rounded-full"
+                  unoptimized
+                />
+              ) : (
+                <div className="size-12">
+                  <ImagePlaceholder
+                    name={profile.name}
+                    lastName={profile.lastName}
+                  />
+                </div>
+              ))}
             {expanded && profile && (
               <span className="font-montserrat text-sm font-semibold text-foreground">
                 ¡Hola, {profile.name}!

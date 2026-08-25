@@ -3,6 +3,7 @@
 import type { ReactNode } from "react";
 import { createContext, useEffect, useMemo, useState } from "react";
 
+import { buildImageUrl } from "@/helpers/buildImageUrl";
 import { useWalletContext } from "@/hooks/useWallet";
 import type { ProfileData, ProfileMode } from "@/types/profile";
 
@@ -49,14 +50,17 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
     const hasIdentityPda = userProfile?.data.identity.__option === "Some";
     const isBanned = Boolean(userProfile?.data.banned);
 
+    const avatar = userBackend?.avatarUrl
+      ? (buildImageUrl(userBackend?.avatarUrl) ?? null)
+      : null;
+
     return {
       name: userBackend?.name ?? "",
       lastName: userBackend?.lastName ?? "",
       email: userBackend?.email ?? "",
-      avatar: `https://api.dicebear.com/9x/avataaars/svg?seed=${
-        userBackend?.owner ?? "stayke"
-      }`,
-      isVerified: hasIdentityPda && !isBanned,
+      avatar,
+      isVerified:
+        (hasIdentityPda && !isBanned) || Boolean(userBackend?.isVerified),
       reputation: {
         host: computeScore(
           reputationProfile?.data.totalScoreHost ?? 0n,
@@ -87,5 +91,3 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
     </ProfileContext.Provider>
   );
 }
-
-// ── Hook ──

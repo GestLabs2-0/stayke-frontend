@@ -104,6 +104,7 @@ export const popularStaysData: PropertyCard[] = [
     price: 210,
     priceLabel: "por noche",
     excepcional: true,
+
     href: "#",
   },
   {
