@@ -90,7 +90,7 @@ export function LocationMap({
       setSearching(true);
       try {
         const res = await fetch(
-          `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(value)}&limit=5&countrycodes=co`,
+          `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(value)}&limit=10`,
           { headers: { "Accept-Language": "es" } },
         );
         if (!res.ok) return;
