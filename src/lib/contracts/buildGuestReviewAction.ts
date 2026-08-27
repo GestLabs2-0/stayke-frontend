@@ -14,6 +14,7 @@ import {
 } from "@GestLabs2-0/stayke-escrow";
 import type { SolanaClient } from "@/context/NetworkContext";
 import { fromSolanaKitIns } from "@/helpers/web3Parsers";
+import { FEE_PAYER } from "@/shared/constants";
 import type { Booking } from "@/types/api/booking";
 
 export interface BuildGuestReviewParams {
@@ -73,7 +74,7 @@ export async function buildGuestReviewAction({
   const tx = new VersionedTransaction(
     new TransactionMessage({
       instructions: [web3Instruction],
-      payerKey: new PublicKey(wallet),
+      payerKey: new PublicKey(FEE_PAYER),
       recentBlockhash: latestBlockhash.blockhash,
     }).compileToV0Message(),
   );

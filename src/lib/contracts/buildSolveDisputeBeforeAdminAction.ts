@@ -17,6 +17,7 @@ import {
 } from "@GestLabs2-0/stayke-escrow";
 import type { SolanaClient } from "@/context/NetworkContext";
 import { fromSolanaKitIns } from "@/helpers/web3Parsers";
+import { FEE_PAYER } from "@/shared/constants";
 
 export interface BuildSolveDisputeBeforeAdminParams {
   /** Wallet del initiator que abrió la disputa. */
@@ -70,7 +71,7 @@ export async function buildSolveDisputeBeforeAdminAction({
   const tx = new VersionedTransaction(
     new TransactionMessage({
       instructions: [web3Instruction],
-      payerKey: new PublicKey(wallet),
+      payerKey: new PublicKey(FEE_PAYER),
       recentBlockhash: latestBlockhash.blockhash,
     }).compileToV0Message(),
   );

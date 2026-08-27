@@ -17,6 +17,7 @@ import {
 import type { SolanaClient } from "@/context/NetworkContext";
 import { fromSolanaKitIns } from "@/helpers/web3Parsers";
 import { USDC_MINT } from "@/lib/contracts/constants";
+import { FEE_PAYER } from "@/shared/constants";
 import type { CreateBookingTx } from "@/types/booking";
 import { getYears, isCrossYear } from "./bookingDaysUtils";
 import { findBookingDaysPda } from "./findBookingDaysPda";
@@ -56,6 +57,7 @@ export async function buildCreateBookingInstruction({
   client,
 }: BuildCreateBookingTxParams): Promise<CreateBookingTx> {
   const authority = createNoopSigner(wallet);
+  const payer = createNoopSigner(FEE_PAYER);
 
   // Derive the client (guest) and host user-profile PDAs.
   const [clientProfile] = await findUserProfilePda({ authority: wallet });
@@ -85,7 +87,7 @@ export async function buildCreateBookingInstruction({
     });
 
     instruction = await getCreateBookingCrossYearInstructionAsync({
-      payer: authority,
+      payer,
       client: authority,
       clientProfile,
       hostProfile,
@@ -102,7 +104,7 @@ export async function buildCreateBookingInstruction({
     });
   } else {
     instruction = await getCreateBookingInstructionAsync({
-      payer: authority,
+      payer,
       client: authority,
       clientProfile,
       hostProfile,
@@ -126,7 +128,7 @@ export async function buildCreateBookingInstruction({
   const tx = new VersionedTransaction(
     new TransactionMessage({
       instructions: [web3Instruction],
-      payerKey: new PublicKey(wallet),
+      payerKey: new PublicKey(FEE_PAYER),
       recentBlockhash: latestBlockhash.blockhash,
     }).compileToV0Message(),
   );

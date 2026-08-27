@@ -18,6 +18,7 @@ import {
 } from "@GestLabs2-0/stayke-escrow";
 import type { SolanaClient } from "@/context/NetworkContext";
 import { fromSolanaKitIns } from "@/helpers/web3Parsers";
+import { FEE_PAYER } from "@/shared/constants";
 
 export interface BuildOpenDisputeParams {
   /** Wallet del initiator (quien abre la disputa; también payer). */
@@ -47,13 +48,14 @@ export async function buildOpenDisputeAction({
   client,
 }: BuildOpenDisputeParams): Promise<BuiltOpenDisputeTx> {
   const signer = createNoopSigner(wallet);
+  const payer = createNoopSigner(FEE_PAYER);
 
   const [globalConfig] = await findEscrowConfigPda();
   const [cpiAuthority] = await findCpiAuthorityPda();
   const [dispute] = await findDisputePda({ booking: bookingId });
 
   const instruction: Instruction = await getOpenDisputeInstructionAsync({
-    payer: signer,
+    payer,
     initiator: signer,
     initiatorProfile,
     booking: bookingId,
@@ -73,7 +75,7 @@ export async function buildOpenDisputeAction({
   const tx = new VersionedTransaction(
     new TransactionMessage({
       instructions: [web3Instruction],
-      payerKey: new PublicKey(wallet),
+      payerKey: new PublicKey(FEE_PAYER),
       recentBlockhash: latestBlockhash.blockhash,
     }).compileToV0Message(),
   );

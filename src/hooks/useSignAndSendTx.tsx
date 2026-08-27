@@ -1,13 +1,15 @@
 import { getWalletAccountFromAddress } from "@dynamic-labs-sdk/client";
 import type { SolanaWalletAccount } from "@dynamic-labs-sdk/solana";
-import { signAndSendTransaction } from "@dynamic-labs-sdk/solana";
-import type { Address } from "@solana/kit";
-import type { VersionedTransaction } from "@solana/web3.js";
-import { SendTransactionError } from "@solana/web3.js";
+import { signTransaction } from "@dynamic-labs-sdk/solana";
+import type { Address, Base64EncodedWireTransaction } from "@solana/kit";
+import { SendTransactionError, VersionedTransaction } from "@solana/web3.js";
 import { useMemo, useState } from "react";
 import { sileo } from "sileo";
 
 import useNetwork from "@/hooks/useNetwork";
+import { needsMoreSignatures } from "@/lib/contracts/utils/needsMoreSignatures";
+import { serializeToBase64 } from "@/lib/contracts/utils/serializeToBase64";
+import { relayerApi } from "@/lib/relayerApi";
 import {
   DEFAULT_SIMULATION_ERROR,
   simulateVersionedTransaction,
@@ -56,13 +58,32 @@ export function useSignAndSendTx(wallet: Address | null) {
         };
       }
 
-      const { signature } = await signAndSendTransaction({
-        walletAccount,
-        transaction,
-      });
+      let cosignedTxBase64 = await relayerApi.cosign(
+        serializeToBase64(transaction),
+        wallet,
+      );
 
+      const cosignedTx = VersionedTransaction.deserialize(
+        Buffer.from(cosignedTxBase64, "base64"),
+      );
+
+      if (needsMoreSignatures(cosignedTx)) {
+        const { signedTransaction } = await signTransaction({
+          walletAccount,
+          transaction: cosignedTx,
+        });
+
+        cosignedTxBase64 = serializeToBase64(signedTransaction);
+      }
+
+      const signature = await client.rpc
+        .sendTransaction(cosignedTxBase64 as Base64EncodedWireTransaction, {
+          skipPreflight: true,
+          encoding: "base64",
+        })
+        .send();
       setSignature(signature);
-      console.log("Transaction sent:", signature);
+
       return { status: true, signature };
     } catch (error: unknown) {
       if (error instanceof SendTransactionError) {
