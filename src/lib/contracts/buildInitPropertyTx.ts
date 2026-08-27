@@ -9,6 +9,7 @@ import {
 import { getInitializeListingInstructionAsync } from "@GestLabs2-0/stayke-core";
 import type { SolanaClient } from "@/context/NetworkContext";
 import { fromSolanaKitIns } from "@/helpers/web3Parsers";
+import { FEE_PAYER } from "@/shared/constants";
 import { transformAmount } from "./utils/transformAmount";
 
 export interface BuildInitPropertyTxParams {
@@ -41,9 +42,10 @@ export async function buildInitPropertyTx({
   client,
 }: BuildInitPropertyTxParams) {
   const authority = createNoopSigner(wallet);
+  const payer = createNoopSigner(FEE_PAYER);
 
   const instruction = await getInitializeListingInstructionAsync({
-    payer: authority,
+    payer,
     authority,
     userProfile,
     listingId,
@@ -61,7 +63,7 @@ export async function buildInitPropertyTx({
   const tx = new VersionedTransaction(
     new TransactionMessage({
       instructions: [web3Instruction],
-      payerKey: new PublicKey(wallet),
+      payerKey: new PublicKey(FEE_PAYER),
       recentBlockhash: latestBlockhash.blockhash,
     }).compileToV0Message(),
   );

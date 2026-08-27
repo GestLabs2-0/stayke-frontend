@@ -19,6 +19,7 @@ import {
 } from "@GestLabs2-0/stayke-treasury";
 import type { SolanaClient } from "@/context/NetworkContext";
 import { fromSolanaKitIns } from "@/helpers/web3Parsers";
+import { FEE_PAYER } from "@/shared/constants";
 import { USDC_MINT } from "./constants";
 import { associatedTokenAccount, TOKEN_PROGRAM } from "./utils/deriveATA";
 import { transformAmount } from "./utils/transformAmount";
@@ -68,7 +69,7 @@ export async function buildDepositGuarantee({
   const tx = new VersionedTransaction(
     new TransactionMessage({
       instructions: [web3Ix],
-      payerKey: new PublicKey(wallet),
+      payerKey: new PublicKey(FEE_PAYER),
       recentBlockhash: latestBlockhash.blockhash,
     }).compileToV0Message(),
   );

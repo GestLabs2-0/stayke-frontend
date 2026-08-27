@@ -29,6 +29,7 @@ import {
 import type { SolanaClient } from "@/context/NetworkContext";
 import { fromSolanaKitIns } from "@/helpers/web3Parsers";
 import { USDC_MINT } from "@/lib/contracts/constants";
+import { FEE_PAYER } from "@/shared/constants";
 import type { Booking } from "@/types/api/booking";
 import type { GuestBookingActionTx } from "@/types/profile/bookings";
 import { getYears, isCrossYear } from "./bookingDaysUtils";
@@ -81,6 +82,7 @@ export async function buildGuestBookingAction({
   client,
 }: BuildGuestBookingActionParams): Promise<BuiltGuestBookingTx> {
   const signer = createNoopSigner(wallet);
+  const payer = createNoopSigner(FEE_PAYER);
   const bookingPda = address(booking.idPda);
   const property = address(booking.property.pda);
   const guestProfile = address(booking.guest.userProfile);
@@ -151,7 +153,7 @@ export async function buildGuestBookingAction({
       const guestTokenAccount = associatedTokenAccount(guestWallet);
 
       const base = {
-        payer: signer,
+        payer,
         guest: guestProfile,
         booking: bookingPda,
         globalConfig,
@@ -189,7 +191,7 @@ export async function buildGuestBookingAction({
   const tx = new VersionedTransaction(
     new TransactionMessage({
       instructions: [web3Instruction],
-      payerKey: new PublicKey(wallet),
+      payerKey: new PublicKey(FEE_PAYER),
       recentBlockhash: latestBlockhash.blockhash,
     }).compileToV0Message(),
   );

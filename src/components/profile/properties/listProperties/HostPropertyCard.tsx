@@ -6,6 +6,8 @@ import Image from "next/image";
 import { formatPrice } from "@/helpers/formatPrice";
 import type { HostPropertyCardProps } from "@/types/property/HostProperties";
 
+// TODO: add a button to activate property in backend if it doesn't exist in blockchain
+
 export function HostPropertyCard({
   property,
   onEdit,

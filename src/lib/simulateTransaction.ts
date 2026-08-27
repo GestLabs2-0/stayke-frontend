@@ -20,6 +20,7 @@ import type {
   SimulateVersionedTransactionArgs,
   SimulationResult,
 } from "@/types/simulateTransaction";
+import { serializeToBase64 } from "./contracts/utils/serializeToBase64";
 
 /**
  * Pre-send transaction simulation gate.
@@ -290,9 +291,7 @@ export async function simulateVersionedTransaction({
   client,
   transaction,
 }: SimulateVersionedTransactionArgs): Promise<SimulationResult> {
-  const encodedTransaction = Buffer.from(transaction.serialize()).toString(
-    "base64",
-  );
+  const encodedTransaction = serializeToBase64(transaction);
 
   return simulateEncodedTransaction(
     client,

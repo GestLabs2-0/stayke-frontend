@@ -41,6 +41,7 @@ import {
 import type { SolanaClient } from "@/context/NetworkContext";
 import { fromSolanaKitIns } from "@/helpers/web3Parsers";
 import { USDC_MINT } from "@/lib/contracts/constants";
+import { FEE_PAYER } from "@/shared/constants";
 import type { Booking } from "@/types/api/booking";
 import type { HostBookingAction } from "@/types/profile/bookings";
 import { getYears, isCrossYear } from "./bookingDaysUtils";
@@ -94,6 +95,7 @@ export async function buildHostBookingAction({
   client,
 }: BuildHostBookingActionParams): Promise<BuiltHostBookingTx> {
   const signer = createNoopSigner(wallet);
+  const payer = createNoopSigner(FEE_PAYER);
   const bookingPda = address(booking.idPda);
   const property = address(booking.property.pda);
   const hostProfile = address(booking.host.userProfile);
@@ -118,7 +120,7 @@ export async function buildHostBookingAction({
   switch (action) {
     case "accept": {
       instruction = await getHostAcceptBookingInstructionAsync({
-        payer: signer,
+        payer,
         host: signer,
         hostProfile,
         booking: bookingPda,
@@ -131,7 +133,7 @@ export async function buildHostBookingAction({
       const guestWallet = await profileAuthority(client, guestProfile);
       const guestTokenAccount = associatedTokenAccount(guestWallet);
       const base = {
-        payer: signer,
+        payer,
         host: signer,
         hostProfile,
         guest: guestProfile,
@@ -165,7 +167,7 @@ export async function buildHostBookingAction({
       const guestWallet = await profileAuthority(client, guestProfile);
       const guestTokenAccount = associatedTokenAccount(guestWallet);
       const base = {
-        payer: signer,
+        payer,
         guest: guestProfile,
         booking: bookingPda,
         globalConfig,
@@ -241,7 +243,7 @@ export async function buildHostBookingAction({
     case "starts": {
       const [cpiAuthority] = await findCpiAuthorityPda();
       instruction = await getBookingStartsInstructionAsync({
-        payer: signer,
+        payer,
         booking: bookingPda,
         guest: guestProfile,
         hostProfile,
@@ -254,7 +256,7 @@ export async function buildHostBookingAction({
 
     case "completes": {
       instruction = getBookingCompletesInstruction({
-        payer: signer,
+        payer,
         booking: bookingPda,
       });
       break;
@@ -265,7 +267,7 @@ export async function buildHostBookingAction({
       const [cpiAuthority] = await findCpiAuthorityPda();
       const [platformVault] = await findPlatformVaultPda();
       instruction = await getReleaseFundsInstructionAsync({
-        payer: signer,
+        payer,
         guestProfile,
         hostProfile,
         booking: bookingPda,
@@ -291,7 +293,7 @@ export async function buildHostBookingAction({
   const tx = new VersionedTransaction(
     new TransactionMessage({
       instructions: [web3Instruction],
-      payerKey: new PublicKey(wallet),
+      payerKey: new PublicKey(FEE_PAYER),
       recentBlockhash: latestBlockhash.blockhash,
     }).compileToV0Message(),
   );

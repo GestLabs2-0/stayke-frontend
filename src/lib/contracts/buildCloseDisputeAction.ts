@@ -18,6 +18,7 @@ import {
 import type { SolanaClient } from "@/context/NetworkContext";
 import { fromSolanaKitIns } from "@/helpers/web3Parsers";
 import { fetchProfileAuthority } from "@/lib/contracts/utils/fetchProfileAuthority";
+import { FEE_PAYER } from "@/shared/constants";
 
 export interface BuildCloseDisputeParams {
   /** Wallet del pagador de la transacción (puede ser cualquiera, es permissionless). */
@@ -44,7 +45,6 @@ export interface BuiltCloseDisputeTx {
  * (permissionless) para cerrar una disputa en estado ResolvedByAdmin o ResolvedByP2P.
  */
 export async function buildCloseDisputeAction({
-  wallet,
   bookingId,
   guestProfile,
   hostProfile,
@@ -77,7 +77,7 @@ export async function buildCloseDisputeAction({
   const tx = new VersionedTransaction(
     new TransactionMessage({
       instructions: [web3Instruction],
-      payerKey: new PublicKey(wallet),
+      payerKey: new PublicKey(FEE_PAYER),
       recentBlockhash: latestBlockhash.blockhash,
     }).compileToV0Message(),
   );

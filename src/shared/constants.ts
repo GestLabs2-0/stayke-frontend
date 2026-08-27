@@ -1,3 +1,5 @@
+import { address } from "@solana/kit";
+
 import type { ClusterNames } from "@/types";
 
 export const CLUSTERS: ClusterNames[] = [
@@ -75,3 +77,8 @@ export const MINT_DECIMALS = Number.isNaN(
 )
   ? 6
   : Number(process.env.NEXT_PUBLIC_MINT_DECIMALS);
+
+export const FEE_PAYER = address(process.env.NEXT_PUBLIC_FEE_PAYER ?? "");
+
+export const RELAYER_URL =
+  process.env.NEXT_PUBLIC_RELAYER_URL || "http://localhost:3002/api/v1.0";

@@ -20,7 +20,8 @@ import type { RouteGuardProps } from "@/types/routeGuard";
  */
 export function RouteGuard({ mode, children, excludeRoute }: RouteGuardProps) {
   const { isPending, isFetched } = useUser();
-  const { isAuthenticated, userBackend, isLoadingUser } = useWalletContext();
+  const { isAuthenticated, userBackend, isLoadingUser, userProfile } =
+    useWalletContext();
   const pathname = usePathname();
   const router = useRouter();
 
@@ -31,7 +32,7 @@ export function RouteGuard({ mode, children, excludeRoute }: RouteGuardProps) {
     determined &&
     (mode === "protected"
       ? !isAuthenticated || !userBackend
-      : isAuthenticated && userBackend);
+      : isAuthenticated && userBackend && userProfile);
 
   const target =
     mode === "protected"

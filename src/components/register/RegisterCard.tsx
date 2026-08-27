@@ -71,6 +71,7 @@ export const RegisterCard = () => {
       });
       return;
     }
+    console.log(reputationProfile, userProfile);
     let reputationProfileAddr: Address<string> | null = null;
     let userProfileAddr: Address<string> | null = null;
 
@@ -84,7 +85,8 @@ export const RegisterCard = () => {
       reputationProfileAddr = reputationProfileAd;
       userProfileAddr = userProfileAd;
       const { status, simulationFailed } = await handleSignAndSend(tx);
-      if (!status && !simulationFailed) {
+
+      if (!status && simulationFailed) {
         sileo.error({
           title: "Error",
           description:
@@ -142,7 +144,7 @@ export const RegisterCard = () => {
           : null,
       email: user.email,
     };
-
+    console.log(reputationProfileAddr, userProfileAddr);
     const result = await staykeApi.register(payload);
 
     if (result.status) {

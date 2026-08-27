@@ -9,15 +9,17 @@ import {
 import { getInitializeUserProfileInstructionAsync } from "@GestLabs2-0/stayke-core";
 import type { SolanaClient } from "@/context/NetworkContext";
 import { fromSolanaKitIns } from "@/helpers/web3Parsers";
+import { FEE_PAYER } from "@/shared/constants";
 
 export async function buildInitUserTx(addr: Address, client: SolanaClient) {
   const authority = createNoopSigner(addr);
+  const payer = createNoopSigner(FEE_PAYER);
   console.log(addr);
 
   const instruction = await getInitializeUserProfileInstructionAsync({
     authority: authority,
     // TODO: in the future we will use a backend relayer
-    payer: authority,
+    payer,
   });
 
   const web3Instruction = fromSolanaKitIns(instruction);
@@ -26,10 +28,11 @@ export async function buildInitUserTx(addr: Address, client: SolanaClient) {
     .getLatestBlockhash()
     .send();
 
+  console.log(latestBlockhash);
   const tx = new VersionedTransaction(
     new TransactionMessage({
       instructions: [web3Instruction],
-      payerKey: new PublicKey(addr),
+      payerKey: new PublicKey(FEE_PAYER),
       recentBlockhash: latestBlockhash.blockhash,
     }).compileToV0Message(),
   );
