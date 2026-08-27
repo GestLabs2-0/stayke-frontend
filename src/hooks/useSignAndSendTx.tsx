@@ -79,7 +79,7 @@ export function useSignAndSendTx(wallet: Address | null) {
       const signature = await client.rpc
         .sendTransaction(cosignedTxBase64 as Base64EncodedWireTransaction, {
           skipPreflight: true,
-          encoding: 'base64'
+          encoding: "base64",
         })
         .send();
       setSignature(signature);
