@@ -5,8 +5,8 @@ import type { Address } from "@solana/kit";
 import type { FormikHelpers } from "formik";
 import { Form, Formik } from "formik";
 import { useRouter } from "next/navigation";
+import type { ReactNode } from "react";
 import { useEffect } from "react";
-import type { JSX } from "react/jsx-runtime";
 import { sileo } from "sileo";
 
 import { COUNTRIES } from "@/constants/countries";
@@ -40,6 +40,48 @@ const initialValues: RegisterValues = {
   fechaNacimiento: "",
 };
 
+const renderBackendErrors = (result: {
+  errors?: string[] | null;
+  message?: string | string[] | null;
+}) => {
+  let content: ReactNode;
+
+  if (Array.isArray(result.errors) && result.errors.length > 0) {
+    content = (
+      <ul className="list-disc pl-5">
+        {result.errors.map((err) => (
+          <li className="text-sm font-medium" key={err}>
+            {err}
+          </li>
+        ))}
+      </ul>
+    );
+  } else if (Array.isArray(result.message) && result.message.length > 0) {
+    content = (
+      <ul className="list-disc pl-5">
+        {result.message.map((msg) => (
+          <li className="text-sm font-medium" key={msg}>
+            {msg}
+          </li>
+        ))}
+      </ul>
+    );
+  } else {
+    content = (
+      <p>{result.message || "Ocurrió un error al completar el registro."}</p>
+    );
+  }
+
+  sileo.error({
+    title: "Ocurrió un error al completar el registro",
+    description: content,
+    styles: {
+      description: "text-base text-white/80",
+      title: "text-xl font-semibold",
+    },
+  });
+};
+
 export const RegisterCard = () => {
   const { client } = useNetwork();
   const {
@@ -60,6 +102,68 @@ export const RegisterCard = () => {
     }
   }, [userWallet, reputationProfile, userProfile, userBackend, router]);
 
+  const ensureOnChainProfiles = async (): Promise<{
+    reputationProfileAddr: Address<string>;
+    userProfileAddr: Address<string>;
+  } | null> => {
+    if (!userWallet) {
+      sileo.error({
+        title: "Error",
+        description: "No se pudo obtener la wallet del usuario.",
+      });
+      return null;
+    }
+
+    if (userProfile && reputationProfile) {
+      return {
+        userProfileAddr: userProfile.address,
+        reputationProfileAddr: reputationProfile.address,
+      };
+    }
+
+    try {
+      const {
+        reputationProfile: reputationProfileAd,
+        userProfile: userProfileAd,
+        tx,
+      } = await buildInitUserTx(userWallet, client);
+
+      const { status, simulationFailed } = await handleSignAndSend(tx);
+
+      if (!status) {
+        if (!simulationFailed) {
+          sileo.error({
+            title: "Error",
+            description:
+              "No se pudo crear la cuenta en blockchain. Por favor, inténtalo de nuevo.",
+          });
+        }
+        return null;
+      }
+
+      return {
+        reputationProfileAddr: reputationProfileAd,
+        userProfileAddr: userProfileAd,
+      };
+    } catch (error) {
+      console.error("Error creating on-chain user profile:", error);
+      sileo.error({
+        title: "Error",
+        description:
+          "Ocurrió un error al preparar la transacción en blockchain.",
+      });
+      return null;
+    }
+  };
+
+  const handleCreateOnChainAccount = async () => {
+    const profiles = await ensureOnChainProfiles();
+    if (profiles) {
+      await refetchAccounts();
+      sileo.success({ title: "¡Cuenta creada en blockchain con éxito!" });
+    }
+  };
+
   const handleSubmit = async (
     values: RegisterValues,
     { resetForm }: FormikHelpers<RegisterValues>,
@@ -68,44 +172,6 @@ export const RegisterCard = () => {
       sileo.error({
         title: "Error",
         description: "No se pudo obtener la wallet del usuario.",
-      });
-      return;
-    }
-    console.log(reputationProfile, userProfile);
-    let reputationProfileAddr: Address<string> | null = null;
-    let userProfileAddr: Address<string> | null = null;
-
-    if (!userProfile && !reputationProfile) {
-      const {
-        reputationProfile: reputationProfileAd,
-        userProfile: userProfileAd,
-        tx,
-      } = await buildInitUserTx(userWallet, client);
-
-      reputationProfileAddr = reputationProfileAd;
-      userProfileAddr = userProfileAd;
-      const { status, simulationFailed } = await handleSignAndSend(tx);
-
-      if (!status && simulationFailed) {
-        sileo.error({
-          title: "Error",
-          description:
-            "No se pudo crear el perfil. Por favor, inténtalo de nuevo.",
-        });
-        return;
-      }
-    } else {
-      reputationProfileAddr = reputationProfile
-        ? reputationProfile.address
-        : null;
-      userProfileAddr = userProfile ? userProfile.address : null;
-    }
-
-    if (!reputationProfileAddr || !userProfileAddr) {
-      sileo.error({
-        title: "Error",
-        description:
-          "No se pudo obtener el perfil del usuario. Por favor, inténtalo de nuevo.",
       });
       return;
     }
@@ -118,6 +184,13 @@ export const RegisterCard = () => {
       });
       return;
     }
+
+    const profiles = await ensureOnChainProfiles();
+    if (!profiles) {
+      return;
+    }
+
+    const { reputationProfileAddr, userProfileAddr } = profiles;
 
     const payload: RegisterUser = {
       owner: userWallet.toString(),
@@ -144,7 +217,7 @@ export const RegisterCard = () => {
           : null,
       email: user.email,
     };
-    console.log(reputationProfileAddr, userProfileAddr);
+
     const result = await staykeApi.register(payload);
 
     if (result.status) {
@@ -154,46 +227,37 @@ export const RegisterCard = () => {
       return;
     }
 
-    let errorMessages: JSX.Element[] | JSX.Element;
-
-    if (Array.isArray(result.errors)) {
-      errorMessages = result.errors.map((err) => (
-        <li className="text-sm font-medium" key={err}>
-          {err}
-        </li>
-      ));
-    }
-    if (Array.isArray(result.message)) {
-      errorMessages = result.message.map((message) => (
-        <li className="text-sm font-medium" key={message}>
-          {message}
-        </li>
-      ));
-    } else {
-      errorMessages = (
-        <p>{result.message || "Ocurrió un error al completar el registro."}</p>
-      );
-    }
-
-    if (errorMessages) {
-      sileo.error({
-        title: "Ocurrió un error al completar el registro",
-        description: (
-          <>
-            {Array.isArray(errorMessages) ? (
-              <ul className="list-disc pl-5">{errorMessages}</ul>
-            ) : (
-              errorMessages
-            )}
-          </>
-        ),
-        styles: {
-          description: "text-base text-white/80",
-          title: "text-xl font-semibold",
-        },
-      });
-    }
+    renderBackendErrors(result);
   };
+
+  const needsOnChainAccount = Boolean(
+    userBackend && (!userProfile || !reputationProfile),
+  );
+
+  if (needsOnChainAccount) {
+    return (
+      <>
+        <h1 className="font-plus-jakarta text-[32px] font-extrabold leading-tight text-white">
+          Finalizá tu registro
+        </h1>
+        <p className="mt-2 font-plus-jakarta text-[14px] font-medium text-white/70">
+          Tus datos ya están registrados en el sistema. Es necesario inicializar
+          tu cuenta en la blockchain para completar el registro.
+        </p>
+
+        <button
+          type="button"
+          onClick={handleCreateOnChainAccount}
+          disabled={loadingSignAndSend}
+          className="mt-8 w-full cursor-pointer rounded-full bg-[#3B007F] px-6 py-3.5 font-plus-jakarta text-[15px] font-bold text-white transition-all duration-200 hover:bg-[#5307AD] hover:shadow-[0_4px_12px_rgba(59,0,127,0.4)] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          {loadingSignAndSend
+            ? "Creando cuenta en blockchain..."
+            : "Crear cuenta en blockchain"}
+        </button>
+      </>
+    );
+  }
 
   return (
     <>

@@ -84,7 +84,7 @@ export function useSignAndSendTx(wallet: Address | null) {
         .send();
       setSignature(signature);
 
-      return { status: true, signature };
+      return { status: true, signature, simulationFailed: false };
     } catch (error: unknown) {
       if (error instanceof SendTransactionError) {
         console.log("SendTransactionError:", error.logs);
